@@ -1,20 +1,31 @@
-# 🦥 Bill Sloth Linux Helper: The Ultimate ADHD-Friendly Linux Power User System
+# 🦥 Bill Sloth Linux Helper: The Ultimate ADHD-Friendly Adaptive Linux System
 
-**Transform your Linux computer into an ADHD-friendly powerhouse using Claude Code as your personal guide.**
+**An AI-powered Linux toolkit that learns from your workflow and adapts to your brain.**
 
 ---
 
-## 🎯 **What Is This Thing?**
+## 🧠 **What Makes This Special?**
 
-Bill Sloth is like having Claude Code as your personal Linux power-user assistant who:
+Bill Sloth is the **first self-modifying Linux power-user system** that:
 
-- **Sets up complete systems** for gaming, productivity, AI development, privacy, and more
-- **Automates complex tasks** that normally take hours of research and configuration
-- **Explains everything** so you understand your system instead of just using it blindly
-- **Troubleshoots problems** before they become frustrating roadblocks
-- **Keeps evolving** - new modules for emerging tools and workflows
+- **🎯 ADAPTS TO YOU**: Modules learn your actual workflow and self-modify to match your needs
+- **🚀 Windows Power-User Equivalents**: Everything, TeraCopy, ClipboardFusion, PowerToys Run + AI superpowers
+- **🛡️ 1337 H4x0r Mode**: Complete ethical hacking toolkit with AI-enhanced security testing
+- **💰 Token-Efficient**: Smart feedback system uses minimal Claude tokens while maximizing customization
+- **🧠 ADHD-Optimized**: Designed for brains that need systems to work WITH them, not against them
 
-Think of it as "your AI-powered Linux toolkit" rather than "figure everything out from scratch."
+**Key Innovation**: If a module teaches video production but you do business development, rate it "Wrong - doesn't match my workflow" and it **automatically adapts** to show partnership templates, revenue analysis, and CRM tools instead.
+
+---
+
+## 🎯 **Real-World Example: No More Frustration**
+
+**Before**: EdBoiGames module shows YouTube tutorials, but Bill does business development  
+**Problem**: Frustrating mismatch between content and actual needs  
+**Solution**: Bill rates experience "5 - Wrong focus", describes his work  
+**Result**: Module detects business focus, switches to partnership outreach, revenue optimization, VRBO management tools
+
+**The system learns YOUR reality** and stops wasting your time with irrelevant content!
 
 ---
 
@@ -259,6 +270,110 @@ You learn WHY each step matters → Everything works → You become confident
 - **Stay in one conversation** with Claude
 - **No need to open browser tabs** or search for tutorials
 - **Claude keeps you focused** on your original goal
+
+---
+
+## 🧠 **NEW: ADAPTIVE LEARNING SYSTEM**
+
+### **🎯 The Problem This Solves**
+
+Ever get frustrated when a tutorial teaches video editing but you actually need business development tools? **Bill Sloth now adapts to YOUR actual workflow.**
+
+### **🚀 How It Works (Token-Efficient)**
+
+1. **Smart Feedback Collection**: Quick 1-6 ratings use **ZERO tokens**
+   - 😍 Perfect - exactly what I needed
+   - 👍 Good - mostly helpful  
+   - 😐 Okay - somewhat useful
+   - 👎 Meh - not quite right
+   - 😤 Wrong - doesn't match my workflow
+   - 💬 Custom feedback (uses tokens only if you choose this)
+
+2. **Automatic Adaptation**: Modules detect patterns and self-modify
+   - Wrong content type? Module switches focus automatically
+   - Consistent low ratings? AI generates customizations
+   - Usage patterns tracked locally - no privacy concerns
+
+3. **Your Commands**:
+   ```bash
+   bill-sloth dashboard     # See how modules adapt to your usage
+   adapt-modules status     # Check satisfaction scores  
+   adapt-modules customize  # Run AI batch customization
+   ```
+
+### **🎯 Real Example: EdBoiGames Module**
+
+**Default Mode**: Shows YouTube content creation, video editing tutorials  
+**After Rating "Wrong Focus"**: Detects business development need  
+**Adaptive Mode**: Shows partnership templates, revenue analysis, VRBO management  
+
+**Result**: Same module, completely different content that matches your actual work!
+
+### **💰 Token Efficiency** 
+
+- **90% of feedback uses ZERO tokens** (1-6 ratings stored locally)
+- **AI customization only when you specifically request it**
+- **Batch processing** minimizes token usage
+- **Learn once, benefit forever** - adaptations persist
+
+---
+
+## 🚀 **NEW: WINDOWS POWER-USER EQUIVALENTS**
+
+Missing your Windows power-user tools? **Bill Sloth now includes AI-enhanced versions of everything:**
+
+### **📋 Clipboard Mastery** (`clipboard_mastery_interactive`)
+- **Replaces**: ClipboardFusion, Ditto, Windows clipboard history
+- **AI Features**: Auto-translate copied text, summarize long content, format code
+- **Better Than Windows**: Unlimited history, cross-app formatting, OCR integration
+
+### **📝 Text Expansion Mastery** (`text_expansion_interactive`) 
+- **Replaces**: TextExpander, AutoHotkey, Windows autocorrect
+- **AI Features**: Smart snippet generation, context-aware expansions, ADHD productivity templates
+- **Better Than Windows**: Works everywhere, AI-powered dynamic content
+
+### **📁 File Mastery** (`file_mastery_interactive`)
+- **Replaces**: Everything, TeraCopy, PowerRename, Windows Search
+- **AI Features**: Intelligent file organization, bulk rename with AI suggestions
+- **Better Than Windows**: Lightning-fast search, AI content analysis, unlimited capability
+
+### **🚀 Launcher Mastery** (`launcher_mastery_interactive`)
+- **Replaces**: PowerToys Run, Alfred (Mac), Windows Start Menu
+- **AI Features**: Context-aware app suggestions, workflow automation, natural language commands  
+- **Better Than Windows**: "smart-launch 'work mode'" starts your entire work stack
+
+### **🪟 Window Mastery** (`window_mastery_interactive`)
+- **Replaces**: PowerToys FancyZones, Windows Snap
+- **AI Features**: Intelligent window organization, focus mode for ADHD
+- **Better Than Windows**: Scriptable layouts, productivity optimization
+
+### **🔧 System Doctor** (`system_doctor_interactive`) 
+- **Replaces**: Windows Device Manager, Disk Management, Event Viewer
+- **AI Features**: Intelligent problem diagnosis, automated fixes
+- **Better Than Windows**: Comprehensive hardware analysis, proactive monitoring
+
+---
+
+## 🛡️ **NEW: 1337 H4X0R MODE** (`defensive_cyber_interactive`)
+
+**Ethical hacking and cybersecurity toolkit** with AI enhancements:
+
+### **🔍 Reconnaissance & Scanning**
+- **Tools**: nmap, nikto, gobuster, masscan
+- **AI Features**: Intelligent vulnerability analysis, automated reporting
+- **Scripts**: `recon-target google.com`, `web-test https://site.com`
+
+### **🧪 Security Labs** 
+- **Practice Environments**: DVWA, intentionally vulnerable apps
+- **CTF Support**: `ctf-helper crypto`, challenge automation
+- **Safe Learning**: Isolated environments, ethical guidelines
+
+### **🛡️ Defensive Security**
+- **Monitoring**: IDS, firewall management, security dashboards  
+- **Analysis**: Log analysis, incident response, forensics
+- **Professional**: CISSP, CEH, OSCP preparation environments
+
+**⚖️ ETHICAL USE ONLY**: Education, certification prep, authorized testing
 
 ---
 
