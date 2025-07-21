@@ -21,7 +21,9 @@
       "Bash(git stash:*)",
       "WebFetch(domain:claude.ai)",
       "Bash(find:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(./scripts/health_check.sh:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }
