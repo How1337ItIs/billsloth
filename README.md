@@ -22,23 +22,37 @@ Think of it as "Claude Code teaches you Linux" rather than "figure out Linux you
 
 ### **Step 1: Get Claude Code (Your Linux Teacher)**
 
-**⚠️ CRITICAL: You need Claude Code CLI subscription ($10/month). This is your Linux teacher - don't skip this!**
+**⚠️ CRITICAL: You need a Claude AI subscription with Claude Code access. This is your Linux teacher - don't skip this!**
 
 #### **Complete Beginners (Never Used Command Line):**
 
-1. **Go to https://claude.ai/code**
-2. **Sign up and pay $10/month** (this is UNLIMITED usage)
-3. **Follow their setup guide** - they'll walk you through installing
-4. **Come back here when Claude Code is working**
+1. **Go to https://claude.ai**
+2. **Choose your subscription:**
+   - **Claude Pro** ($20/month) - Good for light coding work  
+   - **Claude Max** ($100-200/month) - Better for extensive Linux learning
+3. **Install Node.js** (required): Go to https://nodejs.org and download the latest version
+4. **Come back here when you have Claude subscription + Node.js installed**
 
 #### **If You Know Basic Commands:**
 
 ```bash
-# Install Claude Code
-curl -fsSL https://claude.ai/install.sh | sh
-claude login
+# First, make sure you have Node.js 18+ installed:
+node --version
+
+# Install Claude Code CLI:
+npm install -g @anthropic-ai/claude-code
+
+# Start Claude Code (it will ask you to login):
+claude
+
+# Test it's working:
 claude "Hello, are you working?"
 ```
+
+#### **What Each Plan Gets You:**
+- **Claude Pro ($20/month)**: 10-40 Claude Code prompts every 5 hours - perfect for learning
+- **Claude Max ($100/month)**: 50-200 prompts every 5 hours - better for heavy usage  
+- **Claude Max ($200/month)**: 200-800 prompts every 5 hours - unlimited feeling usage
 
 ### **Step 2: Download Bill Sloth (Claude Will Help You)**
 
@@ -170,9 +184,11 @@ You learn WHY each step matters → Everything works → You become confident
 **Absolutely YES.** Here's why:
 
 - **This system requires Claude Code** - it won't work with anything else
-- **$10/month unlimited** vs. API costs that would be $50+ per month
+- **Fixed monthly cost** vs. API costs that add up fast and unpredictably
 - **Claude Code knows these modules** inside and out
 - **It's your Linux teacher** - this is your education cost
+
+**Recommended plan for learning Linux:** Claude Pro ($20/month) gives you plenty of usage for learning. If you plan to use it heavily, Claude Max ($100/month) gives you much more usage.
 
 ### **"How is this different from YouTube tutorials?"**
 
