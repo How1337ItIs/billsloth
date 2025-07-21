@@ -18,7 +18,10 @@
       "Bash(mv:*)",
       "Bash(OFFLINE_MODE=1 bin/audit_workflow vacation_rental_manager.sh)",
       "Bash(OFFLINE_MODE=1 bin/audit_workflow vacation_rental_manager_interactive)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "WebFetch(domain:claude.ai)",
+      "Bash(find:*)",
+      "Bash(wc:*)"
     ],
     "deny": []
   }

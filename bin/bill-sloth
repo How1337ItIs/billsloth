@@ -1,0 +1,91 @@
+#!/bin/bash
+# Bill Sloth main command - enhanced with adaptive learning
+
+BILL_SLOTH_ROOT="$(dirname "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+source "$BILL_SLOTH_ROOT/lib/adaptive_learning.sh" 2>/dev/null || true
+
+case "$1" in
+    "dashboard"|"learning"|"insights")
+        show_learning_dashboard
+        ;;
+    "feedback")
+        collect_feedback "${2:-general}" "${3:-}"
+        ;;
+    "preferences"|"prefs")
+        echo "🧠 BILL SLOTH LEARNING PREFERENCES"
+        echo "=================================="
+        echo ""
+        if [ -f "$HOME/.bill-sloth/learning/preferences_simple.txt" ]; then
+            echo "📊 Your preferences:"
+            cat "$HOME/.bill-sloth/learning/preferences_simple.txt" | sort | uniq
+        else
+            echo "No preferences set yet. Use modules and provide feedback to build preferences."
+        fi
+        echo ""
+        echo "💡 To reset preferences: rm ~/.bill-sloth/learning/preferences_simple.txt"
+        ;;
+    "stats"|"usage")
+        if [ -f "$HOME/.bill-sloth/learning/usage.log" ]; then
+            echo "📈 USAGE STATISTICS"
+            echo "=================="
+            echo ""
+            total_sessions=$(tail -n +3 "$HOME/.bill-sloth/learning/usage.log" 2>/dev/null | wc -l)
+            echo "Total sessions: $total_sessions"
+            echo ""
+            echo "Most used modules:"
+            tail -100 "$HOME/.bill-sloth/learning/usage.log" 2>/dev/null | cut -d',' -f2 | sort | uniq -c | sort -nr | head -5
+        else
+            echo "No usage statistics yet. Start using modules to see insights!"
+        fi
+        ;;
+    "reset-learning")
+        echo "🔄 Reset Bill Sloth learning data? This will:"
+        echo "   • Clear usage logs"
+        echo "   • Clear feedback history"
+        echo "   • Reset preferences"
+        echo "   • Modules will behave as if new"
+        echo ""
+        read -p "Are you sure? (yes/no): " confirm
+        if [ "$confirm" = "yes" ]; then
+            rm -rf "$HOME/.bill-sloth/learning"
+            echo "✅ Learning data reset. Modules will adapt to your usage from scratch."
+        else
+            echo "❌ Reset cancelled."
+        fi
+        ;;
+    "help")
+        echo "🤖 BILL SLOTH ADAPTIVE COMMANDS"
+        echo "==============================="
+        echo ""
+        echo "Learning & Adaptation:"
+        echo "  bill-sloth dashboard     - Show learning insights and usage stats"
+        echo "  bill-sloth feedback      - Provide feedback for any module"
+        echo "  bill-sloth preferences   - View your learned preferences"
+        echo "  bill-sloth stats         - View usage statistics"
+        echo "  bill-sloth reset-learning - Reset all learning data"
+        echo ""
+        echo "System Commands:"
+        echo "  bill-sloth               - Show main menu"
+        echo "  bill-sloth help          - Show this help"
+        echo ""
+        echo "🧠 Bill Sloth learns from your usage patterns and feedback to"
+        echo "   customize modules to match your actual needs and workflow."
+        ;;
+    *)
+        # Default behavior - show main menu or run original command
+        if [ -f "$BILL_SLOTH_ROOT/bill-sloth-original" ]; then
+            "$BILL_SLOTH_ROOT/bill-sloth-original" "$@"
+        else
+            echo "🤖 BILL SLOTH - ADAPTIVE LINUX POWER-USER SYSTEM"
+            echo "==============================================="
+            echo ""
+            echo "Enhanced with adaptive learning - modules customize to your needs!"
+            echo ""
+            echo "Commands:"
+            echo "  bill-sloth help          - Show all commands"
+            echo "  bill-sloth dashboard     - View learning insights"
+            echo "  [run any module]         - Modules will adapt based on your usage"
+            echo ""
+        fi
+        ;;
+esac
