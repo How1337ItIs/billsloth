@@ -1,6 +1,20 @@
 #!/bin/bash
-# Bill Sloth Aliases - Anime Hacker Shortcuts
+# Bill Sloth Aliases - ADHD-Friendly Shortcuts
 # Source this file: source ~/BillSloth/shortcuts/aliases.sh
+
+# ADHD-friendly work shortcuts
+alias work-mode='~/bin/work-mode'
+alias focus='~/bin/focus-timer'
+alias brain-dump='~/bin/brain-dump'
+alias dashboard='~/bin/dashboard'
+alias rental='~/bin/rental-dashboard'
+alias edboigames='~/bin/edboigames-dashboard'
+alias data-hoard='~/bin/data-dashboard'
+
+# Memory aids
+alias todo='echo "$(date): $*" >> ~/Productivity/.current-task && echo "Task set: $*"'
+alias done='mv ~/Productivity/.current-task ~/Productivity/Done/$(date +%Y%m%d)-task.txt'
+alias what-am-i-doing='cat ~/Productivity/.current-task 2>/dev/null || echo "No current task set"'
 
 # System shortcuts with anime flair
 alias kamehameha='sudo apt update && sudo apt upgrade -y'
