@@ -16,13 +16,19 @@ alias todo='echo "$(date): $*" >> ~/Productivity/.current-task && echo "Task set
 alias done='mv ~/Productivity/.current-task ~/Productivity/Done/$(date +%Y%m%d)-task.txt'
 alias what-am-i-doing='cat ~/Productivity/.current-task 2>/dev/null || echo "No current task set"'
 
-# System shortcuts with anime flair
-alias kamehameha='sudo apt update && sudo apt upgrade -y'
-alias rasengan='kill -9'
-alias sharingan='watch -n1 -d'
-alias bankai='sudo systemctl restart'
-alias genjutsu='sleep'
-alias omae='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'
+# System shortcuts - Easy to spell AND anime versions
+alias update='sudo apt update && sudo apt upgrade -y'
+alias kamehameha='sudo apt update && sudo apt upgrade -y'  # anime version
+alias kill9='kill -9'
+alias rasengan='kill -9'  # anime version
+alias watch='watch -n1 -d'
+alias sharingan='watch -n1 -d'  # anime version
+alias restart='sudo systemctl restart'
+alias bankai='sudo systemctl restart'  # anime version
+alias pause='sleep'
+alias genjutsu='sleep'  # anime version
+alias sudo-mode='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'
+alias omae='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'  # anime version
 
 # Quick system info
 alias matrix='cmatrix -b -C green'
