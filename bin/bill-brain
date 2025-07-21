@@ -1,0 +1,182 @@
+#!/bin/bash
+# Bill's Adaptive Learning System - Remembers patterns and suggests workflows
+
+BRAIN_DIR="$HOME/.billsloth-brain"
+mkdir -p "$BRAIN_DIR"
+
+# Log user actions for pattern learning
+log_action() {
+    local action="$1"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local weekday=$(date '+%A')
+    local hour=$(date '+%H')
+    
+    echo "$timestamp,$weekday,$hour,$action" >> "$BRAIN_DIR/activity.log"
+}
+
+# LOCAL pattern analysis - no external AI needed
+suggest_next_action() {
+    if [ ! -f "$BRAIN_DIR/activity.log" ]; then
+        echo "🧠 No patterns learned yet. Let me watch and learn!"
+        return
+    fi
+    
+    local current_hour=$(date '+%H')
+    local current_weekday=$(date '+%A')
+    
+    # PURE LOCAL ANALYSIS using simple bash commands
+    echo "🧠 Analyzing patterns locally..."
+    
+    # Find what Bill typically does at this time
+    local time_patterns=$(awk -F',' -v day="$current_weekday" -v hour="$current_hour" '
+        $2 == day && $3 == hour {print $4}
+    ' "$BRAIN_DIR/activity.log" | sort | uniq -c | sort -nr)
+    
+    if [ -n "$time_patterns" ]; then
+        echo "📊 At this time on $current_weekday, you usually:"
+        echo "$time_patterns" | head -3 | while read count action; do
+            echo "  • $action ($count times)"
+        done
+        
+        # Auto-suggest the most common action
+        local top_action=$(echo "$time_patterns" | head -1 | awk '{print $2}')
+        echo ""
+        echo "🚀 Auto-execute '$top_action'? (y/n)"
+        read -n 1 -r auto_help
+        echo ""
+        if [[ $auto_help =~ ^[Yy]$ ]]; then
+            execute_learned_action "$top_action"
+        fi
+    else
+        # Fallback to general patterns
+        echo "🤔 No specific patterns for this time. Your general habits:"
+        cut -d',' -f4 "$BRAIN_DIR/activity.log" | sort | uniq -c | sort -nr | head -5
+    fi
+}
+
+# Execute commonly done actions
+execute_learned_action() {
+    local action="$1"
+    
+    case "$action" in
+        "check_vrbo")
+            echo "🏠 Opening VRBO dashboard..."
+            firefox https://www.vrbo.com/traveler/inbox &
+            ~/bin/rental-dashboard &
+            ;;
+        "streaming_setup")
+            echo "🎬 Setting up streaming..."
+            ~/bin/stream
+            ;;
+        "gaming_session")
+            echo "🎮 Preparing gaming session..."
+            ~/bin/game
+            ;;
+        "work_focus")
+            echo "⚡ Activating work focus..."
+            ~/bin/focus-mode && ~/bin/focus-timer
+            ;;
+    esac
+}
+
+# Smart workflow suggestions based on context
+suggest_workflow() {
+    local current_context="$1"
+    
+    case "$current_context" in
+        "morning")
+            echo "🌅 Good morning! Your usual morning routine:"
+            echo "1. Check VRBO messages"
+            echo "2. Review cleaning schedule" 
+            echo "3. Plan the day"
+            echo ""
+            echo "Start morning routine? (y/n)"
+            read -n 1 -r morning_start
+            echo ""
+            if [[ $morning_start =~ ^[Yy]$ ]]; then
+                log_action "morning_routine"
+                firefox https://www.vrbo.com/traveler/inbox &
+                ~/bin/daily-routine
+            fi
+            ;;
+        "afternoon")
+            echo "☀️ Afternoon energy dip detected!"
+            echo "Suggestions:"
+            echo "1. Take a 15-minute break"
+            echo "2. Quick brain dump"
+            echo "3. Switch to easier tasks"
+            ;;
+        "evening")
+            echo "🌙 Winding down time!"
+            echo "1. Backup important work"
+            echo "2. Plan tomorrow"
+            echo "3. Check if anything needs to seed overnight"
+            ;;
+    esac
+}
+
+# Detect what Bill might need based on system state
+smart_suggestions() {
+    # Check if it's a typical work time
+    local hour=$(date '+%H')
+    if [ $hour -ge 9 ] && [ $hour -le 17 ]; then
+        suggest_workflow "work_time"
+    fi
+    
+    # Check system state for suggestions
+    if ! ip addr | grep -q "tun\|wg"; then
+        echo "⚠️ VPN is down - you usually turn it on before torrenting"
+    fi
+    
+    # Check if streaming software is running
+    if pgrep obs > /dev/null; then
+        echo "📹 OBS is running - stream mode suggestions available"
+    fi
+    
+    # Check calendar/schedule if available
+    local weekday=$(date '+%A')
+    if [ "$weekday" = "Friday" ]; then
+        echo "🎉 It's Friday! Weekend prep suggestions:"
+        echo "• Download weekend entertainment"
+        echo "• Set up gaming session"
+        echo "• Plan creative projects"
+    fi
+}
+
+# Main brain function
+case "$1" in
+    "log")
+        log_action "$2"
+        ;;
+    "suggest")
+        suggest_next_action
+        ;;
+    "workflow")
+        suggest_workflow "$2"
+        ;;
+    "smart")
+        smart_suggestions
+        ;;
+    "analyze")
+        echo "🧠 BILL'S ACTIVITY PATTERNS:"
+        echo "============================="
+        if [ -f "$BRAIN_DIR/activity.log" ]; then
+            echo "Most common actions:"
+            cut -d',' -f4 "$BRAIN_DIR/activity.log" | sort | uniq -c | sort -nr | head -10
+            echo ""
+            echo "Busiest hours:"
+            cut -d',' -f3 "$BRAIN_DIR/activity.log" | sort | uniq -c | sort -nr | head -5
+        else
+            echo "No data yet - start using the system!"
+        fi
+        ;;
+    *)
+        echo "🧠 Bill's Brain - Learning Your Patterns"
+        echo "Usage:"
+        echo "  bill-brain log <action>     - Log an action"
+        echo "  bill-brain suggest          - Get suggestions based on patterns"
+        echo "  bill-brain workflow <time>  - Get workflow suggestions"
+        echo "  bill-brain smart            - Smart context-aware suggestions"
+        echo "  bill-brain analyze          - Show learned patterns"
+        ;;
+esac

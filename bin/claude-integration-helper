@@ -1,0 +1,320 @@
+#!/bin/bash
+# Claude Integration Helper - Bridges local system with Claude Code sessions
+# Provides context and suggests capability installations
+
+TRACKER_DIR="$HOME/.bill-capability-tracker"
+CLAUDE_CONTEXT="$HOME/.claude-context"
+mkdir -p "$CLAUDE_CONTEXT"
+
+# Generate context for Claude Code sessions
+generate_claude_context() {
+    local session_type="$1"  # general, installation, troubleshooting
+    
+    echo "🤖 GENERATING CLAUDE CODE CONTEXT"
+    echo "=================================="
+    
+    # Create comprehensive context file
+    cat > "$CLAUDE_CONTEXT/current_session_context.md" << EOF
+# Claude Code Session Context - $(date)
+
+## Bill's Current Situation
+- **Session Type**: $session_type
+- **Time**: $(date '+%A, %B %d at %H:%M')
+- **Context**: $(get_time_context)
+
+## Recent Activity Patterns
+$(get_recent_patterns)
+
+## Pending Capability Installations
+$(get_installation_opportunities)
+
+## System Status
+$(get_system_status)
+
+## Learning Opportunities
+$(identify_learning_opportunities)
+
+## Suggested Session Focus
+$(suggest_session_focus "$session_type")
+EOF
+
+    echo "✅ Context generated at $CLAUDE_CONTEXT/current_session_context.md"
+    echo ""
+    echo "📋 Quick Summary for Claude Code:"
+    suggest_session_focus "$session_type"
+}
+
+# Get recent activity patterns
+get_recent_patterns() {
+    echo "### Recent Requests (Last 7 Days)"
+    if [ -f "$TRACKER_DIR/requests/all_requests.log" ]; then
+        local recent_cutoff=$(date -d '7 days ago' '+%Y-%m-%d')
+        awk -F',' -v cutoff="$recent_cutoff" '
+            $1 >= cutoff {
+                gsub(",", " | ", $0)
+                print "- " $0
+            }
+        ' "$TRACKER_DIR/requests/all_requests.log" | tail -10
+    else
+        echo "- No recent activity logged"
+    fi
+    
+    echo ""
+    echo "### Most Common Issues"
+    if [ -f "$TRACKER_DIR/requests/all_requests.log" ]; then
+        awk -F',' '{count[$2]++} END {for (cat in count) printf "- %s: %d times\n", cat, count[cat]}' \
+            "$TRACKER_DIR/requests/all_requests.log" | sort -t':' -k2 -nr | head -5
+    fi
+}
+
+# Get installation opportunities
+get_installation_opportunities() {
+    echo "### High Priority Installations"
+    if [ -f "$TRACKER_DIR/queue/install_queue.txt" ]; then
+        awk -F',' '$2 == "high" || $2 == "urgent" {
+            printf "- **%s** (%s priority): %s requests, added %s\n", $1, $2, $4, $3
+        }' "$TRACKER_DIR/queue/install_queue.txt"
+    else
+        echo "- No pending installations"
+    fi
+    
+    echo ""
+    echo "### Medium Priority Installations"
+    if [ -f "$TRACKER_DIR/queue/install_queue.txt" ]; then
+        awk -F',' '$2 == "medium" {
+            printf "- **%s**: %s requests, added %s\n", $1, $4, $3
+        }' "$TRACKER_DIR/queue/install_queue.txt"
+    fi
+}
+
+# Get current system status
+get_system_status() {
+    echo "### System Health"
+    echo "- Uptime: $(uptime -p)"
+    echo "- Load: $(uptime | awk -F'load average:' '{print $2}')"
+    echo "- Disk Usage: $(df -h / | awk 'NR==2 {print $5}') of root partition used"
+    
+    # VPN Status
+    if ip addr | grep -q "tun\|wg"; then
+        echo "- VPN: ✅ Active"
+    else
+        echo "- VPN: ❌ Inactive"
+    fi
+    
+    # Installed Capabilities
+    echo ""
+    echo "### Installed Capabilities"
+    if [ -f "$TRACKER_DIR/solutions/installed_capabilities.log" ]; then
+        awk -F',' '{printf "- %s (%s)\n", $2, $3}' "$TRACKER_DIR/solutions/installed_capabilities.log"
+    else
+        echo "- None yet (opportunity for first installations)"
+    fi
+}
+
+# Identify learning opportunities
+identify_learning_opportunities() {
+    echo "### Educational Opportunities"
+    
+    # Based on recent requests, suggest learning topics
+    if [ -f "$TRACKER_DIR/requests/all_requests.log" ]; then
+        local recent_categories=$(awk -F',' -v cutoff="$(date -d '7 days ago' '+%Y-%m-%d')" '
+            $1 >= cutoff {print $2}
+        ' "$TRACKER_DIR/requests/all_requests.log" | sort | uniq)
+        
+        echo "$recent_categories" | while read category; do
+            case "$category" in
+                "audio")
+                    echo "- **Linux Audio Architecture**: Good time to teach PipeWire vs PulseAudio"
+                    ;;
+                "system_maintenance")
+                    echo "- **System Administration**: Opportunity to teach systemd and service management"
+                    ;;
+                "network")
+                    echo "- **Networking Fundamentals**: VPN concepts and network troubleshooting"
+                    ;;
+                "productivity")
+                    echo "- **Workflow Automation**: Teaching shell scripting and task automation"
+                    ;;
+            esac
+        done
+    fi
+    
+    # Suggest based on Bill's interests
+    echo "- **ATHF Integration**: More creative ways to integrate favorite show references"
+    echo "- **Streaming Tech**: Latest in OBS plugins and streaming automation"
+    echo "- **Linux Gaming**: Proton updates and gaming optimizations"
+}
+
+# Suggest session focus based on context
+suggest_session_focus() {
+    local session_type="$1"
+    
+    case "$session_type" in
+        "installation")
+            echo "### Suggested Installation Session Focus"
+            if [ -f "$TRACKER_DIR/queue/install_queue.txt" ]; then
+                local top_priority=$(awk -F',' '$2 == "urgent" || $2 == "high" {print $1; exit}' "$TRACKER_DIR/queue/install_queue.txt")
+                if [ -n "$top_priority" ]; then
+                    echo "**Primary Goal**: Install $top_priority capability suite"
+                    echo "**Approach**: Install + teach + document why it works"
+                    echo "**Success Metric**: Bill can handle $top_priority issues independently"
+                else
+                    echo "**Assessment Mode**: Analyze current needs and plan future installations"
+                fi
+            fi
+            ;;
+        "troubleshooting")
+            echo "### Suggested Troubleshooting Session Focus"
+            echo "**Primary Goal**: Solve immediate problem + install prevention tools"
+            echo "**Approach**: Fix + explain + automate to prevent recurrence"
+            echo "**Success Metric**: This problem type never happens again"
+            ;;
+        "learning")
+            echo "### Suggested Learning Session Focus"
+            echo "**Primary Goal**: Expand Bill's Linux knowledge in area of interest"
+            echo "**Approach**: Interactive exploration + practical application"
+            echo "**Success Metric**: Bill can explain concept to his streaming audience"
+            ;;
+        *)
+            echo "### Suggested General Session Focus"
+            
+            # Determine most important area
+            if [ -f "$TRACKER_DIR/queue/install_queue.txt" ] && [ -s "$TRACKER_DIR/queue/install_queue.txt" ]; then
+                echo "**Recommended**: Address pending capability installations"
+                echo "**Alternative**: General learning or system exploration"
+            else
+                echo "**Recommended**: Explore Bill's current interests and setup monitoring"
+                echo "**Goal**: Identify areas where capability building would be valuable"
+            fi
+            ;;
+    esac
+}
+
+# Get contextual information based on time
+get_time_context() {
+    local hour=$(date '+%H')
+    local weekday=$(date '+%A')
+    
+    if [ "$weekday" = "Saturday" ] || [ "$weekday" = "Sunday" ]; then
+        echo "Weekend - good time for learning and experimentation"
+    elif [ $hour -ge 9 ] && [ $hour -le 17 ]; then
+        echo "Business hours - might need quick solutions for work tasks"
+    elif [ $hour -ge 18 ] && [ $hour -le 23 ]; then
+        echo "Evening - good time for learning and personal projects"
+    else
+        echo "Late night/early morning - might need urgent problem solving"
+    fi
+}
+
+# Prepare post-session summary
+create_session_summary() {
+    local what_accomplished="$1"
+    local capabilities_installed="$2"
+    local learning_outcomes="$3"
+    
+    cat > "$CLAUDE_CONTEXT/last_session_summary.md" << EOF
+# Claude Code Session Summary - $(date)
+
+## What We Accomplished
+$what_accomplished
+
+## Capabilities Installed
+$capabilities_installed
+
+## Learning Outcomes
+$learning_outcomes
+
+## Bill's Next Steps
+- Practice using new tools
+- Try to handle similar problems independently
+- Document any issues for follow-up
+
+## System Improvements
+- Reduced dependency in: $(echo "$capabilities_installed" | tr '\n' ' ')
+- Increased Bill's knowledge of: $(echo "$learning_outcomes" | tr '\n' ' ')
+
+## Follow-up Opportunities
+- Monitor how well new capabilities work
+- Identify any gaps or improvements needed
+- Plan next capability installation based on usage patterns
+EOF
+
+    echo "📝 Session summary saved to $CLAUDE_CONTEXT/last_session_summary.md"
+}
+
+# Integration with other Bill Sloth tools
+notify_capability_request() {
+    local category="$1"
+    local specific_request="$2"
+    
+    # Log the request
+    ~/bin/capability-tracker log "$category" "$specific_request" "claude_assistance"
+    
+    # Check if this should trigger installation planning
+    local queue_size_before=$(wc -l < "$TRACKER_DIR/queue/install_queue.txt" 2>/dev/null || echo 0)
+    ~/bin/capability-tracker analyze > /dev/null
+    local queue_size_after=$(wc -l < "$TRACKER_DIR/queue/install_queue.txt" 2>/dev/null || echo 0)
+    
+    if [ $queue_size_after -gt $queue_size_before ]; then
+        echo "📋 New capability installation recommended! Check queue with: capability-tracker queue"
+    fi
+}
+
+# Main command interface
+case "$1" in
+    "context")
+        generate_claude_context "$2"
+        ;;
+    "summary")
+        create_session_summary "$2" "$3" "$4"
+        ;;
+    "notify")
+        notify_capability_request "$2" "$3"
+        ;;
+    "show-context")
+        if [ -f "$CLAUDE_CONTEXT/current_session_context.md" ]; then
+            cat "$CLAUDE_CONTEXT/current_session_context.md"
+        else
+            echo "No context generated yet. Run: claude-integration-helper context"
+        fi
+        ;;
+    "quick-status")
+        echo "🔍 QUICK STATUS FOR CLAUDE CODE"
+        echo "==============================="
+        
+        # High priority items
+        if [ -f "$TRACKER_DIR/queue/install_queue.txt" ]; then
+            local urgent_items=$(awk -F',' '$2 == "urgent" || $2 == "high"' "$TRACKER_DIR/queue/install_queue.txt" | wc -l)
+            if [ $urgent_items -gt 0 ]; then
+                echo "🚨 $urgent_items high-priority capability installations needed"
+                echo "Use: capability-tracker queue"
+            fi
+        fi
+        
+        # Recent problems
+        if [ -f "$TRACKER_DIR/requests/all_requests.log" ]; then
+            local recent_problems=$(awk -F',' -v cutoff="$(date -d '1 day ago' '+%Y-%m-%d')" '$1 >= cutoff' "$TRACKER_DIR/requests/all_requests.log" | wc -l)
+            echo "📊 $recent_problems requests in last 24 hours"
+        fi
+        
+        # System health
+        if ! ip addr | grep -q "tun\|wg"; then
+            echo "⚠️ VPN currently inactive"
+        fi
+        ;;
+    *)
+        echo "🤖 CLAUDE INTEGRATION HELPER"
+        echo "============================"
+        echo ""
+        echo "Bridges local Bill Sloth system with Claude Code sessions"
+        echo ""
+        echo "Usage:"
+        echo "  claude-integration-helper context [type]    - Generate session context"
+        echo "  claude-integration-helper summary <what> <installed> <learned> - Post-session summary"
+        echo "  claude-integration-helper notify <category> <request> - Log Claude assistance request"
+        echo "  claude-integration-helper show-context      - Show current context"
+        echo "  claude-integration-helper quick-status      - Quick status for Claude"
+        echo ""
+        echo "Session types: general, installation, troubleshooting, learning"
+        ;;
+esac

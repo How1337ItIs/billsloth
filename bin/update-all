@@ -1,0 +1,55 @@
+#!/bin/bash
+# Bill Sloth System Updater - One command to refresh everything
+
+echo "🔄 BILL SLOTH SYSTEM UPDATE"
+echo "==========================="
+
+# Git pull to get latest changes
+echo "📡 Pulling latest changes..."
+if git pull origin main; then
+    echo "✅ Code updated successfully"
+else
+    echo "⚠️  Git pull failed - continuing with local refresh"
+fi
+
+# Make everything executable
+echo "🔧 Setting permissions..."
+chmod +x bin/* 2>/dev/null || echo "⚠️  Some bin files may not exist yet"
+chmod +x modules/*.sh 2>/dev/null || echo "⚠️  Some modules may not exist yet"
+chmod +x lib/*.sh 2>/dev/null || echo "⚠️  Some lib files may not exist yet"
+
+# Create directories if missing
+echo "📁 Creating directories..."
+mkdir -p ~/.bill-sloth/{logs,backups,data,audit}
+mkdir -p ~/bin ~/BillSloth
+
+# Source aliases if they exist
+if [ -f shortcuts/aliases.sh ]; then
+    echo "🔗 Loading aliases..."
+    echo "Run 'source ~/BillSloth/shortcuts/aliases.sh' to activate shortcuts"
+else
+    echo "ℹ️  No aliases file found"
+fi
+
+# Check system health
+echo "🏥 Quick system check..."
+if command -v glances &> /dev/null; then
+    echo "✅ Glances (system monitor) available"
+else
+    echo "📦 Consider installing: sudo apt install glances"
+fi
+
+if command -v docker &> /dev/null; then
+    echo "✅ Docker available for container deployments"
+else
+    echo "📦 Consider installing: curl -fsSL https://get.docker.com | sudo bash"
+fi
+
+echo ""
+echo "🎉 Update complete!"
+echo "📋 Available commands:"
+echo "• ./lab.sh - Main interface"
+echo "• audit_workflow <module> - Audit any module"
+echo "• update-all - Run this updater again"
+echo ""
+echo "🚀 Ready to go! Run './lab.sh' to start."

@@ -1,0 +1,201 @@
+#!/bin/bash
+# Smart VRBO Management - Automates Bill's vacation rental workflow
+
+VRBO_DIR="$HOME/VacationRental"
+mkdir -p "$VRBO_DIR"/{Messages,Bookings,Cleaning,Maintenance,Reports}
+
+echo "🏠 SMART VRBO MANAGER"
+echo "===================="
+
+# Quick status check
+vrbo_status_check() {
+    echo "📊 Quick Status Check:"
+    echo "=============================="
+    
+    # Check if we're in business hours
+    local hour=$(date '+%H')
+    if [ $hour -ge 6 ] && [ $hour -le 22 ]; then
+        echo "✅ Business hours - guests may be active"
+    else
+        echo "🌙 After hours - emergency mode only"
+    fi
+    
+    # Check internet connection for guest wifi issues
+    if ping -c 1 8.8.8.8 > /dev/null 2>&1; then
+        echo "✅ Internet working - guest wifi should be fine"
+    else
+        echo "❌ Internet issues - guests may be complaining!"
+    fi
+    
+    # Check calendar for today's events
+    echo ""
+    echo "📅 Today's Schedule:"
+    if [ -f "$VRBO_DIR/schedule.txt" ]; then
+        grep "$(date '+%Y-%m-%d')" "$VRBO_DIR/schedule.txt" || echo "  No scheduled events"
+    else
+        echo "  No schedule file - create one with 'vrbo schedule'"
+    fi
+}
+
+# Message templates for common situations
+send_template_message() {
+    local template="$1"
+    
+    case "$template" in
+        "checkin")
+            cat << 'EOF'
+🏠 Welcome to Guntersville Getaway! 
+
+Your checkin details:
+• WiFi: GuntersvilleGuest / [password]
+• Checkout: 11 AM
+• Any issues? Text me at [number]
+
+Enjoy your stay! 🌊
+EOF
+            ;;
+        "checkout")
+            cat << 'EOF'
+Thanks for staying with us! 
+
+Quick checkout reminders:
+• Leave keys on kitchen counter
+• Turn thermostat to 72°F
+• Close all windows
+• Lock front door on your way out
+
+Hope you had a great time! ⭐
+EOF
+            ;;
+        "wifi_issue")
+            cat << 'EOF'
+Hi! Sorry about the WiFi issue.
+
+Quick fixes to try:
+1. Unplug router for 30 seconds, plug back in
+2. Try network: GuntersvilleGuest-5G
+3. If still down, I can remotely reset it
+
+Let me know if that doesn't work! 📶
+EOF
+            ;;
+        "cleaning_delay")
+            cat << 'EOF'
+Hi! Small delay with cleaning crew today.
+
+Your unit will be ready by [TIME]. I'll personally check 
+everything before you arrive.
+
+Sorry for the inconvenience! 🧹
+EOF
+            ;;
+    esac
+}
+
+# Smart notification system
+check_urgent_situations() {
+    echo "🚨 Checking for urgent situations..."
+    
+    # Check if it's close to checkin time
+    local hour=$(date '+%H')
+    if [ $hour -eq 15 ]; then  # 3 PM
+        echo "⏰ Standard checkin time approaching!"
+        echo "  • Confirm cleaning is done"
+        echo "  • Check WiFi and AC"
+        echo "  • Prepare welcome message"
+    fi
+    
+    # Check if it's after checkout time
+    if [ $hour -eq 12 ]; then  # Noon (after 11 AM checkout)
+        echo "🧹 Post-checkout time!"
+        echo "  • Schedule cleaning crew"
+        echo "  • Damage assessment"
+        echo "  • Prepare for next guest"
+    fi
+    
+    # Weekend peak times
+    local weekday=$(date '+%A')
+    if [ "$weekday" = "Friday" ] && [ $hour -ge 16 ]; then
+        echo "🎉 Weekend rush starting!"
+        echo "  • Expect more messages"
+        echo "  • Have backup plans ready"
+        echo "  • Double-check tomorrow's bookings"
+    fi
+}
+
+# Integration with system monitoring
+monitor_guest_services() {
+    echo "📡 Monitoring guest services..."
+    
+    # Check if we can ping the property router (if accessible)
+    echo "WiFi Status: Checking..."
+    
+    # Check weather for guest planning
+    echo "Weather: $(curl -s wttr.in/guntersville?format=3)"
+    
+    # Check local events that might affect guests
+    echo "Local Events: Check guntersvilleal.org for today's events"
+}
+
+# Quick action menu
+quick_actions() {
+    echo ""
+    echo "🚀 QUICK ACTIONS:"
+    echo "=================="
+    echo "1) Open VRBO inbox"
+    echo "2) Send template message"  
+    echo "3) Check property status"
+    echo "4) Schedule cleaning"
+    echo "5) Emergency contact list"
+    echo "6) Today's bookings"
+    echo "7) Financial dashboard"
+    echo ""
+    read -p "Choose action (1-7): " action
+    
+    case $action in
+        1)
+            echo "📧 Opening VRBO inbox..."
+            firefox https://www.vrbo.com/traveler/inbox &
+            ~/bin/bill-brain log "check_vrbo"
+            ;;
+        2)
+            echo "💬 Template messages:"
+            echo "a) Check-in welcome"
+            echo "b) Check-out reminder" 
+            echo "c) WiFi troubleshooting"
+            echo "d) Cleaning delay"
+            read -p "Choose template: " template
+            case $template in
+                a) send_template_message "checkin" ;;
+                b) send_template_message "checkout" ;;
+                c) send_template_message "wifi_issue" ;;
+                d) send_template_message "cleaning_delay" ;;
+            esac
+            ;;
+        3)
+            monitor_guest_services
+            ;;
+        4)
+            echo "🧹 Cleaning scheduler would integrate with crew's calendar"
+            ;;
+        5)
+            echo "📞 Emergency Contacts:"
+            echo "• Plumber: [number]"
+            echo "• Electrician: [number]"
+            echo "• Cleaning Crew: [number]"
+            echo "• Property Manager: [number]"
+            ;;
+        6)
+            echo "📅 Today's bookings would pull from VRBO API"
+            ;;
+        7)
+            echo "💰 Financial dashboard would show revenue, expenses, occupancy"
+            ;;
+    esac
+}
+
+# Main execution
+vrbo_status_check
+check_urgent_situations
+monitor_guest_services
+quick_actions

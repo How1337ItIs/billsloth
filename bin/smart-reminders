@@ -1,0 +1,197 @@
+#!/bin/bash
+# Smart ADHD-Friendly Reminder System
+# Adapts to Bill's patterns and energy levels
+
+REMINDER_DIR="$HOME/.billsloth-reminders"
+mkdir -p "$REMINDER_DIR"
+
+# Different reminder styles based on urgency and Bill's current state
+send_smart_notification() {
+    local message="$1"
+    local urgency="$2"  # low, medium, high, emergency
+    local context="$3"  # work, personal, guest, maintenance
+    
+    # Choose notification method based on urgency
+    case "$urgency" in
+        "emergency")
+            # Multiple alerts + sound
+            notify-send -u critical "🚨 EMERGENCY" "$message"
+            espeak "Emergency! $message" 2>/dev/null &
+            echo "🚨 EMERGENCY: $message" >> "$REMINDER_DIR/alerts.log"
+            ;;
+        "high")
+            # Visual + gentle sound
+            notify-send -u normal "⚠️ Important" "$message"
+            echo "⚠️ $(date): $message" >> "$REMINDER_DIR/important.log"
+            ;;
+        "medium")
+            # Just visual
+            notify-send "📋 Reminder" "$message"
+            echo "📋 $(date): $message" >> "$REMINDER_DIR/reminders.log"
+            ;;
+        "low")
+            # Quiet log for later review
+            echo "💭 $(date): $message" >> "$REMINDER_DIR/thoughts.log"
+            ;;
+    esac
+}
+
+# Smart timing - don't interrupt flow states
+check_if_good_time() {
+    # Check if user is in deep focus (no mouse/keyboard activity)
+    local idle_time=$(xprintidle 2>/dev/null || echo 0)
+    local idle_minutes=$((idle_time / 60000))
+    
+    if [ $idle_minutes -gt 30 ]; then
+        echo "user_away"
+    elif [ $idle_minutes -lt 2 ]; then
+        echo "user_active"
+    else
+        echo "user_idle"
+    fi
+}
+
+# Context-aware reminder scheduling
+schedule_smart_reminder() {
+    local message="$1"
+    local when="$2"      # now, 15min, 1hour, end_of_day, etc.
+    local urgency="$3"
+    local context="$4"
+    
+    case "$when" in
+        "now")
+            send_smart_notification "$message" "$urgency" "$context"
+            ;;
+        "when_idle")
+            # Wait for user to be idle, then remind
+            (while true; do
+                state=$(check_if_good_time)
+                if [ "$state" = "user_idle" ]; then
+                    send_smart_notification "$message" "$urgency" "$context"
+                    break
+                fi
+                sleep 60
+            done) &
+            ;;
+        "15min")
+            (sleep 900 && send_smart_notification "$message" "$urgency" "$context") &
+            ;;
+        "1hour")
+            (sleep 3600 && send_smart_notification "$message" "$urgency" "$context") &
+            ;;
+        "end_of_workday")
+            # Schedule for 5 PM
+            echo "0 17 * * * /home/$USER/bin/smart-reminders send '$message' '$urgency' '$context'" | crontab -
+            ;;
+    esac
+}
+
+# Adaptive reminder frequency based on task completion
+track_reminder_effectiveness() {
+    local reminder_id="$1"
+    local completed="$2"  # true/false
+    
+    if [ "$completed" = "true" ]; then
+        echo "$(date),success,$reminder_id" >> "$REMINDER_DIR/effectiveness.log"
+    else
+        echo "$(date),missed,$reminder_id" >> "$REMINDER_DIR/effectiveness.log"
+        # Escalate next time
+        echo "$reminder_id needs escalation" >> "$REMINDER_DIR/escalate.txt"
+    fi
+}
+
+# Smart reminder suggestions based on patterns
+suggest_reminders() {
+    local current_context="$1"
+    
+    case "$current_context" in
+        "vrbo_work")
+            echo "🏠 VRBO Reminders:"
+            echo "• Check messages every 2 hours during business hours"
+            echo "• Property status check before new guest arrivals"
+            echo "• Weekly financial review on Sundays"
+            echo "• Maintenance checks monthly"
+            ;;
+        "streaming")
+            echo "🎬 Streaming Reminders:"
+            echo "• Test stream 15 minutes before going live"
+            echo "• Check VPN is OFF for streaming"
+            echo "• Hydration break every hour"
+            echo "• Save stream highlights afterward"
+            ;;
+        "gaming")
+            echo "🎮 Gaming Session Reminders:"
+            echo "• Eye break every 30 minutes"
+            echo "• Posture check hourly"
+            echo "• Save progress regularly"
+            echo "• Set session end time to avoid all-nighters"
+            ;;
+        "work_focus")
+            echo "⚡ Focus Session Reminders:"
+            echo "• Brain dump before starting (clear mental cache)"
+            echo "• Single task focus - no multitasking"
+            echo "• Pomodoro breaks are mandatory"
+            echo "• Celebrate completions"
+            ;;
+    esac
+}
+
+# Emergency intervention for ADHD spirals
+detect_adhd_spiral() {
+    # Look for patterns that indicate ADHD overwhelm
+    local recent_actions=$(tail -20 "$HOME/.billsloth-brain/activity.log" 2>/dev/null)
+    
+    # Check for rapid task switching
+    local task_switches=$(echo "$recent_actions" | awk -F',' '{print $4}' | uniq | wc -l)
+    if [ $task_switches -gt 10 ]; then
+        send_smart_notification "ADHD spiral detected! Time to brain dump and pick ONE thing." "high" "wellness"
+        echo "🧠 Spiral intervention triggered" >> "$REMINDER_DIR/interventions.log"
+    fi
+    
+    # Check for repeated failed attempts
+    local failures=$(grep "failed\|error\|quit" "$REMINDER_DIR/alerts.log" 2>/dev/null | wc -l)
+    if [ $failures -gt 3 ]; then
+        send_smart_notification "Multiple issues detected. Take a 10-minute break." "medium" "wellness"
+    fi
+}
+
+# Main command interface
+case "$1" in
+    "send")
+        send_smart_notification "$2" "$3" "$4"
+        ;;
+    "schedule")
+        schedule_smart_reminder "$2" "$3" "$4" "$5"
+        ;;
+    "suggest")
+        suggest_reminders "$2"
+        ;;
+    "track")
+        track_reminder_effectiveness "$2" "$3"
+        ;;
+    "check-spiral")
+        detect_adhd_spiral
+        ;;
+    "view")
+        echo "📋 Recent Reminders:"
+        echo "==================="
+        tail -10 "$REMINDER_DIR/reminders.log" 2>/dev/null || echo "No reminders yet"
+        echo ""
+        echo "⚠️ Important Alerts:"
+        echo "==================="
+        tail -5 "$REMINDER_DIR/important.log" 2>/dev/null || echo "No important alerts"
+        ;;
+    *)
+        echo "🔔 Smart ADHD-Friendly Reminders"
+        echo "Usage:"
+        echo "  smart-reminders send 'message' urgency context"
+        echo "  smart-reminders schedule 'message' when urgency context"
+        echo "  smart-reminders suggest context"
+        echo "  smart-reminders check-spiral"
+        echo "  smart-reminders view"
+        echo ""
+        echo "Urgency levels: emergency, high, medium, low"
+        echo "Contexts: work, personal, guest, maintenance, wellness"
+        echo "When: now, when_idle, 15min, 1hour, end_of_workday"
+        ;;
+esac

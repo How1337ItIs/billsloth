@@ -1,0 +1,116 @@
+#!/bin/bash
+# Bill Sloth Hotkey System - ADHD-friendly quick access
+# Press F12 for instant lab access, F11 for voice interface
+
+echo "🔥 Activating hotkey system..."
+
+# Check if xbindkeys is installed
+if ! command -v xbindkeys &> /dev/null; then
+    echo "Installing xbindkeys for hotkey support..."
+    sudo apt install -y xbindkeys xbindkeys-config
+fi
+
+# Create xbindkeys config for hotkeys
+cat > ~/.xbindkeysrc << 'EOF'
+# Bill Sloth Hotkeys - Adult Swim Style
+
+# F12 - Quick access to Bill Sloth lab (like Carl's computer)
+"gnome-terminal --title='ATHF Lab' --geometry=120x40 -- bash -c 'cd ~/BillSloth && ./lab.sh; exec bash'"
+F12
+
+# F11 - Voice interface (Meatwad style - "I understand!")
+"gnome-terminal --title='Voice Interface' --geometry=80x20 -- bash -c '~/bin/voice-interface; exec bash'"
+F11
+
+# Ctrl+Alt+F - Frylock mode (science and logic)
+"~/bin/frylock-mode"
+control+alt + f
+
+# Ctrl+Alt+M - Meatwad mode (simple and fun)
+"~/bin/meatwad-mode"
+control+alt + m
+
+# Ctrl+Alt+S - Shake mode (chaos and speed)
+"~/bin/shake-mode"
+control+alt + s
+
+# Ctrl+Alt+C - Carl mode (pretend to know computers)
+"~/bin/carl-mode"
+control+alt + c
+
+# Super+Space - Quick brain dump (for ADHD thoughts)
+"gnome-terminal --title='Brain Dump' --geometry=60x15 -- bash -c '~/bin/brain-dump; exec bash'"
+Super_L + space
+
+# Super+T - Quick task board
+"gnome-terminal --title='Task Board' --geometry=100x30 -- bash -c '~/bin/kanban; exec bash'"
+Super_L + t
+
+# Super+V - VPN check (safety first!)
+"notify-send 'VPN Status' \"$(~/bin/vpn-check | head -3)\""
+Super_L + v
+EOF
+
+# Create the ATHF mode scripts
+mkdir -p ~/bin
+
+# Frylock mode - logical and organized
+cat > ~/bin/frylock-mode << 'EOF'
+#!/bin/bash
+notify-send "🧠 FRYLOCK MODE" "Logic and science activated!"
+echo "Frylock: 'You've been messing around with my computer, haven't you?'"
+echo "Frylock: 'How the hell did this happen?'"
+~/bin/dashboard
+EOF
+
+# Meatwad mode - simple and accessible
+cat > ~/bin/meatwad-mode << 'EOF'
+#!/bin/bash
+notify-send "🍔 MEATWAD MODE" "Simple and fun!"
+echo "Meatwad: 'I get it! It ain't making me laugh, but I get it!'"
+~/bin/focus-timer
+EOF
+
+# Shake mode - chaotic and fast
+cat > ~/bin/shake-mode << 'EOF'
+#!/bin/bash
+notify-send "🥤 SHAKE MODE" "Maximum chaos engaged!"
+echo "Shake: 'Number one in the hood, G!'"
+echo "Shake: 'All right! Free money! You ain't even got to leave the house.'"
+# Quick system update and cleanup
+~/bin/update || sudo apt update && sudo apt upgrade -y
+EOF
+
+# Carl mode - pretend expertise
+cat > ~/bin/carl-mode << 'EOF'
+#!/bin/bash
+notify-send "👨 CARL MODE" "Computer expert activated!"
+echo "Carl: 'Yeah, I know all about computers.'"
+echo "Carl: 'Call a doctor! Can't you see I'm bleeding here?'"
+# Show system info like a "computer expert"
+neofetch
+echo ""
+echo "Carl: 'Hey, if you're watching this right now, I'm running out of oxygen.'"
+EOF
+
+# Make all scripts executable
+chmod +x ~/bin/*-mode
+
+# Start xbindkeys
+killall xbindkeys 2>/dev/null
+xbindkeys
+
+echo "🎮 Hotkey system activated!"
+echo ""
+echo "🔥 HOTKEYS READY:"
+echo "F12 - Open Bill Sloth Lab"
+echo "F11 - Voice Interface"
+echo "Ctrl+Alt+F - Frylock Mode (logical)"
+echo "Ctrl+Alt+M - Meatwad Mode (simple)"
+echo "Ctrl+Alt+S - Shake Mode (chaos)"
+echo "Ctrl+Alt+C - Carl Mode (fake expertise)"
+echo "Super+Space - Brain Dump"
+echo "Super+T - Task Board"
+echo "Super+V - VPN Check"
+echo ""
+echo "Number one in the hood, G!"

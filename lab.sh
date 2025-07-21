@@ -1,14 +1,19 @@
 #!/bin/bash
 # BILL SLOTH LINUX LAB - Main Interface
 # Designed for Claude Code execution and interpretation
-# "The Matrix has you..." - Morpheus
+# "Number one in the hood, G!" - Master Shake
+# "I understand! I understand!" - Meatwad
 
-# Cyber colors for terminal aesthetics
-R='\033[0;31m'    # Red (Alert)
-G='\033[0;32m'    # Green (Matrix)
-B='\033[0;34m'    # Blue (Ice)
-P='\033[1;35m'    # Purple (Neon)
-C='\033[0;36m'    # Cyan (Ghost)
+# Generate context for Claude Code at session start
+echo "🤖 Preparing Claude Code context..."
+~/bin/claude-integration-helper context general
+
+# ATHF colors for terminal aesthetics
+R='\033[0;31m'    # Red (Shake)
+G='\033[0;32m'    # Green (Frylock)
+B='\033[0;34m'    # Blue (Carl's Pool)
+P='\033[1;35m'    # Purple (Meatwad)
+C='\033[0;36m'    # Cyan (wwwyzzerdd)
 Y='\033[1;33m'    # Yellow (Warning)
 M='\033[0;35m'    # Magenta
 W='\033[1;37m'    # White
@@ -27,6 +32,14 @@ show_banner() {
     
           L I N U X   L A B   【Linux初心者の助手】  
     ═══════════════════════════════════════════════════════════════════════════
+            ╭─────────────────────────────────────────────────╮
+            │    ☆ﾟ.*･｡ﾟ  S L O W  &  S T E A D Y  ﾟ｡･*.ﾟ☆   │
+            │                                                 │
+            │        🦥    /|_/|   Chill vibes only    🦥      │
+            │           (  o.o  )   Taking it slow...         │
+            │            > ^ <      One task at a time        │
+            │                                                 │
+            ╰─────────────────────────────────────────────────╯
 BANNER
     echo -e "${N}"
     
@@ -48,29 +61,62 @@ BANNER
 
 show_menu() {
     echo -e "\n${P}【WORK & PRODUCTIVITY】${N}"
-    check_module "01" "🧠 PRODUCTIVITY SUITE" "ADHD tools, memory aids, focus timers" "productivity_suite"
-    check_module "02" "🏖️ VACATION RENTAL MGR" "Guntersville Getaway management" "vacation_rental_manager"
-    check_module "03" "🎮 EDBOIGAMES TOOLKIT" "YouTube BD, partnerships, content planning" "edboigames_toolkit"
-    
-    echo -e "\n${B}【SYSTEM & TECH】${N}"
-    check_module "04" "🔧 SYSTEM OPS" "Updates, fixes, maintenance" "system_ops"
-    check_module "05" "🎥 STREAMING SETUP" "OBS, audio, scenes" "streaming_setup"
-    check_module "06" "🤖 AI PLAYGROUND" "Ollama, Stable Diffusion, local AI" "ai_playground"
-    check_module "07" "🎮 GAMING BOOST" "Steam, performance optimization" "gaming_boost"
-    check_module "08" "🛡️ PRIVACY TOOLS" "VPN, encryption, security" "privacy_tools"
-    check_module "09" "🎨 CREATIVE CODING" "p5.js, Processing, digital art" "creative_coding"
-    
-    echo -e "\n${M}【DATA & ORGANIZATION】${N}"
-    check_module "10" "🏴‍☠️ DATA HOARDING" "Torrenting, file management, disk analytics" "data_hoarding"
-    
-    echo -e "\n${B}【UTILITIES】${N}"
-    echo -e "   ${C}U${N}) 🔄 Update all modules (git pull)"
-    echo -e "   ${C}A${N}) 📋 Show aliases and shortcuts"
-    echo -e "   ${C}H${N}) ❓ Help and documentation"
-    echo -e "   ${C}L${N}) 📜 View system logs"
-    echo -e "   ${C}0${N}) 🚪 Exit lab"
-    
-    echo -ne "\n${G}bill@sloth${N}:${B}~/lab${N}$ "
+    echo "  1) Productivity Suite (Run)"
+    echo "  1a) Audit Productivity Suite"
+    echo "  2) Data Hoarding (Run)"
+    echo "  2a) Audit Data Hoarding"
+    echo "  3) Streaming Setup (Run)"
+    echo "  3a) Audit Streaming Setup"
+    echo "  4) Gaming Boost (Run)"
+    echo "  4a) Audit Gaming Boost"
+    echo "  5) Privacy Tools (Run)"
+    echo "  5a) Audit Privacy Tools"
+    echo "  6) Creative Coding (Run)"
+    echo "  6a) Audit Creative Coding"
+    echo "  7) AI Playground (Run)"
+    echo "  7a) Audit AI Playground"
+    echo "  8) System Ops (Run)"
+    echo "  8a) Audit System Ops"
+    echo "  9) EdBoiGames Toolkit (Run)"
+    echo "  9a) Audit EdBoiGames Toolkit"
+    echo " 10) Repetitive Tasks (Run)"
+    echo " 10a) Audit Repetitive Tasks"
+    echo " 11) Vacation Rental Manager (Run)"
+    echo " 11a) Audit Vacation Rental Manager"
+    echo ""
+    echo -e "${C}【LOCAL AI】${N}"
+    echo "  L) Local AI (install / toggle)"
+    echo "  0) Exit"
+    echo ""
+    read -p "Your choice: " menu_choice
+    case $menu_choice in
+        1) bash modules/productivity_suite_interactive.sh ;;
+        1a) bin/audit_workflow productivity_suite_interactive ;;
+        2) bash modules/data_hoarding_interactive.sh ;;
+        2a) bin/audit_workflow data_hoarding_interactive ;;
+        3) bash modules/streaming_setup_interactive.sh ;;
+        3a) bin/audit_workflow streaming_setup_interactive ;;
+        4) bash modules/gaming_boost_interactive.sh ;;
+        4a) bin/audit_workflow gaming_boost_interactive ;;
+        5) bash modules/privacy_tools_interactive.sh ;;
+        5a) bin/audit_workflow privacy_tools_interactive ;;
+        6) bash modules/creative_coding_interactive.sh ;;
+        6a) bin/audit_workflow creative_coding_interactive ;;
+        7) bash modules/ai_playground_interactive.sh ;;
+        7a) bin/audit_workflow ai_playground_interactive ;;
+        8) bash modules/system_ops_interactive.sh ;;
+        8a) bin/audit_workflow system_ops_interactive ;;
+        9) bash modules/edboigames_toolkit_interactive.sh ;;
+        9a) bin/audit_workflow edboigames_toolkit_interactive ;;
+        10) bash modules/repetitive_tasks_interactive.sh ;;
+        10a) bin/audit_workflow repetitive_tasks_interactive ;;
+        11) bash modules/vacation_rental_manager_interactive.sh ;;
+        11a) bin/audit_workflow vacation_rental_manager_interactive ;;
+        L|l) toggle_local_ai ;;
+        0) echo "Bye!"; exit 0 ;;
+        *) echo "No valid choice. Try again."; show_menu ;;
+    esac
+    echo "\nYou can always re-run the menu to explore or audit other modules!"
 }
 
 check_module() {
@@ -132,6 +178,108 @@ show_shortcuts() {
     echo -e "${C}\nTo load shortcuts: source shortcuts/aliases.sh${N}"
 }
 
+toggle_local_ai() {
+    echo -e "\n${P}🤖 LOCAL AI MANAGEMENT${N}"
+    echo "======================"
+    
+    # Check if local AI is installed
+    if command -v interpreter &> /dev/null && command -v ollama &> /dev/null; then
+        echo "✅ Local AI stack is installed"
+        echo "📊 Installed models:"
+        ollama list 2>/dev/null | head -5
+    else
+        echo "📦 Local AI stack not installed"
+        echo ""
+        echo "🚀 Install local AI stack? (Open Interpreter + Ollama + CodeLlama 13B)"
+        echo "This enables offline AI capabilities for file operations, log parsing, etc."
+        echo "Size: ~7GB download"
+        echo ""
+        read -p "Install now? (y/n): " install_choice
+        if [[ $install_choice =~ ^[Yy]$ ]]; then
+            bash modules/local_llm_setup.sh
+            return
+        else
+            echo "Skipping installation"
+            return
+        fi
+    fi
+    
+    # Toggle offline mode
+    echo ""
+    echo "🧠 Current AI brain: $( [[ ${OFFLINE_MODE:-0} -eq 1 ]] && echo 'Local model (offline)' || echo 'Claude Code (cloud)' )"
+    echo ""
+    echo "Options:"
+    echo "1) Use local AI (offline mode)"
+    echo "2) Use Claude Code (cloud mode)" 
+    echo "3) Auto-detect based on task"
+    echo "0) Back to main menu"
+    echo ""
+    read -p "Your choice: " ai_choice
+    
+    case $ai_choice in
+        1)
+            export OFFLINE_MODE=1
+            unset FORCE_CLOUD
+            echo "🤖 Switched to local AI mode"
+            echo "All AI calls will use local models when possible"
+            ;;
+        2)
+            export FORCE_CLOUD=1
+            unset OFFLINE_MODE
+            echo "☁️ Switched to cloud mode"
+            echo "All AI calls will prefer Claude Code"
+            ;;
+        3)
+            unset OFFLINE_MODE FORCE_CLOUD
+            echo "🎯 Auto-detect mode enabled"
+            echo "AI choice depends on task capability and availability"
+            ;;
+        0)
+            return
+            ;;
+    esac
+    
+    echo ""
+    echo "💡 Current session settings applied. Use OFFLINE_MODE=1 ./lab.sh to make permanent."
+}
+
+global_interactive_launcher() {
+    echo "\n🌟 BILL SLOTH GLOBAL INTERACTIVE LAUNCHER"
+    echo "========================================="
+    echo "Choose a workflow to explore. Each module will help you pick the best tools for your needs!"
+    echo ""
+    echo "1) Productivity Suite"
+    echo "2) Data Hoarding"
+    echo "3) Streaming Setup"
+    echo "4) Gaming Boost"
+    echo "5) Privacy Tools"
+    echo "6) Creative Coding"
+    echo "7) AI Playground"
+    echo "8) System Ops"
+    echo "9) EdBoiGames Toolkit"
+    echo "10) Repetitive Tasks"
+    echo "11) Vacation Rental Manager"
+    echo "0) Exit"
+    echo ""
+    read -p "Your choice: " global_choice
+    case $global_choice in
+        1) bash modules/productivity_suite_interactive.sh ;;
+        2) bash modules/data_hoarding_interactive.sh ;;
+        3) bash modules/streaming_setup_interactive.sh ;;
+        4) bash modules/gaming_boost_interactive.sh ;;
+        5) bash modules/privacy_tools_interactive.sh ;;
+        6) bash modules/creative_coding_interactive.sh ;;
+        7) bash modules/ai_playground_interactive.sh ;;
+        8) bash modules/system_ops_interactive.sh ;;
+        9) bash modules/edboigames_toolkit_interactive.sh ;;
+        10) bash modules/repetitive_tasks_interactive.sh ;;
+        11) bash modules/vacation_rental_manager_interactive.sh ;;
+        0) echo "Bye!"; exit 0 ;;
+        *) echo "No valid choice. Try again."; global_interactive_launcher ;;
+    esac
+    echo "\nYou can always re-run the global launcher to explore other modules!"
+}
+
 # Initialize
 mkdir -p ~/.bill-sloth/{logs,backups,data}
 mkdir -p modules prompts shortcuts data
@@ -148,9 +296,9 @@ while true; do
     read -r choice
     
     case $choice in
-        01) install_module "productivity_suite" ;;
-        02) install_module "vacation_rental_manager" ;;
-        03) install_module "edboigames_toolkit" ;;
+        01) echo "Use interactive menu instead (choice 'I')"; sleep 2 ;;
+        02) echo "Use interactive menu instead (choice 'I')"; sleep 2 ;;
+        03) echo "Use interactive menu instead (choice 'I')"; sleep 2 ;;
         04) install_module "system_ops" ;;
         05) install_module "streaming_setup" ;;
         06) install_module "ai_playground" ;;

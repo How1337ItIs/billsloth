@@ -1,3 +1,7 @@
+# Bill Sloth Project: Purpose & Overview
+
+Bill Sloth is a hybrid, local-first Linux assistant for users with ADHD, dyslexia, and memory challenges. It always prefers mature, open-source tools for all workflows, uses custom scripts only as glue or fallback, and continuously audits itself to replace fragile solutions. The project maintains a detailed methods log and documents every change for transparency and maintainability. Claude Code (AI) is used as a guide and fallback for complex or novel problems, with the goal of building user independence and capability over time.
+
 # 【CYBERSPACE】Otaku Hacker Lab セットアップ
 
 ## The Smart Approach: Git-Based Modular System
@@ -937,3 +941,43 @@ alias genjutsu='sleep'
 - **ghost_protocol.sh** - Anti-forensics, steganography
 
 Each module can be as complex as needed, with proper error handling, dependencies, etc. The git approach makes it all manageable!
+
+## 🗂️ Media Management: FileBot Automation
+
+- Use the new FileBot integration for all media renaming and organization tasks.
+- Legacy/manual steps are deprecated; always prefer the automated function.
+- Example usage:
+
+```bash
+source modules/data_hoarding.sh
+automate_media_renaming
+```
+
+- FileBot must be installed: https://www.filebot.net/
+- Actions are logged to ~/.billsloth-reminders/filebot_automation.log
+
+## 🧠 Mature-First Philosophy
+
+- Always check for a robust, open-source solution before building custom logic.
+- Use custom scripts only as glue or fallback, and document all decisions in METHODS_LOG.md.
+
+## 🩺 On-Demand System Health Check
+
+- Use the `system-health` alias (runs `glances`) for a friendly, all-in-one summary of disk, memory, CPU, and network status.
+- If Glances is not installed, run: `sudo apt install glances`
+- No background monitoring, no nagging—just info when you want it.
+- Only truly critical issues are flagged in the Glances UI.
+- Output is ADHD/dyslexia-friendly and non-alarming.
+
+## 🕵️ Workflow Auditing (AI-Powered)
+
+You can audit any workflow in seconds and see AI-powered upgrade suggestions:
+
+```bash
+# Example: Audit the streaming setup workflow
+bin/audit_workflow streaming_setup_interactive
+```
+
+- The script runs an LLM audit, logs results, and shows a friendly TUI summary.
+- All audits are stored in `~/.bill-sloth/audit.log` for future review.
+- You can also run audits from the main menu (look for 'Audit' options).

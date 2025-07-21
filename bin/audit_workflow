@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# AI-Powered Workflow Auditing - Enhanced with LLM abstraction
+set -e
+
+# Source LLM abstraction
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/call_llm.sh"
+
+WORKFLOW="$1"
+MODULE="modules/${WORKFLOW}.sh"
+LOG="$HOME/.bill-sloth/audit.log"
+TMP="$(mktemp)"
+
+if [[ -z "$WORKFLOW" ]]; then
+    echo "🔍 BILL SLOTH WORKFLOW AUDITOR"
+    echo "=============================="
+    echo "Usage: audit_workflow <workflow>"
+    echo ""
+    echo "Available workflows:"
+    ls -1 modules/*interactive.sh 2>/dev/null | sed 's/modules\///g' | sed 's/_interactive\.sh//g' || echo "No modules found"
+    exit 1
+fi
+
+if [[ ! -f "$MODULE" ]]; then
+    echo "❌ Unknown workflow: $WORKFLOW"
+    echo "Available modules:"
+    ls -1 modules/*.sh 2>/dev/null | sed 's/modules\///g' | sed 's/\.sh//g'
+    exit 1
+fi
+
+echo "🔍 AUDITING WORKFLOW: $WORKFLOW"
+echo "==============================="
+
+# Create comprehensive audit prompt
+cat "$MODULE" > "$TMP"
+AUDIT_PROMPT="You are a shell-script auditor specializing in mature open-source tool adoption.
+
+AUDIT THIS WORKFLOW FOR:
+1. Custom implementations that could use battle-tested tools
+2. Half-cooked solutions vs mature alternatives
+3. Security vulnerabilities or unsafe practices  
+4. ADHD/dyslexia accessibility improvements
+5. Token optimization (prefer local-first solutions)
+
+SCRIPT: $MODULE
+CONTENT:
+$(cat "$TMP")
+
+Provide specific recommendations with tool names and installation commands.
+Focus on replacing custom code with proven open-source solutions."
+
+# Try ollama first, fallback to manual processing
+if command -v ollama &> /dev/null; then
+    echo "🤖 Running audit via Ollama..."
+    ollama run claude-code --prompt "$AUDIT_PROMPT" > "$TMP.out" 2>/dev/null || {
+        echo "⚠️ Ollama failed, falling back to manual processing..."
+        call_llm "$AUDIT_PROMPT" > "$TMP.out"
+    }
+else
+    echo "💭 No local LLM found, using manual processing..."
+    call_llm "$AUDIT_PROMPT" > "$TMP.out"
+fi
+
+# Log the audit with timestamp
+{
+    echo "=== $(date '+%F %T') · $WORKFLOW ==="
+    cat "$TMP.out"
+    echo
+} >> "$LOG"
+
+# Show results with fallback if gum not available
+if command -v gum &> /dev/null; then
+    gum pager "$TMP.out"
+else
+    echo "📋 AUDIT RESULTS:"
+    echo "================"
+    cat "$TMP.out"
+fi
+
+echo ""
+echo "📝 Full audit logged to: $LOG"
+echo "🔄 Re-run after implementing suggestions to track improvements"
+
+# Cleanup
+rm -f "$TMP" "$TMP.out"

@@ -1,0 +1,304 @@
+#!/bin/bash
+# Local-First Intelligence Router
+# PREFER MATURE SOLUTIONS: Uses voice2json or Rhasspy for intent recognition.
+# FALLBACK pattern matching is DEPRECATED and only used if mature tools are unavailable.
+# To install mature solutions, run: ~/bin/voice-engine-installer
+# See https://voice2json.org/ and https://rhasspy.readthedocs.io/
+
+LOCAL_SOLUTIONS_DIR="$HOME/.billsloth-local"
+VOICE_ENGINE_DIR="$HOME/.voice-engine"
+mkdir -p "$LOCAL_SOLUTIONS_DIR"/{workflows,solutions,patterns}
+mkdir -p "$VOICE_ENGINE_DIR"
+
+# Check if mature voice engines are available, fallback to simple detection
+detect_intent() {
+    local request="$1"
+    
+    # FIRST: Try voice2json if installed (proper offline intent recognition)
+    if command -v voice2json &> /dev/null && [ -f "$VOICE_ENGINE_DIR/profile/sentences.ini" ]; then
+        echo "🎙️ Using voice2json for intent recognition..."
+        local voice2json_result=$(echo "$request" | voice2json recognize-intent 2>/dev/null)
+        if [ $? -eq 0 ] && [ -n "$voice2json_result" ]; then
+            local intent_name=$(echo "$voice2json_result" | jq -r '.intent.name // empty' 2>/dev/null)
+            case "$intent_name" in
+                "AudioFix") echo "local_audio_fix"; return 0 ;;
+                "SystemUpdate") echo "local_system_update"; return 0 ;;
+                "NetworkCheck") echo "local_network_check"; return 0 ;;
+                "StreamingSetup") echo "local_streaming_setup"; return 0 ;;
+                "GamingMode") echo "local_gaming_mode"; return 0 ;;
+                "VrboWorkflow") echo "local_vrbo_workflow"; return 0 ;;
+                "ProductivityTask") echo "local_reminder_system"; return 0 ;;
+            esac
+        fi
+    fi
+    
+    # SECOND: Try Rhasspy via MQTT if configured
+    if command -v mosquitto_pub &> /dev/null && [ -f "$VOICE_ENGINE_DIR/rhasspy_config.json" ]; then
+        echo "🏠 Using Rhasspy for intent recognition..."
+        local rhasspy_result=$(echo "$request" | mosquitto_pub -h localhost -t hermes/nlu/query -l 2>/dev/null)
+        # Process Rhasspy response (similar pattern)
+    fi
+    
+    # FALLBACK: Basic pattern matching (the crude system we built)
+    echo "⚠️  Using fallback pattern matching - consider installing voice2json or Rhasspy"
+    fallback_pattern_detect "$request"
+}
+
+# Fallback detection (simplified version of our original system)
+# DEPRECATED: Only used if mature tools are unavailable. Install voice2json or Rhasspy for robust intent recognition.
+fallback_pattern_detect() {
+    local request="$1"
+    local request_lower=$(echo "$request" | tr '[:upper:]' '[:lower:]')
+    
+    # Simplified domain detection - much shorter than before
+    case "$request_lower" in
+        *"audio"*|*"sound"*|*"speaker"*|*"broken"*) 
+            echo "local_audio_fix"; return 0 ;;
+        *"update"*|*"upgrade"*|*"system"*)
+            echo "local_system_update"; return 0 ;;
+        *"vpn"*|*"network"*|*"internet"*)
+            echo "local_network_check"; return 0 ;;
+        *"stream"*|*"obs"*|*"live"*)
+            echo "local_streaming_setup"; return 0 ;;
+        *"game"*|*"gaming"*|*"steam"*)
+            echo "local_gaming_mode"; return 0 ;;
+        *"vrbo"*|*"rental"*|*"guest"*)
+            echo "local_vrbo_workflow"; return 0 ;;
+        *"task"*|*"reminder"*|*"focus"*)
+            echo "local_reminder_system"; return 0 ;;
+        *"help"*|*"forgot"*|*"don't remember"*)
+            echo "needs_command_reminder"; return 1 ;;
+        *)
+            echo "needs_claude_code"; return 1 ;;
+    esac
+}
+
+# Execute local solutions without using tokens
+execute_local_solution() {
+    local solution_type="$1"
+    local original_request="$2"
+    
+    case "$solution_type" in
+        "local_system_update")
+            echo "🔧 Handling system update locally..."
+            source ~/BillSloth/modules/system_ops.sh && update_everything
+            log_local_success "system_update"
+            ;;
+        "local_audio_fix")
+            echo "🔊 Fixing audio locally..."
+            source ~/BillSloth/modules/system_ops.sh && fix_audio
+            log_local_success "audio_fix"
+            ;;
+        "local_network_check")
+            echo "🌐 Checking network locally..."
+            source ~/BillSloth/modules/privacy_tools.sh && check_vpn_status
+            log_local_success "network_check"
+            ;;
+        "local_streaming_setup")
+            echo "📹 Setting up streaming locally..."
+            ~/bin/stream
+            log_local_success "streaming_setup"
+            ;;
+        "local_gaming_mode")
+            echo "🎮 Activating gaming mode locally..."
+            ~/bin/game
+            log_local_success "gaming_mode"
+            ;;
+        "local_vrbo_workflow")
+            echo "🏠 Opening VRBO workflow locally..."
+            ~/bin/vrbo-smart-manager
+            log_local_success "vrbo_workflow"
+            ;;
+        "local_reminder_system")
+            echo "🔔 Setting up reminders locally..."
+            ~/bin/smart-reminders suggest work
+            log_local_success "reminder_system"
+            ;;
+        "local_known_solution")
+            echo "💡 Using previously learned solution..."
+            local solution=$(grep "$original_request" "$LOCAL_SOLUTIONS_DIR/solutions/known_solutions.txt" | cut -d'|' -f2)
+            eval "$solution"
+            log_local_success "known_solution"
+            ;;
+        "local_suggest_options")
+            echo "🤔 I think you might want one of these:"
+            echo ""
+            echo "🔧 COMMON TASKS:"
+            echo "• ~/bin/system-health - Check what's wrong"  
+            echo "• ~/bin/audio-doctor - Fix audio problems"
+            echo "• ~/bin/focus-session - Start work session"
+            echo "• ~/bin/data-dashboard - Manage files/torrents"
+            echo "• ./lab.sh - Open full interface"
+            echo ""
+            echo "💬 Or just say things like:"
+            echo "• 'speakers broken' • 'need to stream' • 'update everything'"
+            echo "• 'gaming mode' • 'check vpn' • 'set reminder'"
+            echo ""
+            read -p "Try one of these? (y/n): " try_suggestion
+            if [[ $try_suggestion =~ ^[Yy]$ ]]; then
+                echo "Which one? (type the command or describe what you want)"
+                read -r clarified_request
+                local new_intent=$(detect_intent "$clarified_request")
+                if [ $? -eq 0 ]; then
+                    execute_local_solution "$new_intent" "$clarified_request"
+                fi
+            fi
+            ;;
+    esac
+}
+
+# Log successful local solutions for learning
+log_local_success() {
+    local solution_type="$1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$solution_type,success" >> "$LOCAL_SOLUTIONS_DIR/patterns/local_successes.log"
+}
+
+# When to call Claude Code (save those tokens!)
+should_call_claude_code() {
+    local request="$1"
+    
+    # ONLY call Claude Code for:
+    echo "🤔 Checking if Claude Code is needed..."
+    
+    # 1. Complex troubleshooting with multiple unknowns
+    if [[ "$request" == *"error"* && "$request" == *"don't know"* ]]; then
+        echo "yes_complex_troubleshooting"
+        return 0
+    fi
+    
+    # 2. Multi-step workflows that need planning
+    if [[ "$request" == *"help me"* && "$request" == *"setup"* && "$request" == *"new"* ]]; then
+        echo "yes_new_setup_planning"
+        return 0
+    fi
+    
+    # 3. Learning new skills
+    if [[ "$request" == *"learn"* || "$request" == *"how to"* ]]; then
+        echo "yes_learning_request"
+        return 0
+    fi
+    
+    # 4. System debugging when local solutions failed
+    if [ -f "$LOCAL_SOLUTIONS_DIR/patterns/recent_failures.log" ]; then
+        local recent_failures=$(tail -5 "$LOCAL_SOLUTIONS_DIR/patterns/recent_failures.log" | wc -l)
+        if [ $recent_failures -gt 3 ]; then
+            echo "yes_multiple_failures"
+            return 0
+        fi
+    fi
+    
+    # Default: try local first
+    echo "no_try_local_first"
+    return 1
+}
+
+# Smart token usage tracker
+track_token_usage() {
+    local usage_type="$1"  # local_success, claude_called, claude_avoided
+    echo "$(date '+%Y-%m-%d %H:%M:%S'),$usage_type" >> "$LOCAL_SOLUTIONS_DIR/patterns/token_savings.log"
+}
+
+# Main router logic
+route_request() {
+    local user_request="$1"
+    
+    echo "🧠 LOCAL-FIRST ROUTER"
+    echo "====================="
+    echo "Request: $user_request"
+    echo ""
+    
+    # First: Can we handle this locally?
+    local local_solution=$(detect_intent "$user_request")
+    
+    if [ $? -eq 0 ]; then
+        echo "✅ Can handle locally: $local_solution"
+        execute_local_solution "$local_solution" "$user_request"
+        track_token_usage "local_success"
+        echo ""
+        echo "💰 Tokens saved! Solution handled locally."
+    else
+        # Check if Claude Code is really needed
+        local claude_needed=$(should_call_claude_code "$user_request")
+        
+        if [[ "$claude_needed" == "yes_"* ]]; then
+            echo "🤖 Calling Claude Code for: ${claude_needed#yes_}"
+            echo "Reason: This requires AI intelligence"
+            track_token_usage "claude_called"
+            
+            # Call Claude Code here (integrate with existing lab.sh)
+            echo "💡 Tip: You can now ask Claude Code about: '$user_request'"
+            echo "Press F12 to open the lab interface"
+        elif [[ "$local_solution" == "needs_command_reminder" ]]; then
+            echo "🧠 MEMORY HELPER - Available Commands:"
+            echo ""
+            echo "🎵 AUDIO: audio-doctor, audio-smart-switch"
+            echo "🔧 SYSTEM: system-health, auto-maintenance"  
+            echo "⚡ PRODUCTIVITY: adhd-tasks, focus-session"
+            echo "📺 STREAMING: stream, obs-setup"
+            echo "🎮 GAMING: game, gaming-boost"
+            echo "🏠 VRBO: vrbo-smart-manager"
+            echo "📊 DATA: data-dashboard, torrent-safe"
+            echo ""
+            echo "🗣️ VOICE: voice-interface (Meatwad mode)"
+            echo "🖥️ FULL LAB: ./lab.sh"
+            echo ""
+            read -p "Which area sounds right? " area_hint
+            local reminded_intent=$(detect_intent "$area_hint")
+            if [ $? -eq 0 ]; then
+                echo "Ah! Running $reminded_intent for you..."
+                execute_local_solution "$reminded_intent" "$area_hint"
+            fi
+        else
+            echo "🤷 Suggesting local alternatives first..."
+            echo "Try these local commands:"
+            echo "• ~/bin/dashboard - for general help"
+            echo "• ~/bin/smart-reminders suggest work - for workflow help"
+            echo "• ~/bin/bill-brain suggest - for pattern-based suggestions"
+            echo ""
+            echo "If none work, press F12 for Claude Code"
+            track_token_usage "claude_avoided"
+        fi
+    fi
+}
+
+# Usage examples and help
+show_usage() {
+    echo "🎯 LOCAL-FIRST ROUTER"
+    echo "===================="
+    echo ""
+    echo "💰 SAVES TOKENS by handling common tasks locally!"
+    echo ""
+    echo "Usage:"
+    echo "  local-first-router 'what you want to do'"
+    echo ""
+    echo "Examples of what runs LOCAL (no tokens):"
+    echo "  • 'update my system'"
+    echo "  • 'fix audio problems'"
+    echo "  • 'check vpn status'"
+    echo "  • 'start streaming'"
+    echo "  • 'gaming mode'"
+    echo "  • 'vrbo management'"
+    echo ""
+    echo "Examples that need CLAUDE CODE (uses tokens):"
+    echo "  • 'help me learn Python'"
+    echo "  • 'complex error I can't figure out'"
+    echo "  • 'plan a new workflow'"
+    echo ""
+    echo "📊 Token Usage Stats:"
+    if [ -f "$LOCAL_SOLUTIONS_DIR/patterns/token_savings.log" ]; then
+        local local_count=$(grep "local_success" "$LOCAL_SOLUTIONS_DIR/patterns/token_savings.log" | wc -l)
+        local claude_count=$(grep "claude_called" "$LOCAL_SOLUTIONS_DIR/patterns/token_savings.log" | wc -l)
+        echo "  • Local solutions: $local_count"
+        echo "  • Claude Code calls: $claude_count"
+        echo "  • Token efficiency: $((local_count * 100 / (local_count + claude_count + 1)))%"
+    else
+        echo "  • No usage data yet"
+    fi
+}
+
+# Main execution
+if [ -z "$1" ]; then
+    show_usage
+else
+    route_request "$*"
+fi

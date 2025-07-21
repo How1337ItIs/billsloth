@@ -1,0 +1,33 @@
+#!/bin/bash
+# Bill Sloth System Health Check (On-Demand, Non-Intrusive)
+# Run this script any time you want a quick, friendly system check.
+# No background monitoring, no nagging—just info when you want it!
+
+# Disk usage
+echo "🗄️ Disk Usage:"
+df -h | grep -E '^/dev/' | awk '{print $1, $4, "free of", $2, "(" $5 " used)"}'
+
+# Memory usage
+echo -e "\n🧠 Memory Usage:"
+free -h | awk '/Mem:/ {print $3 " used of " $2}'
+
+# CPU load
+echo -e "\n⚡ CPU Load (1/5/15 min):"
+uptime | awk -F'load average:' '{print $2}'
+
+# Network status
+echo -e "\n🌐 Network Interfaces:"
+ip -brief address | grep -v 'lo'
+
+# Critical warnings (only if truly urgent)
+disk_full=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+if [ "$disk_full" -ge 95 ]; then
+  echo -e "\n🚨 WARNING: Root disk is over 95% full! Consider cleaning up."
+fi
+
+mem_free=$(free | awk '/Mem:/ {print $4}')
+if [ "$mem_free" -lt 1048576 ]; then
+  echo -e "\n🚨 WARNING: Less than 1GB RAM free!"
+fi
+
+echo -e "\n✅ System health check complete. No news is good news!" 

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -e
+
+WORKFLOW="$1"                  # e.g. "streaming_setup"
+MODULE="modules/${WORKFLOW}.sh"
+LOG="$HOME/.bill-sloth/audit.log"
+TMP="$(mktemp)"
+
+if [[ -z "$WORKFLOW" ]]; then
+  echo "Usage: audit_workflow <workflow>"
+  exit 1
+fi
+
+if [[ ! -f "$MODULE" ]]; then
+  echo "Unknown workflow: $WORKFLOW"
+  exit 1
+fi
+
+# 1️⃣  Grab the raw script for AI context
+cat "$MODULE" > "$TMP"
+
+# 2️⃣  Ask Claude (or any LLM) for a robustness review
+#     – Focus on mature FOSS replacements, idempotency, logging.
+ollama run claude-code \
+  --prompt "You are a shell‑script auditor.  Suggest mature, \
+open‑source tools that can replace or harden the attached workflow. \
+Return plaintext suggestions only.\n\nSCRIPT:\n$(cat \"$TMP\")" \
+  > "$TMP.out" || echo "[ERROR] ollama/claude-code failed. Check your setup." > "$TMP.out"
+
+# 3️⃣  Log it with timestamp
+{
+  echo "=== $(date '+%F %T') · $WORKFLOW ==="
+  cat "$TMP.out"
+  echo
+} >> "$LOG"
+
+# 4️⃣  Show Bill a friendly TUI summary
+gum pager "$TMP.out" 

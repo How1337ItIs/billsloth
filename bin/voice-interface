@@ -1,0 +1,203 @@
+#!/bin/bash
+# Bill Sloth Voice Interface - ATHF Meatwad Style
+# "I understand! I understand!"
+
+echo "🎤 MEATWAD VOICE INTERFACE ACTIVATED!"
+echo "======================================="
+echo ""
+echo "🍔 Meatwad: 'I understand! Tell me what you want to do!'"
+echo ""
+
+# Check if speech tools are installed
+if ! command -v espeak &> /dev/null; then
+    echo "Installing voice tools..."
+    sudo apt install -y espeak espeak-data alsa-utils
+fi
+
+# Meatwad greeting
+espeak -s 120 -p 50 "I understand! I understand! What do you want to do?" 2>/dev/null &
+
+echo "🎙️ Say what you want to do (or type it):"
+echo ""
+echo "Example commands:"
+echo "• 'update system' - Updates everything"
+echo "• 'fix audio' - Fixes sound problems"  
+echo "• 'check vpn' - Checks VPN status"
+echo "• 'start streaming' - Sets up streaming"
+echo "• 'gaming mode' - Optimizes for gaming"
+echo "• 'data hoarding' - Opens treasure hunting"
+echo "• 'brain dump' - Capture racing thoughts"
+echo "• 'frylock help' - Show all commands"
+echo ""
+
+while true; do
+    echo -n "🍔 Meatwad is listening: "
+    read -r command
+    
+    # Log for pattern learning AND capability tracking
+    ~/bin/bill-brain log "voice_command_$(echo "$command" | tr ' ' '_')"
+    ~/bin/capability-tracker voice "$command"
+    
+    # FIRST: Try local-first router to save tokens!
+    echo "🧠 Checking local solutions first..."
+    local_result=$(~/bin/local-first-router "$command" 2>/dev/null)
+    
+    if echo "$local_result" | grep -q "Can handle locally"; then
+        echo "💰 Handled locally - tokens saved!"
+        echo ""
+        continue
+    fi
+    
+    # Convert to lowercase for ATHF character responses
+    command_lower=$(echo "$command" | tr '[:upper:]' '[:lower:]')
+    
+    case "$command_lower" in
+        *"update"*|*"upgrade"*)
+            espeak "Updating the system! I understand!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I'll update everything for you!'"
+            source ~/BillSloth/modules/system_ops.sh && update_everything
+            ;;
+        *"audio"*|*"sound"*|*"fix"*)
+            espeak "Fixing the audio! Dancing is forbidden!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I'll make the sounds work!'"
+            source ~/BillSloth/modules/system_ops.sh && fix_audio
+            ;;
+        *"vpn"*|*"safe"*)
+            espeak "Checking VPN status!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Let me check if we're safe!'"
+            source ~/BillSloth/modules/privacy_tools.sh && check_vpn_status
+            ;;
+        *"stream"*|*"obs"*)
+            espeak "Starting streaming mode!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Time to be famous!'"
+            source ~/BillSloth/modules/streaming_setup.sh && create_stream_command && ~/bin/stream
+            ;;
+        *"game"*|*"gaming"*)
+            espeak "Gaming mode activated!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Let's play games!'"
+            source ~/BillSloth/modules/gaming_boost.sh && ~/bin/game
+            ;;
+        *"data"*|*"torrent"*|*"pirate"*|*"treasure"*)
+            espeak "Ahoy! Time for treasure hunting!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I don't get pirates but I'll help!'"
+            ~/bin/data-dashboard
+            ;;
+        *"brain"*|*"dump"*|*"thoughts"*|*"adhd"*)
+            espeak "Brain dump time! Get those thoughts out!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Tell me everything in your head!'"
+            ~/bin/brain-dump
+            ;;
+        *"ai"*|*"ollama"*)
+            espeak "Starting AI assistant!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Talking to robot friends!'"
+            source ~/BillSloth/modules/ai_playground.sh && create_ai_shortcuts && ~/bin/ai
+            ;;
+        *"creative"*|*"vibe"*|*"art"*)
+            espeak "Creative mode activated!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Time to make pretty things!'"
+            source ~/BillSloth/modules/creative_coding.sh && ~/bin/vibe
+            ;;
+        *"towel"*|*"drape"*)
+            espeak "Don't drape that towel on my computer!" 2>/dev/null &
+            echo "🧠 Frylock: 'Don't drape that towel on my computer!'"
+            echo "🧠 Frylock: 'That is a precision instrument!'"
+            ;;
+        *"help"*|*"frylock"*|*"commands"*)
+            echo ""
+            echo "🧠 FRYLOCK'S COMPREHENSIVE COMMAND LIST:"
+            echo "========================================"
+            echo ""
+            echo "🔧 SYSTEM COMMANDS:"
+            echo "• 'update system' - Full system update"
+            echo "• 'fix audio' - Restart audio services"
+            echo "• 'check health' - System health check"
+            echo "• 'clean system' - Remove old files"
+            echo ""
+            echo "🎮 ENTERTAINMENT:"
+            echo "• 'gaming mode' - Optimize for games"
+            echo "• 'start streaming' - Set up OBS"
+            echo "• 'creative mode' - p5.js coding"
+            echo "• 'ai chat' - Talk to AI"
+            echo ""
+            echo "🏴‍☠️ DATA HOARDING:"
+            echo "• 'data hoarding' - Pirate treasure dashboard"
+            echo "• 'check vpn' - VPN safety check"
+            echo "• 'torrent safe' - Safe torrenting"
+            echo ""
+            echo "🧠 PRODUCTIVITY:"
+            echo "• 'brain dump' - Capture thoughts"
+            echo "• 'task board' - View todos"
+            echo "• 'focus timer' - Pomodoro timer"
+            echo "• 'work mode' - Context switching"
+            echo ""
+            echo "🍔 MEATWAD COMMANDS:"
+            echo "• 'dance' - I like to dance!"
+            echo "• 'boat' - I am not a boat"
+            echo "• 'understand' - I understand!"
+            echo ""
+            echo "🧠 FRYLOCK COMMANDS:"
+            echo "• 'towel' - Don't drape that towel on my computer!"
+            echo ""
+            echo "👨 CARL COMMANDS:"
+            echo "• 'computer expert' - Carl's tech wisdom"
+            echo ""
+            echo "🧙 WWWYZZERDD COMMANDS:"
+            echo "• 'wizard' - The infamous internet wizard"
+            echo "• 'supervisor' - Fake customer service"
+            echo "• 'broadbrain' - Primitive internet references"
+            ;;
+        *"dance"*)
+            espeak "I like to dance! Dancing is forbidden!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I like to dance! But dancing is forbidden...'"
+            ;;
+        *"boat"*)
+            espeak "I am not a boat! I am a ball of meat!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I am not a boat! I am Meatwad!'"
+            ;;
+        *"understand"*)
+            espeak "I understand! I understand!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I get it! It ain't making me laugh, but I get it!'"
+            ;;
+        *"wizard"*|*"wwwyzzerdd"*)
+            espeak "It is I, the wwwyzzerdd. D-d-d-d." 2>/dev/null &
+            echo "🧙 wwwyzzerdd: 'It is I, the wwwyzzerdd.'"
+            echo "🧙 wwwyzzerdd: 'There are 2 zs, 2 ds, and 3 ws. Get it straight.'"
+            ;;
+        *"supervisor"*)
+            espeak "I'm the supervisor. What seems to be the problem?" 2>/dev/null &
+            echo "🧙 wwwyzzerdd: 'I'm the supervisor. What seems to be the problem?'"
+            echo "🧠 Frylock: 'You're the same damn guy! You just put on another beard and mustache.'"
+            ;;
+        *"broadbrain"*|*"brainframe"*)
+            espeak "You are not on the brainframe." 2>/dev/null &
+            echo "🧙 wwwyzzerdd: 'You are not on the brainframe.'"
+            echo "🧙 wwwyzzerdd: 'This is live streaming, broadbrrrain.'"
+            ;;
+        *"exit"*|*"quit"*|*"bye"*)
+            espeak "Goodbye! I understand!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Bye! I understand!'"
+            break
+            ;;
+        "")
+            echo "🍔 Meatwad: 'You didn't say anything... I understand!'"
+            ;;
+        *"plaque"*|*"teeth"*)
+            espeak "Plaque is a figment of the liberal media!" 2>/dev/null &
+            echo "🥤 Shake: 'Plaque is a figment of the liberal media and the dental industry to scare you into buying useless appliances and pastes.'"
+            echo "🥤 Shake: 'I've read the arguments on both sides, and I haven't found any evidence yet to support the need to brush your teeth. Ever.'"
+            ;;
+        *"crime lab"*)
+            espeak "Come on. To the crime lab!" 2>/dev/null &
+            echo "🥤 Shake: 'Come on. To the crime lab!'"
+            echo "🍔 Meatwad: 'Frylock says this ain't the crime lab, and this is his room, and he don't like us in it.'"
+            ;;
+        *)
+            espeak "I don't understand that one!" 2>/dev/null &
+            echo "🍔 Meatwad: 'I don't get it! Say 'frylock help' for all commands!'"
+            ;;
+    esac
+    
+    echo ""
+done
+
+echo "🍔 Meatwad voice interface deactivated. I understand!"

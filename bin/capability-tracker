@@ -1,0 +1,301 @@
+#!/bin/bash
+# Capability Tracker - Identifies when Bill needs permanent local solutions
+# Follows the Development Philosophy: Build capability, reduce dependency
+
+TRACKER_DIR="$HOME/.bill-capability-tracker"
+mkdir -p "$TRACKER_DIR"/{requests,patterns,solutions,queue}
+
+# Initialize tracking files
+touch "$TRACKER_DIR/requests/all_requests.log"
+touch "$TRACKER_DIR/queue/install_queue.txt"
+touch "$TRACKER_DIR/solutions/installed_capabilities.log"
+
+# Log a request and analyze patterns
+log_request() {
+    local category="$1"
+    local request="$2"
+    local resolution_type="$3"  # claude_assistance, local_solution, failed_local
+    
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local log_entry="$timestamp,$category,$request,$resolution_type"
+    
+    echo "$log_entry" >> "$TRACKER_DIR/requests/all_requests.log"
+    
+    # Analyze if this warrants a capability installation
+    analyze_installation_opportunity "$category" "$request"
+}
+
+# Analyze patterns to identify installation opportunities
+analyze_installation_opportunity() {
+    local category="$1"
+    local request="$2"
+    
+    # Count recent requests in this category (last 30 days)
+    local recent_requests=$(awk -F',' -v cat="$category" -v cutoff="$(date -d '30 days ago' '+%Y-%m-%d')" '
+        $1 >= cutoff && $2 == cat {count++} 
+        END {print count+0}
+    ' "$TRACKER_DIR/requests/all_requests.log")
+    
+    # Installation thresholds based on category
+    local threshold=3
+    case "$category" in
+        "audio") threshold=2 ;;
+        "network"|"vpn") threshold=3 ;;
+        "productivity"|"adhd") threshold=4 ;;
+        "system_maintenance") threshold=5 ;;
+        "media"|"torrenting") threshold=3 ;;
+        "streaming") threshold=2 ;;
+        "gaming") threshold=3 ;;
+        "vrbo"|"business") threshold=4 ;;
+    esac
+    
+    # Check if we should recommend installation
+    if [ $recent_requests -ge $threshold ]; then
+        recommend_capability_installation "$category" "$recent_requests"
+    fi
+}
+
+# Recommend installing a capability suite
+recommend_capability_installation() {
+    local category="$1"
+    local request_count="$2"
+    
+    # Check if already queued or installed
+    if grep -q "^$category" "$TRACKER_DIR/queue/install_queue.txt" || \
+       grep -q "^$category" "$TRACKER_DIR/solutions/installed_capabilities.log"; then
+        return 0
+    fi
+    
+    echo "📊 CAPABILITY INSTALLATION OPPORTUNITY DETECTED"
+    echo "=============================================="
+    echo "Category: $category"
+    echo "Recent requests: $request_count"
+    echo "Threshold: Installation recommended"
+    echo ""
+    
+    # Generate specific recommendation
+    case "$category" in
+        "audio")
+            echo "🎵 AUDIO CAPABILITY SUITE RECOMMENDED:"
+            echo "• Advanced PipeWire configuration"
+            echo "• Audio routing automation"
+            echo "• Per-application audio controls"
+            echo "• Streaming audio optimization"
+            echo "• Bluetooth device management"
+            ;;
+        "productivity"|"adhd")
+            echo "⚡ ADHD PRODUCTIVITY SUITE RECOMMENDED:"
+            echo "• Advanced task management (Taskwarrior + custom)"
+            echo "• Focus tracking and analytics"
+            echo "• Distraction blocking automation"
+            echo "• Pomodoro integration with system"
+            echo "• Brain dump and thought organization tools"
+            ;;
+        "system_maintenance")
+            echo "🔧 SYSTEM AUTOMATION SUITE RECOMMENDED:"
+            echo "• Automatic updates with smart scheduling"
+            echo "• System health monitoring and alerts"
+            echo "• Self-healing common issues"
+            echo "• Performance optimization automation"
+            echo "• Backup and recovery systems"
+            ;;
+        "media"|"torrenting")
+            echo "🎬 MEDIA MANAGEMENT SUITE RECOMMENDED:"
+            echo "• Automatic media organization"
+            echo "• Torrent management with VPN integration"
+            echo "• Media center setup (Jellyfin/Plex)"
+            echo "• Quality analysis and optimization"
+            echo "• Metadata and subtitle automation"
+            ;;
+        "streaming")
+            echo "📺 STREAMING PRODUCTION SUITE RECOMMENDED:"
+            echo "• Advanced OBS configuration and automation"
+            echo "• Stream health monitoring"
+            echo "• Multi-platform streaming setup"
+            echo "• Viewer engagement tools"
+            echo "• Stream analytics and optimization"
+            ;;
+        "vrbo"|"business")
+            echo "🏠 BUSINESS AUTOMATION SUITE RECOMMENDED:"
+            echo "• Guest communication automation"
+            echo "• Booking management integration"
+            echo "• Financial tracking and reporting"
+            echo "• Property monitoring systems"
+            echo "• Review and feedback management"
+            ;;
+    esac
+    
+    echo ""
+    echo "📋 Next steps:"
+    echo "1. Add to installation queue"
+    echo "2. Research and plan installation"
+    echo "3. Schedule installation session with Claude Code"
+    echo ""
+    
+    read -p "Add this capability suite to installation queue? (y/n): " add_to_queue
+    
+    if [[ $add_to_queue =~ ^[Yy]$ ]]; then
+        add_to_installation_queue "$category" "$request_count"
+    fi
+}
+
+# Add capability to installation queue
+add_to_installation_queue() {
+    local category="$1"
+    local request_count="$2"
+    local priority="medium"
+    
+    # Determine priority based on request frequency and category
+    if [ $request_count -gt 6 ]; then
+        priority="high"
+    elif [ $request_count -gt 10 ]; then
+        priority="urgent"
+    fi
+    
+    # Special priority cases
+    case "$category" in
+        "audio"|"system_maintenance") priority="high" ;;
+        "productivity"|"adhd") priority="high" ;;
+    esac
+    
+    local queue_entry="$category,$priority,$(date '+%Y-%m-%d'),$request_count,pending"
+    echo "$queue_entry" >> "$TRACKER_DIR/queue/install_queue.txt"
+    
+    echo "✅ Added to installation queue with priority: $priority"
+    echo "🤖 Next time you use Claude Code, mention this installation opportunity!"
+}
+
+# Show current installation queue for Claude Code
+show_installation_queue() {
+    echo "📋 CAPABILITY INSTALLATION QUEUE"
+    echo "================================="
+    echo ""
+    
+    if [ ! -s "$TRACKER_DIR/queue/install_queue.txt" ]; then
+        echo "No pending installations. System learning Bill's patterns..."
+        return
+    fi
+    
+    echo "Priority | Category | Date Added | Requests | Status"
+    echo "---------|----------|------------|----------|--------"
+    
+    sort -t',' -k2,2r -k4,4nr "$TRACKER_DIR/queue/install_queue.txt" | while IFS=',' read category priority date_added requests status; do
+        printf "%-8s | %-12s | %-10s | %-8s | %s\n" "$priority" "$category" "$date_added" "$requests" "$status"
+    done
+    
+    echo ""
+    echo "💡 Use these when talking to Claude Code:"
+    echo "• 'I need help with [category] - I see it's in my install queue'"
+    echo "• 'Can you help me set up the [category] capability suite?'"
+    echo "• 'I keep having [category] problems, can we solve this permanently?'"
+}
+
+# Mark capability as installed
+mark_installed() {
+    local category="$1"
+    local install_type="$2"  # full_suite, partial, custom
+    
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    echo "$timestamp,$category,$install_type,installed" >> "$TRACKER_DIR/solutions/installed_capabilities.log"
+    
+    # Remove from queue
+    grep -v "^$category," "$TRACKER_DIR/queue/install_queue.txt" > "/tmp/queue_temp" && \
+    mv "/tmp/queue_temp" "$TRACKER_DIR/queue/install_queue.txt"
+    
+    echo "✅ Marked $category capability as installed ($install_type)"
+}
+
+# Analyze Bill's current capability gaps
+analyze_capability_gaps() {
+    echo "🔍 BILL'S CAPABILITY ANALYSIS"
+    echo "=============================="
+    echo ""
+    
+    # Most requested categories without solutions
+    echo "📊 Top Problem Categories (last 30 days):"
+    awk -F',' -v cutoff="$(date -d '30 days ago' '+%Y-%m-%d')" '
+        $1 >= cutoff {count[$2]++} 
+        END {for (cat in count) printf "%s: %d requests\n", cat, count[cat]}
+    ' "$TRACKER_DIR/requests/all_requests.log" | sort -t':' -k2 -nr | head -5
+    
+    echo ""
+    echo "🛠️ Installed Capabilities:"
+    if [ -s "$TRACKER_DIR/solutions/installed_capabilities.log" ]; then
+        awk -F',' '{print "• " $2 " (" $3 ")"}' "$TRACKER_DIR/solutions/installed_capabilities.log"
+    else
+        echo "• None yet - system is learning"
+    fi
+    
+    echo ""
+    echo "🎯 Recommended Next Installations:"
+    show_installation_queue | tail -n +4 | head -3
+}
+
+# Integration with existing system
+integrate_with_voice() {
+    local request="$1"
+    local category=""
+    
+    # Categorize the request
+    case "$request" in
+        *"audio"*|*"sound"*|*"mic"*|*"speaker"*) category="audio" ;;
+        *"update"*|*"upgrade"*|*"fix"*|*"broken"*) category="system_maintenance" ;;
+        *"focus"*|*"adhd"*|*"productivity"*|*"task"*) category="productivity" ;;
+        *"stream"*|*"obs"*|*"broadcast"*) category="streaming" ;;
+        *"game"*|*"gaming"*|*"steam"*) category="gaming" ;;
+        *"torrent"*|*"download"*|*"media"*) category="media" ;;
+        *"vrbo"*|*"guest"*|*"rental"*) category="vrbo" ;;
+        *"vpn"*|*"network"*|*"internet"*) category="network" ;;
+        *) category="general" ;;
+    esac
+    
+    # Log the request
+    log_request "$category" "$request" "voice_interface"
+}
+
+# Main command interface
+case "$1" in
+    "log")
+        log_request "$2" "$3" "$4"
+        ;;
+    "queue")
+        show_installation_queue
+        ;;
+    "analyze")
+        analyze_capability_gaps
+        ;;
+    "installed")
+        mark_installed "$2" "$3"
+        ;;
+    "voice")
+        integrate_with_voice "$2"
+        ;;
+    "stats")
+        echo "📈 REQUEST STATISTICS"
+        echo "===================="
+        echo "Total requests: $(wc -l < "$TRACKER_DIR/requests/all_requests.log")"
+        echo "Pending installations: $(wc -l < "$TRACKER_DIR/queue/install_queue.txt")"
+        echo "Installed capabilities: $(wc -l < "$TRACKER_DIR/solutions/installed_capabilities.log")"
+        echo ""
+        echo "Most common categories:"
+        awk -F',' '{count[$2]++} END {for (cat in count) printf "%s: %d\n", cat, count[cat]}' \
+            "$TRACKER_DIR/requests/all_requests.log" | sort -t':' -k2 -nr | head -5
+        ;;
+    *)
+        echo "🎯 CAPABILITY TRACKER"
+        echo "====================="
+        echo ""
+        echo "Tracks Bill's requests to identify when to install permanent solutions"
+        echo ""
+        echo "Usage:"
+        echo "  capability-tracker log <category> <request> <resolution>"
+        echo "  capability-tracker queue           - Show installation queue"
+        echo "  capability-tracker analyze         - Analyze capability gaps"
+        echo "  capability-tracker installed <cat> <type> - Mark as installed"
+        echo "  capability-tracker voice <request> - Log voice interface request"
+        echo "  capability-tracker stats           - Show statistics"
+        echo ""
+        echo "Categories: audio, system_maintenance, productivity, streaming, gaming, media, vrbo, network"
+        echo "Resolution types: claude_assistance, local_solution, failed_local"
+        ;;
+esac

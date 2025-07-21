@@ -1,0 +1,242 @@
+#!/bin/bash
+# Ultimate Bill Sloth Integration - The ADHD-friendly, token-saving, ATHF-themed Linux helper
+
+echo "🦥 BILL SLOTH ULTIMATE HELPER"
+echo "============================="
+echo "🍔 Meatwad: 'I understand! Everything is connected now!'"
+echo ""
+
+# Initialize all systems
+initialize_systems() {
+    echo "🚀 Initializing all Bill Sloth systems..."
+    
+    # Create necessary directories
+    mkdir -p ~/bin ~/.billsloth-brain ~/.billsloth-reminders ~/.billsloth-local/{workflows,solutions,patterns}
+    
+    # Start background services
+    echo "📡 Starting adaptive learning..."
+    ~/bin/bill-brain smart &
+    
+    echo "🔔 Activating smart reminders..."
+    ~/bin/smart-reminders check-spiral &
+    
+    echo "🎯 Loading ATHF personality matrix..."
+    sleep 1
+    
+    echo "✅ All systems online!"
+    echo ""
+}
+
+# Smart dashboard that shows everything
+show_ultimate_dashboard() {
+    clear
+    echo -e "\033[35m"
+    cat << 'BANNER'
+    🦥 BILL SLOTH ULTIMATE CONTROL CENTER 🦥
+    =========================================
+BANNER
+    echo -e "\033[0m"
+    echo ""
+    
+    # System status
+    echo "📊 SYSTEM STATUS:"
+    echo "=================="
+    
+    # VPN status (important for torrenting)
+    if ip addr | grep -q "tun\|wg"; then
+        echo "🛡️ VPN: ✅ ACTIVE (safe for torrenting)"
+    else
+        echo "🛡️ VPN: ❌ INACTIVE (NOT safe for public torrents)"
+    fi
+    
+    # Pattern learning status
+    if [ -f ~/.billsloth-brain/activity.log ]; then
+        local actions_learned=$(wc -l < ~/.billsloth-brain/activity.log)
+        echo "🧠 Learning: $actions_learned patterns recorded"
+    else
+        echo "🧠 Learning: Just started learning your patterns"
+    fi
+    
+    # Token savings
+    if [ -f ~/.billsloth-local/patterns/token_savings.log ]; then
+        local local_solutions=$(grep "local_success" ~/.billsloth-local/patterns/token_savings.log | wc -l)
+        local claude_calls=$(grep "claude_called" ~/.billsloth-local/patterns/token_savings.log | wc -l)
+        echo "💰 Token Savings: $local_solutions local / $claude_calls Claude calls"
+    else
+        echo "💰 Token Savings: No usage data yet"
+    fi
+    
+    # Current time context
+    local hour=$(date '+%H')
+    local weekday=$(date '+%A')
+    echo "⏰ Context: $weekday, $(date '+%H:%M') - $(get_time_context)"
+    
+    echo ""
+    echo "🎮 SMART QUICK ACCESS:"
+    echo "======================"
+    echo "1) 🎤 Voice Interface (F11) - Just talk to Meatwad!"
+    echo "2) 🧠 Smart Suggestions - Based on your patterns"
+    echo "3) 🏠 VRBO Management - Guest workflow automation"
+    echo "4) 🎬 Streaming Setup - OBS + audio routing"
+    echo "5) 🎮 Gaming Mode - Optimize and launch games"
+    echo "6) 🏴‍☠️ Data Hoarding - Safe torrenting dashboard"
+    echo "7) ⚡ Focus Session - ADHD-friendly productivity"
+    echo "8) 🔧 System Tools - Updates, fixes, maintenance"
+    echo "9) 💭 Brain Dump - Clear your mental cache"
+    echo "0) 🤖 Claude Code - For complex problem solving"
+    echo ""
+    read -p "🍔 Meatwad: Choose what you wanna do: " choice
+    
+    handle_dashboard_choice "$choice"
+}
+
+# Context-aware suggestions
+get_time_context() {
+    local hour=$(date '+%H')
+    
+    if [ $hour -ge 6 ] && [ $hour -lt 12 ]; then
+        echo "Morning routine time"
+    elif [ $hour -ge 12 ] && [ $hour -lt 17 ]; then
+        echo "Peak productivity hours"
+    elif [ $hour -ge 17 ] && [ $hour -lt 21 ]; then
+        echo "Evening tasks"
+    else
+        echo "Late night mode"
+    fi
+}
+
+# Handle dashboard choices intelligently
+handle_dashboard_choice() {
+    local choice="$1"
+    
+    case "$choice" in
+        1)
+            echo "🎤 Starting voice interface..."
+            ~/bin/voice-interface
+            ;;
+        2)
+            echo "🧠 Getting smart suggestions..."
+            ~/bin/bill-brain suggest
+            ;;
+        3)
+            echo "🏠 Opening VRBO management..."
+            ~/bin/vrbo-smart-manager
+            ;;
+        4)
+            echo "🎬 Setting up streaming..."
+            ~/bin/stream
+            ;;
+        5)
+            echo "🎮 Activating gaming mode..."
+            ~/bin/game
+            ;;
+        6)
+            echo "🏴‍☠️ Opening data hoarding dashboard..."
+            ~/bin/data-dashboard
+            ;;
+        7)
+            echo "⚡ Starting focus session..."
+            ~/bin/focus-timer
+            ;;
+        8)
+            echo "🔧 System maintenance menu..."
+            show_system_menu
+            ;;
+        9)
+            echo "💭 Brain dump time..."
+            ~/bin/brain-dump
+            ;;
+        0)
+            echo "🤖 Opening Claude Code lab..."
+            cd ~/BillSloth && ./lab.sh
+            ;;
+        "q"|"quit"|"exit")
+            echo "🍔 Meatwad: 'Bye! I understand!'"
+            exit 0
+            ;;
+        *)
+            echo "🍔 Meatwad: 'I don't get that number! Try again!'"
+            sleep 2
+            show_ultimate_dashboard
+            ;;
+    esac
+}
+
+# System maintenance menu
+show_system_menu() {
+    echo ""
+    echo "🔧 SYSTEM TOOLS:"
+    echo "================"
+    echo "a) Update everything"
+    echo "b) Fix audio issues"
+    echo "c) Check VPN status"
+    echo "d) Clean system"
+    echo "e) Check system health"
+    echo "f) Back to main menu"
+    echo ""
+    read -p "Choose tool: " tool
+    
+    case "$tool" in
+        a) ~/bin/local-first-router "update system" ;;
+        b) ~/bin/local-first-router "fix audio" ;;
+        c) ~/bin/local-first-router "check vpn" ;;
+        d) sudo apt autoremove -y && sudo apt autoclean ;;
+        e) source ~/BillSloth/modules/system_ops.sh && check_system_health ;;
+        f) show_ultimate_dashboard ;;
+        *) echo "Invalid choice" && sleep 1 && show_system_menu ;;
+    esac
+}
+
+# Emergency ADHD intervention
+adhd_emergency() {
+    echo "🚨 ADHD EMERGENCY MODE ACTIVATED"
+    echo "================================="
+    echo ""
+    echo "🍔 Meatwad: 'Hey, it's ok! Let's just do ONE thing.'"
+    echo ""
+    echo "Quick calming actions:"
+    echo "1) 💭 Brain dump (get it all out of your head)"
+    echo "2) ⏰ 15-minute timer (just one small task)"
+    echo "3) 🎵 Background music + simple task"
+    echo "4) 🚶 Take a 5-minute walk"
+    echo "5) 💧 Drink water + deep breaths"
+    echo ""
+    read -p "Pick ONE (1-5): " emergency_choice
+    
+    case "$emergency_choice" in
+        1) ~/bin/brain-dump ;;
+        2) echo "⏰ 15 minutes starting NOW!" && sleep 900 && notify-send "Time's up! Good job!" ;;
+        3) echo "🎵 Playing focus music..." ;;
+        4) echo "🚶 Go take that walk. I'll be here when you get back." ;;
+        5) echo "💧 Hydrate and breathe. You got this." ;;
+    esac
+}
+
+# Command line interface
+case "$1" in
+    "dashboard"|"")
+        initialize_systems
+        show_ultimate_dashboard
+        ;;
+    "emergency"|"help"|"adhd")
+        adhd_emergency
+        ;;
+    "voice")
+        ~/bin/voice-interface
+        ;;
+    "smart")
+        ~/bin/local-first-router "$2 $3 $4 $5"
+        ;;
+    "learn")
+        ~/bin/bill-brain analyze
+        ;;
+    *)
+        echo "🦥 Bill Sloth Ultimate Helper"
+        echo "Usage:"
+        echo "  bill-sloth-ultimate                 - Main dashboard"
+        echo "  bill-sloth-ultimate voice           - Voice interface"
+        echo "  bill-sloth-ultimate smart <request> - Smart local-first handling"
+        echo "  bill-sloth-ultimate emergency       - ADHD emergency mode"
+        echo "  bill-sloth-ultimate learn           - Show learned patterns"
+        ;;
+esac

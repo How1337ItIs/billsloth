@@ -1,0 +1,132 @@
+#!/bin/bash
+# DEPRECATED: Use voice2json or Rhasspy for all voice/intent recognition.
+# This script is only a fallback for minimal environments where mature tools cannot be installed.
+# See https://voice2json.org/ and https://rhasspy.readthedocs.io/ for robust, offline, ADHD-friendly solutions.
+#
+# Smart Voice Interface with fuzzy matching for dyslexia (LEGACY/FALLBACK)
+# Uses Levenshtein distance to understand misspelled commands
+
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+  echo "WARNING: This script is DEPRECATED. Use voice2json or Rhasspy for robust, offline voice/intent recognition."
+  echo "This script is only a fallback for minimal environments."
+  exit 0
+fi
+
+echo "🧠 SMART MEATWAD INTERFACE ACTIVATED!"
+echo "======================================"
+echo ""
+echo "🍔 Meatwad: 'I understand! Even when you spell it wrong!'"
+
+# Local fuzzy matching - no Python/external calls needed
+calculate_similarity() {
+    local word1="$1"
+    local word2="$2"
+    
+    # Simple local pattern matching using bash only
+    local common_chars=0
+    local word1_len=${#word1}
+    local word2_len=${#word2}
+    
+    # Count matching characters
+    for (( i=0; i<word1_len; i++ )); do
+        char="${word1:$i:1}"
+        if [[ "$word2" == *"$char"* ]]; then
+            ((common_chars++))
+        fi
+    done
+    
+    # Return similarity percentage (0-100)
+    local max_len=$word1_len
+    [ $word2_len -gt $max_len ] && max_len=$word2_len
+    echo $((common_chars * 100 / max_len))
+}
+
+# Function to find best command match
+find_best_match() {
+    local input="$1"
+    declare -A commands=(
+        ["update"]="system update"
+        ["audio"]="fix audio"
+        ["vpn"]="check vpn"
+        ["stream"]="start streaming"
+        ["game"]="gaming mode"
+        ["torrent"]="safe torrenting"
+        ["brain"]="brain dump"
+        ["focus"]="focus timer"
+        ["work"]="work mode"
+        ["dashboard"]="dashboard"
+    )
+    
+    local best_match=""
+    local best_score=0
+    
+    for cmd in "${!commands[@]}"; do
+        score=$(calculate_similarity "$input" "$cmd")
+        if (( $(echo "$score > $best_score" | bc -l) )); then
+            best_score=$score
+            best_match=$cmd
+        fi
+    done
+    
+    # If similarity is above 0.6, suggest the command
+    if (( $(echo "$best_score > 0.6" | bc -l) )); then
+        echo "$best_match"
+    else
+        echo ""
+    fi
+}
+
+# Smart command processing with typo forgiveness
+while true; do
+    echo -n "🍔 Meatwad: "
+    read -r user_input
+    
+    # Convert to lowercase and clean up
+    clean_input=$(echo "$user_input" | tr '[:upper:]' '[:lower:]' | tr -d '[:punct:]')
+    
+    # Try exact matching first
+    case "$clean_input" in
+        *"update"*|*"updat"*|*"updaet"*|*"upadte"*)
+            echo "🍔 Meatwad: 'Updating everything!'"
+            source ~/BillSloth/modules/system_ops.sh && update_everything
+            ;;
+        *"audio"*|*"sound"*|*"adio"*|*"aduio"*)
+            echo "🍔 Meatwad: 'Fixing the sounds!'"
+            source ~/BillSloth/modules/system_ops.sh && fix_audio
+            ;;
+        *"vpn"*|*"vpn"*|*"vpm"*)
+            echo "🍔 Meatwad: 'Checking if we're safe!'"
+            source ~/BillSloth/modules/privacy_tools.sh && check_vpn_status
+            ;;
+        *"exit"*|*"quit"*|*"bye"*)
+            echo "🍔 Meatwad: 'Bye! I understand!'"
+            break
+            ;;
+        "")
+            echo "🍔 Meatwad: 'You didn't say anything... that's ok!'"
+            ;;
+        *)
+            # Try fuzzy matching for unrecognized commands
+            suggestion=$(find_best_match "$clean_input")
+            if [ -n "$suggestion" ]; then
+                echo "🍔 Meatwad: 'Did you mean \"$suggestion\"? (y/n)'"
+                read -n 1 -r confirm
+                echo
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    # Execute the suggested command
+                    case "$suggestion" in
+                        "update") source ~/BillSloth/modules/system_ops.sh && update_everything ;;
+                        "audio") source ~/BillSloth/modules/system_ops.sh && fix_audio ;;
+                        "vpn") source ~/BillSloth/modules/privacy_tools.sh && check_vpn_status ;;
+                        "dashboard") ~/bin/dashboard ;;
+                    esac
+                else
+                    echo "🍔 Meatwad: 'Ok! Say \"help\" to see all commands!'"
+                fi
+            else
+                echo "🍔 Meatwad: 'I don't get that one! Say \"help\" for commands!'"
+            fi
+            ;;
+    esac
+    echo ""
+done

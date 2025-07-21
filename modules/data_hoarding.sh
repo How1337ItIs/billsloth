@@ -1,23 +1,24 @@
 #!/bin/bash
-# DATA HOARDING - Advanced File Management & Torrenting
-# "Information wants to be free" - But organized and safe!
+# LLM_CAPABILITY: local_ok
+# 🏴‍☠️ PIRATE DATA HOARDING - Digital Treasure Management 🏴‍☠️
+# "Yarr! Information wants to be free, but stored safely in the digital vault!"
 
-echo "DATA_HOARDING_MODULE_LOADED"
+echo "🏴‍☠️ AHOY! PIRATE DATA HOARDING MODULE LOADED! 🏴‍☠️"
 
-data_hoarding_capabilities() {
-    echo "Data Hoarding & File Management Capabilities:"
-    echo "1. Safe torrenting setup with VPN integration"
-    echo "2. Private tracker management and guides"
-    echo "3. Disk space analytics and monitoring"
-    echo "4. Automated file organization systems"
-    echo "5. Duplicate file detection and cleanup"
-    echo "6. Media library management (movies, shows, music)"
-    echo "7. Archive compression and backup strategies"
-    echo "8. Seedbox integration and remote management"
+pirate_data_hoarding_capabilities() {
+    echo "🏴‍☠️ DIGITAL PIRATE TREASURE HUNTING CAPABILITIES:"
+    echo "1. 🏴‍☠️ Safe treasure hunting with VPN cloaking"
+    echo "2. 🗺️ Private treasure map management and guides"
+    echo "3. 💎 Digital vault space analytics and monitoring"
+    echo "4. 📦 Automated treasure chest organization"
+    echo "5. 🔍 Duplicate treasure detection and cleanup"
+    echo "6. 🎬 Media treasure library management (movies, shows, music)"
+    echo "7. 🗜️ Treasure compression and backup strategies"
+    echo "8. ⚓ Remote treasure ship (seedbox) management"
 }
 
-install_torrenting_suite() {
-    echo "[*] Installing torrenting and file management tools..."
+install_pirate_treasure_hunting_suite() {
+    echo "🏴‍☠️ [*] Installing digital treasure hunting tools, matey..."
     
     # Torrent clients
     sudo apt install -y \
@@ -645,8 +646,8 @@ case $tool in
         ;;
     2)
         echo "✏️ Media file renaming tool"
-        echo "This would integrate with tools like FileBot"
-        echo "For now, manual renaming recommended"
+        echo "This would integrate with tools like FileBot (recommended)."
+        echo "For now, manual renaming recommended (LEGACY)."
         echo "Standard format: Movie.Name.Year.1080p.BluRay.x264-GROUP"
         ;;
     3)
@@ -718,8 +719,9 @@ create_data_hoarding_dashboard() {
     cat > ~/bin/data-dashboard << 'EOF'
 #!/bin/bash
 clear
-echo "🏴‍☠️ DATA HOARDING COMMAND CENTER"
-echo "=================================="
+echo "🏴‍☠️ DIGITAL TREASURE COMMAND CENTER"
+echo "It is I, the wwwyzzerdd of data hoarding!"
+echo "====================================="
 echo ""
 echo "💾 Storage: $(df -h ~ | awk 'NR==2{print $3 "/" $2 " (" $5 " used)"}')"
 echo "📊 Today: $(date '+%A, %B %d, %Y')"
@@ -925,6 +927,44 @@ check_data_hoarding_setup() {
     else
         echo "✗ Torrents workspace: Not created"
     fi
+}
+
+# === MEDIA RENAMING & ORGANIZATION ===
+# RECOMMENDATION: Integrate with FileBot (https://www.filebot.net/) or similar mature tools for automated media renaming and organization.
+# TODO: Automate this step. Current manual steps are legacy and should be replaced with direct FileBot integration.
+
+# === AUTOMATED MEDIA RENAMING & ORGANIZATION (FileBot Integration) ===
+automate_media_renaming() {
+    echo "[*] Automated Media Renaming & Organization (FileBot)"
+    if ! command -v filebot &> /dev/null; then
+        echo "[!] FileBot is not installed. Please install from https://www.filebot.net/"
+        return 1
+    fi
+    echo "Select media type to organize:"
+    echo "1) Movies"
+    echo "2) TV Shows"
+    echo "3) Music"
+    read -p "Choice: " media_type
+    case $media_type in
+        1)
+            read -p "Enter path to Movies folder: " movies_path
+            filebot -rename "$movies_path" --db TheMovieDB --format "{n} ({y})/{n} ({y})"
+            ;;
+        2)
+            read -p "Enter path to TV Shows folder: " tv_path
+            filebot -rename "$tv_path" --db TheTVDB --format "{n}/Season {s}/{n} - S{s}E{e} - {t}"
+            ;;
+        3)
+            read -p "Enter path to Music folder: " music_path
+            filebot -rename "$music_path" --db ID3 --format "{artist}/{album}/{pi.pad(2)} - {t}"
+            ;;
+        *)
+            echo "Invalid choice."
+            return 1
+            ;;
+    esac
+    echo "[✓] Media renaming/organization complete."
+    echo "$(date): FileBot media organization run for type $media_type" >> "$HOME/.billsloth-reminders/filebot_automation.log"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

@@ -1,0 +1,439 @@
+#!/bin/bash
+# Capability Installer - Executes the installation plans created with Claude Code
+# Implements the capability suites identified by the tracker
+
+TRACKER_DIR="$HOME/.bill-capability-tracker"
+INSTALL_DIR="$HOME/.bill-capability-installer"
+mkdir -p "$INSTALL_DIR"/{scripts,configs,docs}
+
+# Audio Capability Suite Installation
+install_audio_suite() {
+    echo "🎵 INSTALLING AUDIO CAPABILITY SUITE"
+    echo "===================================="
+    
+    # Advanced PipeWire setup
+    echo "📦 Installing PipeWire ecosystem..."
+    sudo apt update
+    sudo apt install -y \
+        pipewire \
+        pipewire-alsa \
+        pipewire-pulse \
+        pipewire-jack \
+        wireplumber \
+        pavucontrol \
+        qpwgraph \
+        helvum \
+        easyeffects
+    
+    # Configure PipeWire for optimal performance
+    echo "⚙️ Configuring PipeWire..."
+    mkdir -p ~/.config/pipewire
+    
+    # Create optimized PipeWire config
+    cat > ~/.config/pipewire/pipewire.conf << 'EOF'
+context.properties = {
+    default.clock.rate = 48000
+    default.clock.quantum = 1024
+    default.clock.min-quantum = 32
+    default.clock.max-quantum = 2048
+}
+EOF
+    
+    # Install audio routing automation
+    cat > ~/bin/audio-smart-switch << 'EOF'
+#!/bin/bash
+# Smart audio device switching based on what's connected
+
+# Check for gaming headset
+if pactl list short sinks | grep -i "steelseries\|hyperx\|corsair\|logitech"; then
+    gaming_sink=$(pactl list short sinks | grep -i "steelseries\|hyperx\|corsair\|logitech" | head -1 | awk '{print $2}')
+    pactl set-default-sink "$gaming_sink"
+    notify-send "🎮 Gaming Audio" "Switched to gaming headset"
+    exit 0
+fi
+
+# Check for streaming setup
+if pactl list short sinks | grep -i "stream\|broadcast"; then
+    stream_sink=$(pactl list short sinks | grep -i "stream\|broadcast" | head -1 | awk '{print $2}')
+    pactl set-default-sink "$stream_sink"
+    notify-send "📺 Streaming Audio" "Switched to streaming setup"
+    exit 0
+fi
+
+# Default to best available
+best_sink=$(pactl list short sinks | grep -v "monitor" | head -1 | awk '{print $2}')
+pactl set-default-sink "$best_sink"
+notify-send "🔊 Audio" "Using default audio device"
+EOF
+    chmod +x ~/bin/audio-smart-switch
+    
+    # Create audio troubleshooting tool
+    cat > ~/bin/audio-doctor << 'EOF'
+#!/bin/bash
+echo "🩺 AUDIO SYSTEM DOCTOR"
+echo "====================="
+
+echo "🔍 Diagnosing audio system..."
+
+# Check PipeWire status
+echo "PipeWire Status:"
+systemctl --user status pipewire | grep "Active:"
+
+# Check available devices
+echo ""
+echo "Available Audio Devices:"
+pactl list short sinks
+
+# Check default device
+echo ""
+echo "Current Default:"
+pactl info | grep "Default Sink"
+
+# Test audio
+echo ""
+echo "🔊 Testing audio..."
+speaker-test -t sine -f 1000 -l 1 -s 1 & 
+sleep 2
+killall speaker-test
+
+echo ""
+echo "🛠️ Quick Fixes:"
+echo "1. Restart PipeWire: systemctl --user restart pipewire"
+echo "2. Switch device: audio-smart-switch"
+echo "3. Open mixer: pavucontrol"
+EOF
+    chmod +x ~/bin/audio-doctor
+    
+    # Mark as installed
+    ~/bin/capability-tracker installed "audio" "full_suite"
+    
+    echo "✅ Audio capability suite installed!"
+    echo "New commands: audio-smart-switch, audio-doctor"
+}
+
+# Productivity/ADHD Suite Installation
+install_productivity_suite() {
+    echo "⚡ INSTALLING ADHD PRODUCTIVITY SUITE"
+    echo "====================================="
+    
+    # Install core productivity tools
+    echo "📦 Installing productivity tools..."
+    sudo apt install -y \
+        taskwarrior \
+        timewarrior \
+        rofi \
+        dunst \
+        redshift \
+        xprintidle \
+        wmctrl
+    
+    # Configure Taskwarrior for ADHD
+    echo "⚙️ Configuring Taskwarrior for ADHD..."
+    cat > ~/.taskrc << 'EOF'
+# ADHD-optimized Taskwarrior config
+data.location=~/.task
+dateformat=Y-M-D
+dateformat.holiday=YMD
+dateformat.edit=Y-M-D H:N:S
+dateformat.info=Y-M-D H:N:S
+dateformat.report=Y-M-D
+default.command=next
+default.project=inbox
+urgency.user.project.inbox.coefficient=100.0
+urgency.age.coefficient=2.0
+urgency.annotations.coefficient=5.0
+color=on
+EOF
+    
+    # Create ADHD-friendly task interface
+    cat > ~/bin/adhd-tasks << 'EOF'
+#!/bin/bash
+echo "🧠 ADHD TASK MANAGER"
+echo "==================="
+
+case "$1" in
+    "quick"|"q")
+        echo "⚡ Quick add task:"
+        read -p "What needs doing? " task
+        task add "$task" project:inbox
+        echo "✅ Added to inbox!"
+        ;;
+    "brain"|"b")
+        echo "💭 Brain dump mode - just type everything:"
+        while read -p "> " line; do
+            [ -z "$line" ] && break
+            task add "$line" project:inbox
+        done
+        echo "🧠 Brain dumped! Now let's organize..."
+        task project:inbox list
+        ;;
+    "now"|"n")
+        echo "🎯 What to do RIGHT NOW:"
+        task next limit:3
+        ;;
+    "done"|"d")
+        echo "🎉 Mark something done:"
+        task next limit:5
+        read -p "Which task # to complete? " tasknum
+        task "$tasknum" done
+        echo "🎉 Great job!"
+        ;;
+    *)
+        echo "Usage:"
+        echo "  adhd-tasks quick - Quick add"
+        echo "  adhd-tasks brain - Brain dump mode"
+        echo "  adhd-tasks now   - Show next tasks"
+        echo "  adhd-tasks done  - Mark task complete"
+        ;;
+esac
+EOF
+    chmod +x ~/bin/adhd-tasks
+    
+    # Create focus session manager
+    cat > ~/bin/focus-session << 'EOF'
+#!/bin/bash
+echo "🎯 FOCUS SESSION MANAGER"
+echo "======================="
+
+# Check for existing focus session
+if [ -f /tmp/focus_session_active ]; then
+    echo "📊 Focus session in progress:"
+    echo "Started: $(cat /tmp/focus_session_active)"
+    echo "Duration: $(($(date +%s) - $(date -d "$(cat /tmp/focus_session_active)" +%s))) seconds"
+    echo ""
+    read -p "End session? (y/n): " end_session
+    if [[ $end_session =~ ^[Yy]$ ]]; then
+        rm /tmp/focus_session_active
+        notify-send "🎉 Focus Session Complete!" "Great work!"
+        echo "Session ended. Take a break!"
+    fi
+    exit 0
+fi
+
+echo "🚀 Starting new focus session..."
+echo "1) Pomodoro (25 min)"
+echo "2) Short burst (15 min)"
+echo "3) Deep work (45 min)"
+echo "4) Custom time"
+
+read -p "Choose session type: " session_type
+
+case $session_type in
+    1) duration=1500 ;;
+    2) duration=900 ;;
+    3) duration=2700 ;;
+    4) 
+        read -p "Minutes: " custom_minutes
+        duration=$((custom_minutes * 60))
+        ;;
+    *) echo "Invalid choice"; exit 1 ;;
+esac
+
+# Start focus session
+echo "$(date)" > /tmp/focus_session_active
+echo "🎯 Focus session started for $((duration/60)) minutes"
+notify-send "🎯 Focus Session" "Started for $((duration/60)) minutes"
+
+# Block distractions
+~/bin/focus-mode &
+
+# End session after duration
+(sleep $duration && rm -f /tmp/focus_session_active && notify-send "⏰ Session Complete!" "Time for a break!") &
+EOF
+    chmod +x ~/bin/focus-session
+    
+    # Mark as installed
+    ~/bin/capability-tracker installed "productivity" "full_suite"
+    
+    echo "✅ Productivity suite installed!"
+    echo "New commands: adhd-tasks, focus-session"
+}
+
+# System Maintenance Suite Installation
+install_system_suite() {
+    echo "🔧 INSTALLING SYSTEM AUTOMATION SUITE"
+    echo "======================================"
+    
+    # Install monitoring tools
+    sudo apt install -y \
+        htop \
+        iotop \
+        nethogs \
+        ncdu \
+        smartmontools \
+        lm-sensors \
+        sysstat
+    
+    # Create system health monitor
+    cat > ~/bin/system-health << 'EOF'
+#!/bin/bash
+echo "🏥 SYSTEM HEALTH MONITOR"
+echo "======================="
+
+# CPU and Memory
+echo "💻 CPU & Memory:"
+echo "Load: $(uptime | awk -F'load average:' '{print $2}')"
+echo "CPU: $(top -bn1 | grep "Cpu(s)" | awk '{print $2}')% used"
+echo "RAM: $(free -h | awk '/^Mem:/ {print $3 "/" $2}')"
+
+# Storage
+echo ""
+echo "💾 Storage:"
+df -h / /home 2>/dev/null | tail -n +2
+
+# Temperature (if available)
+echo ""
+echo "🌡️ Temperature:"
+sensors 2>/dev/null | grep "Core\|temp" | head -3 || echo "No temperature sensors"
+
+# Network
+echo ""
+echo "🌐 Network:"
+ip route get 8.8.8.8 >/dev/null 2>&1 && echo "Internet: ✅ Connected" || echo "Internet: ❌ No connection"
+
+# Services
+echo ""
+echo "🔧 Critical Services:"
+systemctl is-active NetworkManager && echo "Network: ✅" || echo "Network: ❌"
+systemctl --user is-active pipewire && echo "Audio: ✅" || echo "Audio: ❌"
+
+# Alerts
+echo ""
+echo "⚠️ Alerts:"
+# High CPU
+cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | sed 's/%us,//')
+if (( $(echo "$cpu_usage > 80" | bc -l) )); then
+    echo "- High CPU usage: $cpu_usage%"
+fi
+
+# Low disk space
+disk_usage=$(df / | awk 'NR==2 {print $5}' | sed 's/%//')
+if [ $disk_usage -gt 90 ]; then
+    echo "- Low disk space: $disk_usage% used"
+fi
+EOF
+    chmod +x ~/bin/system-health
+    
+    # Create auto-maintenance script
+    cat > ~/bin/auto-maintenance << 'EOF'
+#!/bin/bash
+echo "🤖 AUTOMATIC MAINTENANCE"
+echo "======================="
+
+# Update package lists
+echo "📦 Updating package lists..."
+sudo apt update
+
+# Check for upgrades
+upgrades=$(apt list --upgradable 2>/dev/null | wc -l)
+if [ $upgrades -gt 1 ]; then
+    echo "📈 $upgrades packages can be upgraded"
+    read -p "Upgrade now? (y/n): " do_upgrade
+    if [[ $do_upgrade =~ ^[Yy]$ ]]; then
+        sudo apt upgrade -y
+    fi
+fi
+
+# Clean up
+echo "🧹 Cleaning up..."
+sudo apt autoremove -y
+sudo apt autoclean
+sudo journalctl --vacuum-time=7d
+
+# Check system health
+echo ""
+~/bin/system-health
+
+echo "✅ Maintenance complete!"
+EOF
+    chmod +x ~/bin/auto-maintenance
+    
+    # Mark as installed
+    ~/bin/capability-tracker installed "system_maintenance" "full_suite"
+    
+    echo "✅ System automation suite installed!"
+    echo "New commands: system-health, auto-maintenance"
+}
+
+# Install capability suite based on category
+install_suite() {
+    local category="$1"
+    
+    case "$category" in
+        "audio")
+            install_audio_suite
+            ;;
+        "productivity"|"adhd")
+            install_productivity_suite
+            ;;
+        "system_maintenance")
+            install_system_suite
+            ;;
+        *)
+            echo "❌ Unknown capability suite: $category"
+            echo "Available suites: audio, productivity, system_maintenance"
+            exit 1
+            ;;
+    esac
+}
+
+# Show available installation scripts
+show_available_suites() {
+    echo "🛠️ AVAILABLE CAPABILITY SUITES"
+    echo "==============================="
+    echo ""
+    echo "🎵 audio - Advanced audio management and routing"
+    echo "   • PipeWire optimization"
+    echo "   • Smart device switching" 
+    echo "   • Audio troubleshooting tools"
+    echo ""
+    echo "⚡ productivity - ADHD-optimized productivity tools"
+    echo "   • Smart task management"
+    echo "   • Focus session management"
+    echo "   • Distraction blocking"
+    echo ""
+    echo "🔧 system_maintenance - Automated system care"
+    echo "   • Health monitoring"
+    echo "   • Automatic maintenance"
+    echo "   • Performance optimization"
+    echo ""
+    echo "Usage: capability-installer install <suite_name>"
+}
+
+# Main command interface
+case "$1" in
+    "install")
+        if [ -z "$2" ]; then
+            echo "❌ Please specify a capability suite to install"
+            show_available_suites
+            exit 1
+        fi
+        install_suite "$2"
+        ;;
+    "available"|"list")
+        show_available_suites
+        ;;
+    "status")
+        echo "📊 INSTALLATION STATUS"
+        echo "======================"
+        if [ -f "$TRACKER_DIR/solutions/installed_capabilities.log" ]; then
+            echo "Installed capabilities:"
+            awk -F',' '{printf "✅ %s (%s) - %s\n", $2, $3, $1}' "$TRACKER_DIR/solutions/installed_capabilities.log"
+        else
+            echo "No capabilities installed yet"
+        fi
+        ;;
+    *)
+        echo "🛠️ CAPABILITY INSTALLER"
+        echo "======================="
+        echo ""
+        echo "Installs capability suites to reduce dependency on Claude Code"
+        echo ""
+        echo "Usage:"
+        echo "  capability-installer install <suite>  - Install a capability suite"
+        echo "  capability-installer available        - Show available suites"
+        echo "  capability-installer status           - Show installation status"
+        echo ""
+        echo "💡 Tip: Check installation queue with 'capability-tracker queue'"
+        ;;
+esac

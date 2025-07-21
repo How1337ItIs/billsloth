@@ -1,0 +1,72 @@
+#!/bin/bash
+# Bill Sloth Auto-startup System
+# Runs at boot to initialize hotkeys and voice interface
+
+echo "🚀 BILL SLOTH LINUX HELPER AUTOSTART"
+echo "====================================="
+
+# Wait for desktop environment to load
+sleep 5
+
+# Ensure ~/bin is in PATH
+export PATH="$HOME/bin:$PATH"
+
+# Make sure all scripts are executable
+chmod +x ~/bin/*
+chmod +x ~/BillSloth/modules/*.sh
+chmod +x ~/BillSloth/lab.sh
+
+# Start hotkey system
+echo "🔥 Starting hotkey system..."
+~/bin/hotkey-system
+
+# Show startup notification with ATHF reference
+notify-send "🍔 BILL SLOTH HELPER" "I get it! It ain't making me laugh, but I get it! Press F12 for lab, F11 for voice interface"
+
+# Create desktop shortcut for easy access
+cat > ~/Desktop/BillSlothLab.desktop << 'EOF'
+[Desktop Entry]
+Name=Bill Sloth Lab
+Comment=ATHF-style Linux helper
+Exec=gnome-terminal --title="Bill Sloth Lab" -- bash -c "cd ~/BillSloth && ./lab.sh; exec bash"
+Icon=computer
+Terminal=false
+Type=Application
+Categories=System;
+EOF
+
+chmod +x ~/Desktop/BillSlothLab.desktop
+
+# Add to autostart
+mkdir -p ~/.config/autostart
+cat > ~/.config/autostart/billsloth.desktop << 'EOF'
+[Desktop Entry]
+Name=Bill Sloth Helper
+Comment=ATHF-style Linux helper autostart
+Exec=/home/$USER/bin/autostart-billsloth
+Icon=computer
+Terminal=false
+Type=Application
+Hidden=false
+X-GNOME-Autostart-enabled=true
+EOF
+
+echo "✅ Bill Sloth Helper is now ready!"
+echo ""
+echo "🎮 QUICK ACCESS:"
+echo "• F12 - Open lab interface"
+echo "• F11 - Voice interface (Meatwad style)"
+echo "• Ctrl+Alt+F - Frylock mode (logical)"
+echo "• Ctrl+Alt+M - Meatwad mode (simple)"
+echo "• Ctrl+Alt+S - Shake mode (chaos)"
+echo "• Ctrl+Alt+C - Carl mode (fake computer expertise)"
+echo "• Super+Space - Brain dump"
+echo "• Super+T - Task board"
+echo "• Super+V - VPN check"
+echo ""
+echo "🍔 Meatwad: 'I understand! Everything is ready!'"
+
+# Play Aqua Teen theme if espeak is available
+if command -v espeak &> /dev/null; then
+    espeak "Number one in the hood G! Bill Sloth Helper activated!" 2>/dev/null &
+fi

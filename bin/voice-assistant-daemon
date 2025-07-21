@@ -1,0 +1,251 @@
+#!/bin/bash
+# Bill Sloth Voice Assistant Daemon
+# Global hotkey activation with local mode switching
+# "I understand! I understand!" - Meatwad
+
+# Configuration
+VOICE_INTERFACE_PATH="$HOME/bin/voice-interface"
+HOTKEY="ctrl+alt+v"
+LOCAL_MODE_FILE="$HOME/.bill-sloth/local-mode"
+PID_FILE="$HOME/.bill-sloth/voice-daemon.pid"
+
+# Create necessary directories
+mkdir -p ~/.bill-sloth
+
+# Check if already running
+if [[ -f "$PID_FILE" ]] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+    echo "🍔 Meatwad: 'Voice daemon is already running! I understand!'"
+    exit 1
+fi
+
+# Store PID
+echo $$ > "$PID_FILE"
+
+# Cleanup function
+cleanup() {
+    echo ""
+    echo "🍔 Meatwad: 'Voice daemon shutting down! I understand!'"
+    rm -f "$PID_FILE"
+    exit 0
+}
+trap cleanup SIGINT SIGTERM
+
+# Check for required tools
+check_dependencies() {
+    local missing_tools=()
+    
+    # Check for xbindkeys (Linux hotkey daemon)
+    if [[ "$OSTYPE" == "linux-gnu"* ]] && ! command -v xbindkeys &> /dev/null; then
+        missing_tools+=("xbindkeys")
+    fi
+    
+    # Check for espeak (text-to-speech)
+    if ! command -v espeak &> /dev/null; then
+        missing_tools+=("espeak")
+    fi
+    
+    if [[ ${#missing_tools[@]} -gt 0 ]]; then
+        echo "🔧 Installing missing dependencies: ${missing_tools[*]}"
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            sudo apt update && sudo apt install -y "${missing_tools[@]}"
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            brew install "${missing_tools[@]}"
+        fi
+    fi
+}
+
+# Initialize local mode (default: enabled)
+initialize_local_mode() {
+    if [[ ! -f "$LOCAL_MODE_FILE" ]]; then
+        echo "enabled" > "$LOCAL_MODE_FILE"
+        echo "🍔 Meatwad: 'Local mode enabled by default! Privacy first!'"
+    fi
+}
+
+# Toggle local mode
+toggle_local_mode() {
+    if [[ -f "$LOCAL_MODE_FILE" ]] && [[ "$(cat "$LOCAL_MODE_FILE")" == "enabled" ]]; then
+        echo "disabled" > "$LOCAL_MODE_FILE"
+        espeak "Local mode disabled. Cloud AI enabled!" 2>/dev/null &
+        echo "🧠 Frylock: 'Local mode disabled - now using cloud AI for complex queries'"
+    else
+        echo "enabled" > "$LOCAL_MODE_FILE"
+        espeak "Local mode enabled. Privacy first!" 2>/dev/null &
+        echo "🍔 Meatwad: 'Local mode enabled! All processing stays here!'"
+    fi
+}
+
+# Get current mode status
+get_mode_status() {
+    if [[ -f "$LOCAL_MODE_FILE" ]] && [[ "$(cat "$LOCAL_MODE_FILE")" == "enabled" ]]; then
+        echo "🔒 LOCAL"
+    else
+        echo "☁️ CLOUD"
+    fi
+}
+
+# Create hotkey configuration
+setup_hotkeys() {
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Create xbindkeys config
+        cat > ~/.xbindkeysrc << EOF
+# Bill Sloth Voice Assistant Hotkeys
+
+# Activate voice interface with Ctrl+Alt+V
+"$HOME/bin/voice-assistant-activate"
+    control+alt+v
+
+# Toggle local mode with Ctrl+Alt+L
+"$HOME/bin/voice-assistant-daemon toggle-local"
+    control+alt+l
+
+# Emergency voice stop with Ctrl+Alt+S
+"pkill -f voice-interface"
+    control+alt+s
+EOF
+        
+        # Create activation script
+        cat > ~/.local/bin/voice-assistant-activate << 'EOF'
+#!/bin/bash
+# Launch voice interface in a terminal
+if command -v gnome-terminal &> /dev/null; then
+    gnome-terminal -- bash -c "$HOME/bin/voice-interface; read -p 'Press Enter to close...'"
+elif command -v konsole &> /dev/null; then
+    konsole -e bash -c "$HOME/bin/voice-interface; read -p 'Press Enter to close...'"
+elif command -v xterm &> /dev/null; then
+    xterm -e bash -c "$HOME/bin/voice-interface; read -p 'Press Enter to close...'"
+else
+    # Fallback to notification
+    notify-send "Voice Assistant" "Terminal not found. Run: $HOME/bin/voice-interface"
+fi
+EOF
+        chmod +x ~/.local/bin/voice-assistant-activate
+        
+        # Start xbindkeys
+        pkill xbindkeys 2>/dev/null
+        xbindkeys &
+        
+        echo "🎮 Hotkeys configured:"
+        echo "  • Ctrl+Alt+V: Activate voice interface"
+        echo "  • Ctrl+Alt+L: Toggle local/cloud mode"
+        echo "  • Ctrl+Alt+S: Emergency stop voice interface"
+        
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        echo "🍎 macOS: Please set up global hotkeys manually in System Preferences"
+        echo "   Target script: $HOME/bin/voice-interface"
+    fi
+}
+
+# Enhanced voice interface with new modules
+enhance_voice_interface() {
+    cat >> "$VOICE_INTERFACE_PATH" << 'EOF'
+
+# Enhanced commands for new data hoarding and automation modules
+        *"download"*|*"youtube"*|*"video"*)
+            espeak "Starting video download! I understand!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Let me download that for you!'"
+            echo "Usage: yt-dlp 'VIDEO_URL'"
+            ;;
+        *"organize music"*|*"beets"*|*"music library"*)
+            espeak "Organizing music collection!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Making your music pretty!'"
+            echo "Put music in ~/Music/Incoming/ then run: beet import -A ~/Music/Incoming/"
+            ;;
+        *"media server"*|*"jellyfin"*|*"netflix"*)
+            espeak "Launching personal Netflix!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Time to watch movies!'"
+            echo "Open http://localhost:8096 for your Jellyfin server"
+            ;;
+        *"automation"*|*"zapier"*|*"workflow"*)
+            espeak "Setting up automation magic!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Let robots do the work!'"
+            source ~/BillSloth/modules/automation_mastery_interactive.sh
+            ;;
+        *"tag files"*|*"organize files"*|*"tagspaces"*)
+            espeak "Organizing files with colors!" 2>/dev/null &
+            echo "🍔 Meatwad: 'Making files pretty with colors!'"
+            echo "Run: tagspaces to organize files visually"
+            ;;
+        *"local mode"*|*"privacy mode"*|*"offline"*)
+            espeak "Toggling privacy mode!" 2>/dev/null &
+            echo "🔒 Switching local mode..."
+            ~/bin/voice-assistant-daemon toggle-local
+            ;;
+EOF
+}
+
+# Status display
+show_status() {
+    local mode_status=$(get_mode_status)
+    echo ""
+    echo "🎤 BILL SLOTH VOICE ASSISTANT DAEMON"
+    echo "===================================="
+    echo "Status: 🟢 Running (PID: $$)"
+    echo "Mode: $mode_status"
+    echo "Hotkey: $HOTKEY (Ctrl+Alt+V)"
+    echo "Local Mode Toggle: Ctrl+Alt+L"
+    echo ""
+    echo "🍔 Meatwad: 'I'm always listening! Press $HOTKEY to talk!'"
+}
+
+# Main daemon function
+main() {
+    case "${1:-start}" in
+        "start")
+            echo "🚀 Starting Bill Sloth Voice Assistant Daemon..."
+            check_dependencies
+            initialize_local_mode
+            setup_hotkeys
+            enhance_voice_interface
+            show_status
+            
+            # Keep daemon running
+            while true; do
+                sleep 30
+                # Health check - make sure voice interface exists
+                if [[ ! -f "$VOICE_INTERFACE_PATH" ]]; then
+                    echo "⚠️ Voice interface missing! Recreating..."
+                    # Could recreate here if needed
+                fi
+            done
+            ;;
+        "stop")
+            if [[ -f "$PID_FILE" ]]; then
+                local pid=$(cat "$PID_FILE")
+                kill "$pid" 2>/dev/null && echo "🍔 Voice daemon stopped"
+                rm -f "$PID_FILE"
+            else
+                echo "🍔 Voice daemon not running"
+            fi
+            ;;
+        "toggle-local")
+            toggle_local_mode
+            ;;
+        "status")
+            show_status
+            ;;
+        "restart")
+            $0 stop
+            sleep 2
+            $0 start
+            ;;
+        *)
+            echo "Usage: $0 {start|stop|restart|status|toggle-local}"
+            echo ""
+            echo "🎤 Bill Sloth Voice Assistant Daemon Commands:"
+            echo "  start      - Start the voice daemon with hotkey support"
+            echo "  stop       - Stop the voice daemon"
+            echo "  restart    - Restart the daemon"
+            echo "  status     - Show daemon status and mode"
+            echo "  toggle-local - Switch between local and cloud mode"
+            echo ""
+            echo "🎮 Global Hotkeys (when daemon is running):"
+            echo "  Ctrl+Alt+V - Activate voice interface"
+            echo "  Ctrl+Alt+L - Toggle local/cloud mode"
+            echo "  Ctrl+Alt+S - Emergency stop voice interface"
+            ;;
+    esac
+}
+
+# Run main function
+main "$@"

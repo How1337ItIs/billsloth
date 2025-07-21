@@ -1,6 +1,13 @@
 #!/bin/bash
 # Bill Sloth Aliases - ADHD-Friendly Shortcuts
 # Source this file: source ~/BillSloth/shortcuts/aliases.sh
+#
+# 🚀 QUICKEST COMMANDS (for when typing is hard):
+# up = update system | k9 = kill process | w = watch | re = restart
+# s = sudo | ip = my IP | vpn = check VPN | fix = audio fix
+# cam = webcam test | rec = record screen | find = find process
+# eb = edit bash | ea = edit aliases | rl = reload bash
+# ai = AI chat | game = gaming mode | stream = streaming | vibe = creative coding
 
 # ADHD-friendly work shortcuts
 alias work-mode='~/bin/work-mode'
@@ -17,17 +24,23 @@ alias done='mv ~/Productivity/.current-task ~/Productivity/Done/$(date +%Y%m%d)-
 alias what-am-i-doing='cat ~/Productivity/.current-task 2>/dev/null || echo "No current task set"'
 
 # System shortcuts - Easy to spell AND anime versions
-alias update='sudo apt update && sudo apt upgrade -y'
-alias kamehameha='sudo apt update && sudo apt upgrade -y'  # anime version
+alias update='~/bin/update || sudo apt update && sudo apt upgrade -y'
+alias up='~/bin/update || sudo apt update && sudo apt upgrade -y'  # easy version
+alias kamehameha='~/bin/update || sudo apt update && sudo apt upgrade -y'  # anime version
 alias kill9='kill -9'
+alias k9='kill -9'  # easy version
 alias rasengan='kill -9'  # anime version
 alias watch='watch -n1 -d'
+alias w='watch -n1 -d'  # easy version
 alias sharingan='watch -n1 -d'  # anime version
 alias restart='sudo systemctl restart'
+alias re='sudo systemctl restart'  # easy version
 alias bankai='sudo systemctl restart'  # anime version
 alias pause='sleep'
+alias p='sleep'  # easy version
 alias genjutsu='sleep'  # anime version
 alias sudo-mode='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'
+alias s='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'  # easy version
 alias omae='echo "お前はもう死んでいる" && sleep 2 && echo "NANI?!" && sudo'  # anime version
 
 # Quick system info
@@ -35,6 +48,9 @@ alias matrix='cmatrix -b -C green'
 alias neofetch='neofetch --ascii_distro arch'
 alias sysinfo='inxi -Fxz'
 alias temp='sensors 2>/dev/null || echo "Install lm-sensors"'
+
+# System health (mature, all-in-one)
+alias system-health='if command -v glances &> /dev/null; then glances; else echo "Glances is not installed. Install with: sudo apt install glances"; fi'  # recommended
 
 # Navigation made easy
 alias ll='ls -alF'
@@ -46,10 +62,13 @@ alias ....='cd ../../..'
 
 # Network shortcuts
 alias myip='curl -s ifconfig.me'
+alias ip='curl -s ifconfig.me'  # easy version
 alias localip='hostname -I | awk "{print \$1}"'
+alias local='hostname -I | awk "{print \$1}"'  # easy version
 alias ports='netstat -tulpn'
-alias listening='lsof -i -P -n | grep LISTEN'
 alias vpn-status='if ip addr | grep -q "tun\|wg"; then echo "🛡️ VPN Connected"; else echo "⚠️ VPN Disconnected"; fi'
+alias vpn='if ip addr | grep -q "tun\|wg"; then echo "🛡️ VPN Connected"; else echo "⚠️ VPN Disconnected"; fi'  # easy version
+alias listening='lsof -i -P -n | grep LISTEN'
 
 # Git shortcuts for the lazy
 alias gs='git status'
@@ -64,9 +83,12 @@ alias weather='curl wttr.in'
 alias qr='qrencode -t ansiutf8'
 
 # Audio/Video shortcuts
-alias audio-fix='pulseaudio -k && pulseaudio --start'
+alias audio-fix='~/bin/fix-audio || pulseaudio -k && pulseaudio --start'
+alias fix='~/bin/fix-audio || pulseaudio -k && pulseaudio --start'  # easy version
 alias webcam-test='ffplay /dev/video0'
+alias cam='ffplay /dev/video0'  # easy version
 alias record-screen='ffmpeg -f x11grab -s 1920x1080 -i :0.0 output.mp4'
+alias rec='ffmpeg -f x11grab -s 1920x1080 -i :0.0 output.mp4'  # easy version
 
 # Security shortcuts
 alias nmap-quick='nmap -sV -sC -O -T4'
@@ -74,14 +96,23 @@ alias nmap-stealth='nmap -sS -O -T2'
 alias whatsmyport='netstat -tulpn | grep LISTEN'
 alias secure-delete='shred -vfz -n 3'
 
-# Fun stuff
+# Fun stuff - Adult Swim & Anime references
 alias hack='echo "Accessing mainframe..." && sleep 2 && echo "Access granted." && echo "Welcome to the Matrix, Neo."'
 alias l33t='echo $@ | tr "aeiostlAEIOSTL" "4310571431057L"'
 alias anime='echo "( ͡° ͜ʖ ͡°) Senpai noticed you!"'
 alias baka='echo "ばか！(´∀｀)♡"'
 
+# Aqua Teen Hunger Force references
+alias meatwad='echo "I get it! It aint making me laugh, but I get it!"'
+alias frylock='echo "Don'\''t drape that towel on my computer!"'
+alias shake='echo "Number one in the hood, G!"'
+alias carl='echo "Yeah, I know all about computers."'
+alias athf='echo "My name is... Shake-zula, the mic rula, the old schoola!"'
+alias wwwyzzerdd='echo "It is I, the wwwyzzerdd. D-d-d-d."'
+alias broadbrain='echo "This is live streaming, broadbrrrain."'
+alias supervisor='echo "I'\''m the supervisor. What seems to be the problem?"'
+
 # Productivity shortcuts
-alias update-all='sudo apt update && sudo apt upgrade -y && flatpak update -y && snap refresh'
 alias clean-system='sudo apt autoremove -y && sudo apt autoclean && sudo journalctl --vacuum-time=7d'
 alias backup-home='tar -czf ~/backup-$(date +%Y%m%d).tar.gz ~/'
 
@@ -92,16 +123,20 @@ alias dex='docker exec -it'
 alias dlog='docker logs'
 
 # AI shortcuts (when Ollama is installed)
-alias ai='ollama run llama2:7b'
+alias ai='~/bin/ai'
 alias code-ai='ollama run codellama:7b'
 alias ai-list='ollama list'
 
+# Creative coding shortcuts
+alias vibe='~/bin/vibe'
+alias processing='processing'
+
 # Streaming shortcuts
-alias start-stream='obs &'
-alias audio-levels='pavucontrol &'
+alias stream='~/bin/stream'
 alias stream-test='ffmpeg -f v4l2 -i /dev/video0 -t 10 -f null -'
 
 # Gaming shortcuts
+alias game='~/bin/game'
 alias steam-native='steam -no-browser'
 alias wine-tricks='winetricks'
 alias fps-check='nvidia-smi dmon -s pucvmet -c 1 2>/dev/null || echo "Install nvidia-smi for GPU monitoring"'
@@ -117,8 +152,11 @@ alias extract='function _extract() { if [ -f $1 ]; then case $1 in *.tar.bz2) ta
 
 # Quick config edits
 alias edit-bash='nano ~/.bashrc'
+alias eb='nano ~/.bashrc'  # easy version
 alias edit-aliases='nano ~/BillSloth/shortcuts/aliases.sh'
+alias ea='nano ~/BillSloth/shortcuts/aliases.sh'  # easy version
 alias reload-bash='source ~/.bashrc'
+alias rl='source ~/.bashrc'  # easy version
 
 # Directory shortcuts for Bill's common locations
 alias downloads='cd ~/Downloads'
@@ -128,12 +166,13 @@ alias lab='cd ~/BillSloth'
 
 # Process shortcuts
 alias psg='ps aux | grep'
+alias find='ps aux | grep'  # easy version
 alias top='htop'
 alias cpu='top -o %CPU'
 alias mem='top -o %MEM'
 
 # Torrenting shortcuts (VPN check built-in)
-alias torrent-safe='if ip addr | grep -q "tun\|wg"; then qbittorrent; else echo "⚠️ Start VPN first!"; fi'
+alias torrent='~/bin/torrent-safe'
 alias seedbox-check='transmission-remote -l 2>/dev/null || echo "Transmission not running"'
 
 # Study shortcuts for learning Linux
@@ -141,15 +180,28 @@ alias man-search='function _mansearch() { man -k $1 | head -10; }; _mansearch'
 alias command-help='function _cmdhelp() { $1 --help | head -20; }; _cmdhelp'
 alias what-is='function _whatis() { which $1 && man $1 | head -5; }; _whatis'
 
-# Anime ASCII art functions
+# Sloth ASCII art functions
 alias welcome='cat << "EOF"
-    ⢀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⣠⣤⣶⣶
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⢰⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⣀⣀⣾⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⡏⠉⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿
-    ⣿⣿⣿⣿⣿⣿⠀⠀⠀⠈⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠁⠀
-    ⣿⣿⣿⣿⣿⣿⣧⡀⠀⠀⠀⠀⠙⠿⠿⠿⠻⠿⠿⠟⠿⠛⠉⠀⠀⠀⠀⠀⠀
-    Welcome to the Bill Sloth Linux Lab! (◕‿◕)♡
+    🦥 Welcome to the Bill Sloth Linux Lab! 🦥
+    
+       ／|_/|     "Slow and steady wins the race!"
+      (  o.o  )    Taking your time is perfectly fine
+       > ^ <       One command at a time, no rush!
+       
+    Remember: Even sloths get things done eventually! (◕‿◕)♡
+EOF'
+
+alias sloth-motivation='cat << "EOF"
+    🌿🦥 SLOTH WISDOM 🦥🌿
+    
+    "Speed isn't everything. Sometimes going slow
+     means you actually finish what you start."
+     
+         ／|_/|
+        (  ^.^ )  <- This is you, being awesome
+         > v <
+         
+    🍃 Take breaks when you need them! 🍃
 EOF'
 
 # Function to show all custom aliases
