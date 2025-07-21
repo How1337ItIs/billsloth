@@ -30,8 +30,38 @@ Think of it as "Claude Code teaches you Linux" rather than "figure out Linux you
 2. **Choose your subscription:**
    - **Claude Pro** ($20/month) - Good for light coding work  
    - **Claude Max** ($100-200/month) - Better for extensive Linux learning
-3. **Install Node.js** (required): Go to https://nodejs.org and download the latest version
-4. **Come back here when you have Claude subscription + Node.js installed**
+
+3. **Install Node.js on Linux** (required):
+
+   **First, open Terminal:**
+   - **Most Linux**: Press `Ctrl+Alt+T`
+   - **Or**: Look for "Terminal" in your applications menu
+   - **Or**: Right-click on desktop → "Open Terminal"
+   
+   ```bash
+   # Copy and paste these commands one at a time (press Enter after each):
+   
+   # Update your system first:
+   sudo apt update
+   
+   # Install Node.js:
+   sudo apt install nodejs npm
+   
+   # Check it worked:
+   node --version
+   # Should show something like "v18.19.0" or newer
+   ```
+
+4. **Install Claude Code:**
+   ```bash
+   # Still in Terminal, run this command:
+   npm install -g @anthropic-ai/claude-code
+   
+   # Start Claude Code (it will ask you to login with your subscription):
+   claude
+   ```
+
+5. **You're done!** Claude Code is now ready to be your Linux teacher.
 
 #### **If You Know Basic Commands:**
 
@@ -284,14 +314,39 @@ of AI development]
 ## 🚨 **What To Do If Things Go Wrong**
 
 ### **Claude Code Not Working?**
+
+**If Claude Code won't start:**
 ```bash
-# Try these commands:
+# Open Terminal (Ctrl+Alt+T) and try these commands one by one:
+
+# Check if Node.js is installed:
+node --version
+# Should show v18 or higher. If not, install it:
+sudo apt update && sudo apt install nodejs npm
+
+# Check if Claude Code is installed:
+claude --version
+# If this fails, reinstall Claude Code:
+npm install -g @anthropic-ai/claude-code
+
+# Try logging out and back in:
 claude logout
 claude login
-claude "Are you there?"
 
-# If still broken, ask for help:
-claude "My Claude Code isn't working properly, can you help me fix it?"
+# Test it's working:
+claude "Are you there?"
+```
+
+**If you get permission errors:**
+```bash
+# You might need to fix npm permissions:
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+# Then reinstall Claude Code:
+npm install -g @anthropic-ai/claude-code
 ```
 
 ### **Bill Sloth Module Issues?**
@@ -302,11 +357,30 @@ claude "I got an error message: [paste the error here]"
 ```
 
 ### **General Linux Confusion?**
+
+**Basic Linux commands you might need:**
+```bash
+# Navigate folders:
+ls          # List files in current folder
+cd ~        # Go to your home folder
+pwd         # Show where you are
+
+# Copy and paste in Terminal:
+# Ctrl+Shift+C to copy
+# Ctrl+Shift+V to paste (NOT Ctrl+V!)
+
+# If a command asks for password:
+# Type your password (you won't see it as you type - this is normal)
+# Press Enter
+```
+
+**Ask Claude for help:**
 ```bash
 # Claude is your teacher - ask anything:
 claude "I'm lost, can you explain what we just did?"
 claude "Can you show me a different way to do this?"
 claude "I want to start over with something simpler"
+claude "What does 'sudo' mean and why do I need it?"
 ```
 
 ---
