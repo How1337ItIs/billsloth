@@ -72,12 +72,24 @@ Think of it as "your AI-powered Linux toolkit" rather than "figure everything ou
    ```
    **What you should see:** Something like `v18.19.0` or `v20.something` - any number 18 or higher is perfect!
 
-4. **Install Claude Code:**
+4. **Install Claude Code (No sudo needed!):**
    ```bash
    # Copy this line, paste it, press Enter:
    npm install -g @anthropic-ai/claude-code
    ```
    **What happens:** This downloads Claude Code. Might take 1-2 minutes.
+   
+   **⚠️ If you get permission errors:** Don't use sudo! Instead run these commands:
+   ```bash
+   # Fix npm permissions (only if needed):
+   mkdir ~/.npm-global
+   npm config set prefix '~/.npm-global'
+   echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+   source ~/.bashrc
+   
+   # Then install Claude Code:
+   npm install -g @anthropic-ai/claude-code
+   ```
 
 5. **Start Claude Code for the First Time:**
    ```bash
@@ -410,17 +422,30 @@ claude login
 claude "Are you there?"
 ```
 
-**If you get permission errors:**
+**If you get permission errors with npm:**
 ```bash
-# You might need to fix npm permissions:
+# NEVER USE SUDO WITH NPM! Instead, fix permissions properly:
+
+# 1. Create npm directory in your home folder:
 mkdir ~/.npm-global
+
+# 2. Tell npm to use it:
 npm config set prefix '~/.npm-global'
+
+# 3. Add it to your PATH:
 echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+
+# 4. Reload your terminal settings:
 source ~/.bashrc
 
-# Then reinstall Claude Code:
+# 5. Now install Claude Code (no sudo!):
 npm install -g @anthropic-ai/claude-code
+
+# 6. Test it works:
+claude --version
 ```
+
+**Why no sudo?** Using sudo with npm can break things and create security issues. The method above installs Claude Code safely in your user space.
 
 ### **Bill Sloth Module Issues?**
 ```bash
