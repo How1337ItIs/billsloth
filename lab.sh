@@ -43,12 +43,6 @@ BANNER
     if command -v nvidia-smi &> /dev/null; then
         echo -e "${C}│${N} GPU: ${G}$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1)${N}"
     fi
-    # VPN Status
-    if ip addr | grep -q "tun\|wg"; then
-        echo -e "${C}│${N} VPN: ${G}ACTIVE ${N}(safe to torrent)"
-    else
-        echo -e "${C}│${N} VPN: ${R}INACTIVE ${N}(connect before torrenting)"
-    fi
     echo -e "${C}└────────────────────────────────────────────────┘${N}"
 }
 
@@ -58,16 +52,16 @@ show_menu() {
     check_module "02" "🏖️ VACATION RENTAL MGR" "Guntersville Getaway management" "vacation_rental_manager"
     check_module "03" "🎮 EDBOIGAMES TOOLKIT" "YouTube BD, partnerships, content planning" "edboigames_toolkit"
     
-    echo -e "\n${Y}【DATA & MEDIA】${N}"
-    check_module "04" "🏴‍☠️ DATA HOARDING" "Torrenting, file organization, disk analytics" "data_hoarding"
+    echo -e "\n${B}【SYSTEM & TECH】${N}"
+    check_module "04" "🔧 SYSTEM OPS" "Updates, fixes, maintenance" "system_ops"
     check_module "05" "🎥 STREAMING SETUP" "OBS, audio, scenes" "streaming_setup"
     check_module "06" "🤖 AI PLAYGROUND" "Ollama, Stable Diffusion, local AI" "ai_playground"
+    check_module "07" "🎮 GAMING BOOST" "Steam, performance optimization" "gaming_boost"
+    check_module "08" "🛡️ PRIVACY TOOLS" "VPN, encryption, security" "privacy_tools"
+    check_module "09" "🎨 CREATIVE CODING" "p5.js, Processing, digital art" "creative_coding"
     
-    echo -e "\n${B}【SYSTEM & TECH】${N}"
-    check_module "07" "🔧 SYSTEM OPS" "Updates, fixes, maintenance" "system_ops"
-    check_module "08" "🎮 GAMING BOOST" "Steam, performance optimization" "gaming_boost"
-    check_module "09" "🛡️ PRIVACY TOOLS" "VPN, encryption, security" "privacy_tools"
-    check_module "10" "🎨 CREATIVE CODING" "p5.js, Processing, digital art" "creative_coding"
+    echo -e "\n${M}【DATA & ORGANIZATION】${N}"
+    check_module "10" "🏴‍☠️ DATA HOARDING" "Torrenting, file management, disk analytics" "data_hoarding"
     
     echo -e "\n${B}【UTILITIES】${N}"
     echo -e "   ${C}U${N}) 🔄 Update all modules (git pull)"
@@ -116,14 +110,16 @@ show_help() {
     echo -e "${B}│${N} intelligently based on your current system state       ${B}│${N}"
     echo -e "${B}│${N}                                                        ${B}│${N}"
     echo -e "${B}│${N} ${G}Quick Commands to tell Claude Code:${N}                  ${B}│${N}"
-    echo -e "${B}│${N} - 'Run my productivity suite'                          ${B}│${N}"
-    echo -e "${B}│${N} - 'Check vacation rental tasks'                        ${B}│${N}"
-    echo -e "${B}│${N} - 'Open EdBoiGames dashboard'                           ${B}│${N}"
-    echo -e "${B}│${N} - 'Start data hoarding tools'                          ${B}│${N}"
     echo -e "${B}│${N} - 'Fix my audio'                                       ${B}│${N}"
     echo -e "${B}│${N} - 'Set up streaming'                                   ${B}│${N}"
     echo -e "${B}│${N} - 'Install local AI'                                   ${B}│${N}"
+    echo -e "${B}│${N} - 'Optimize for gaming'                                ${B}│${N}"
+    echo -e "${B}│${N} - 'Check my VPN'                                       ${B}│${N}"
     echo -e "${B}│${N} - 'Update everything'                                  ${B}│${N}"
+    echo -e "${B}│${N} - 'Start work mode'                                    ${B}│${N}"
+    echo -e "${B}│${N} - 'Open rental dashboard'                              ${B}│${N}"
+    echo -e "${B}│${N} - 'Launch EdBoiGames tools'                            ${B}│${N}"
+    echo -e "${B}│${N} - 'Organize my files'                                  ${B}│${N}"
     echo -e "${B}└────────────────────────────────────────────────────────┘${N}"
 }
 
@@ -155,13 +151,13 @@ while true; do
         01) install_module "productivity_suite" ;;
         02) install_module "vacation_rental_manager" ;;
         03) install_module "edboigames_toolkit" ;;
-        04) install_module "data_hoarding" ;;
+        04) install_module "system_ops" ;;
         05) install_module "streaming_setup" ;;
         06) install_module "ai_playground" ;;
-        07) install_module "system_ops" ;;
-        08) install_module "gaming_boost" ;;
-        09) install_module "privacy_tools" ;;
-        10) install_module "creative_coding" ;;
+        07) install_module "gaming_boost" ;;
+        08) install_module "privacy_tools" ;;
+        09) install_module "creative_coding" ;;
+        10) install_module "data_hoarding" ;;
         U|u) 
             echo -e "${C}[*] Updating Bill Sloth Lab...${N}"
             git pull origin main 2>/dev/null || echo "Not a git repository or no remote"
