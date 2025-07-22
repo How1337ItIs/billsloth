@@ -1,0 +1,14 @@
+[Unit]
+Description=Bill Sloth Automated Backup Timer
+Documentation=https://github.com/user/bill-sloth
+Requires=bill-sloth-backup.service
+
+[Timer]
+# Run backup every 6 hours
+OnCalendar=*-*-* 00,06,12,18:00:00
+Persistent=true
+RandomizedDelaySec=300
+AccuracySec=1m
+
+[Install]
+WantedBy=timers.target

@@ -6,10 +6,12 @@ check_vpn_status() {
     if ip addr | grep -qE "tun|wg"; then
         echo "✅ VPN is ACTIVE"
         echo "IP: $(curl -s ifconfig.me)"
+        echo '"I got a virus. It’s called being awesome." – Master Shake'
         return 0
     else
         echo "❌ VPN is NOT ACTIVE"
         echo "⚠️  Your real IP: $(curl -s ifconfig.me)"
+        echo '"I got a virus. It’s called being awesome." – Master Shake'
         return 1
     fi
 }

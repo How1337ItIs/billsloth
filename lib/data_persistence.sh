@@ -17,6 +17,10 @@ LEGACY_CACHE_DIR="$HOME/.bill-sloth/cache"
 init_data_persistence() {
     log_info "Initializing Bill Sloth data persistence..."
     
+    # PERFORMANCE: Load performance monitoring
+    source "$SCRIPT_DIR/performance_monitoring.sh" 2>/dev/null || true
+    local start_time=$(date +%s%N)
+    
     # Create database directory
     mkdir -p "$DB_DIR"
     
@@ -32,6 +36,13 @@ init_data_persistence() {
     fi
     
     export DATABASE_ENGINE
+    
+    # PERFORMANCE: Record initialization time
+    if command -v capture_performance_snapshot &>/dev/null; then
+        local end_time=$(date +%s%N)
+        local duration_ms=$(( (end_time - start_time) / 1000000 ))
+        capture_performance_snapshot "data_persistence" "initialization" "$duration_ms" >/dev/null 2>&1 || true
+    fi
 }
 
 # Create SQLite database schema
@@ -143,6 +154,9 @@ store_data() {
     local value="$3"
     local ttl_hours="${4:-24}" # Default 24 hour TTL
     local data_type="${5:-string}"
+    
+    # PERFORMANCE: Track operation timing
+    local start_time=$(date +%s%N)
     
     if [ -z "$module" ] || [ -z "$key" ] || [ -z "$value" ]; then
         log_error "store_data requires module, key, and value"
@@ -357,7 +371,7 @@ EOF
     esac
 }
 
-# Store VRBO booking (Bill-specific functionality)
+# Store VRBO booking (Bill-specific functionality) - PRODUCTION SAFE
 store_vrbo_booking() {
     local guest_name="$1"
     local property="$2"
@@ -365,13 +379,30 @@ store_vrbo_booking() {
     local checkout_date="$4"
     local metadata="$5"
     
+    # PRODUCTION SAFETY: Validate all inputs
+    source "$SCRIPT_DIR/production_safety.sh" 2>/dev/null || true
+    if command -v validate_vrbo_booking &>/dev/null; then
+        if ! validate_vrbo_booking "$guest_name" "$property" "$checkin_date" "$checkout_date"; then
+            log_error "VRBO booking validation failed - operation aborted"
+            return 1
+        fi
+    fi
+    
     case "$DATABASE_ENGINE" in
         "sqlite3")
-            sqlite3 "$DB_FILE" << EOF
+            # PRODUCTION SAFETY: Use safe SQLite operation with locking
+            local sql_command="INSERT INTO vrbo_bookings (guest_name, property, checkin_date, checkout_date, metadata) VALUES ('$guest_name', '$property', '$checkin_date', '$checkout_date', '$metadata');"
+            
+            if command -v safe_sqlite_operation &>/dev/null; then
+                safe_sqlite_operation "$DB_FILE" "$sql_command" "store_vrbo_booking"
+            else
+                # Fallback to original method
+                sqlite3 "$DB_FILE" << EOF
 INSERT INTO vrbo_bookings 
 (guest_name, property, checkin_date, checkout_date, metadata)
 VALUES ('$guest_name', '$property', '$checkin_date', '$checkout_date', '$metadata');
 EOF
+            fi
             ;;
         "json_files")
             local booking_file="$LEGACY_CACHE_DIR/vrbo_bookings.jsonl"

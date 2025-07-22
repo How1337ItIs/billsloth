@@ -1,0 +1,50 @@
+[Unit]
+Description=Bill Sloth Backup Management Service
+Documentation=https://github.com/user/bill-sloth
+After=bill-sloth-core.service
+Requires=bill-sloth-core.service
+
+[Service]
+Type=oneshot
+User=bill
+Group=bill
+WorkingDirectory=/home/bill/bill sloth
+
+# Backup service command
+ExecStart=/home/bill/bill sloth/systemd/scripts/bill-sloth-backup-runner.sh
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/bill"
+Environment="BILL_SLOTH_HOME=/home/bill/bill sloth"
+Environment="BILL_SLOTH_CONFIG=/home/bill/.config/bill-sloth"
+
+# Resource limits (backup can be resource intensive)
+MemoryLimit=2G
+CPUQuota=80%
+IOWeight=200
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/bill/.bill-sloth /home/bill/.config/bill-sloth /home/bill/VacationRental /home/bill/edboigames_business
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Network access for cloud backup
+PrivateNetwork=false
+
+# Timeout for backup operations
+TimeoutStartSec=3600s
+TimeoutStopSec=60s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bill-sloth-backup
+
+[Install]
+WantedBy=multi-user.target

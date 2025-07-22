@@ -34,6 +34,7 @@ create_stream_command() {
     cat > ~/bin/stream << 'EOF'
 #!/bin/bash
 echo "🎬 STREAM MODE ACTIVATED!"
+echo "\"I’m on the internet. I’m downloading the internet as we speak. I’m going to have the whole thing on this computer by tomorrow.\" – Master Shake"
 echo "Starting OBS and audio mixer..."
 obs &
 pavucontrol &
@@ -42,6 +43,7 @@ echo "💡 Quick tips:"
 echo "- Set OBS to use 'Stream_Audio' for desktop audio"
 echo "- Use pavucontrol to route audio"
 echo "- Check your VPN is OFF for better performance"
+random_athf_easter_egg
 EOF
     chmod +x ~/bin/stream
 }

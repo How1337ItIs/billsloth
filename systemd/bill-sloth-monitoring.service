@@ -1,0 +1,55 @@
+[Unit]
+Description=Bill Sloth Performance and Health Monitoring Service
+Documentation=https://github.com/user/bill-sloth
+After=bill-sloth-core.service
+Requires=bill-sloth-core.service
+PartOf=bill-sloth-core.service
+
+[Service]
+Type=simple
+User=bill
+Group=bill
+WorkingDirectory=/home/bill/bill sloth
+
+# Monitoring service command
+ExecStart=/home/bill/bill sloth/systemd/scripts/bill-sloth-monitoring-daemon.sh
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/bill"
+Environment="BILL_SLOTH_HOME=/home/bill/bill sloth"
+Environment="BILL_SLOTH_CONFIG=/home/bill/.config/bill-sloth"
+
+# Resource limits (monitoring should be lightweight)
+MemoryLimit=128M
+CPUQuota=20%
+TasksMax=50
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/bill/.bill-sloth /home/bill/.config/bill-sloth
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Restart behavior
+Restart=always
+RestartSec=5s
+StartLimitBurst=5
+StartLimitIntervalSec=60s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bill-sloth-monitoring
+
+# Health checking
+TimeoutStartSec=15s
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=multi-user.target

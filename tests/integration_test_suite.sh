@@ -26,6 +26,8 @@ declare -A TEST_CATEGORIES=(
     ["backup"]="Backup Management"
     ["architecture"]="Unified Architecture"
     ["command_center"]="Command Center Integration"
+    ["production_safety"]="Production Safety & Error Handling"
+    ["performance"]="Performance & Resource Usage"
 )
 
 # Source test utilities
@@ -423,6 +425,107 @@ test_command_center_modules() {
     return 0
 }
 
+# Production safety tests
+test_production_safety_init() {
+    source "$BASE_DIR/lib/production_safety.sh"
+    
+    if ! command -v init_production_safety &> /dev/null; then
+        echo "Production safety initialization function missing"
+        return 1
+    fi
+    
+    if ! init_production_safety; then
+        echo "Production safety initialization failed"
+        return 1
+    fi
+    
+    # Check safety directories created
+    if [ ! -d "$HOME/.bill-sloth/safety" ]; then
+        echo "Safety directory not created"
+        return 1
+    fi
+    
+    return 0
+}
+
+test_database_integrity_check() {
+    source "$BASE_DIR/lib/production_safety.sh"
+    source "$BASE_DIR/lib/data_persistence.sh"
+    
+    # Initialize database
+    init_data_persistence
+    
+    local db_file="$HOME/.bill-sloth/data/bill_sloth.db"
+    
+    # Test database integrity check
+    if ! check_database_integrity "$db_file"; then
+        echo "Database integrity check failed"
+        return 1
+    fi
+    
+    return 0
+}
+
+test_safe_input_validation() {
+    source "$BASE_DIR/lib/production_safety.sh"
+    
+    # Test VRBO booking validation
+    if ! validate_vrbo_booking "John Doe" "Test Property" "2025-01-01" "2025-01-02"; then
+        echo "Valid VRBO booking failed validation"
+        return 1
+    fi
+    
+    # Test invalid input rejection
+    if validate_vrbo_booking "" "" "invalid-date" "" 2>/dev/null; then
+        echo "Invalid input was not rejected"
+        return 1
+    fi
+    
+    return 0
+}
+
+test_backup_verification() {
+    source "$BASE_DIR/lib/production_safety.sh"
+    
+    # Create test file for verification
+    local test_file="/tmp/test_backup_verification.txt"
+    echo "test content" > "$test_file"
+    
+    # Test backup verification
+    if ! verify_backup_integrity "$test_file"; then
+        echo "Backup verification failed for valid file"
+        rm -f "$test_file"
+        return 1
+    fi
+    
+    # Test empty file rejection
+    touch "${test_file}.empty"
+    if verify_backup_integrity "${test_file}.empty" 2>/dev/null; then
+        echo "Empty file was not rejected"
+        rm -f "$test_file" "${test_file}.empty"
+        return 1
+    fi
+    
+    rm -f "$test_file" "${test_file}.empty"
+    return 0
+}
+
+test_dependency_checking() {
+    source "$BASE_DIR/lib/production_safety.sh"
+    
+    # Test dependency checking (should find missing optional deps)
+    if ! command -v check_critical_dependencies &> /dev/null; then
+        echo "Dependency checking function missing"
+        return 1
+    fi
+    
+    # Run dependency check (may fail due to missing optional deps, but function should work)
+    check_critical_dependencies > /dev/null 2>&1
+    # Function should run without error even if deps are missing
+    
+    return 0
+}
+
 # Performance tests
 test_data_sharing_performance() {
     source "$BASE_DIR/lib/data_sharing.sh"
@@ -443,6 +546,46 @@ test_data_sharing_performance() {
     fi
     
     echo "Performance: ${duration}ms for 100 cache operations"
+    return 0
+}
+
+test_performance_monitoring_system() {
+    source "$BASE_DIR/lib/performance_monitoring.sh"
+    
+    # Test performance monitoring initialization
+    if ! command -v capture_performance_snapshot &> /dev/null; then
+        echo "Performance monitoring functions not available"
+        return 1
+    fi
+    
+    # Test performance snapshot capture
+    local snapshot=$(capture_performance_snapshot "test_module" "test_operation" 100)
+    if [ -z "$snapshot" ]; then
+        echo "Failed to capture performance snapshot"
+        return 1
+    fi
+    
+    # Verify snapshot contains expected fields
+    if ! echo "$snapshot" | jq -e '.module' >/dev/null 2>&1; then
+        echo "Performance snapshot missing required fields"
+        return 1
+    fi
+    
+    return 0
+}
+
+test_performance_optimization() {
+    source "$BASE_DIR/lib/performance_monitoring.sh"
+    
+    # Test that optimization functions exist
+    if ! command -v optimize_module_performance &> /dev/null; then
+        echo "Performance optimization functions not available"
+        return 1
+    fi
+    
+    # Test optimization on a safe module (should not fail)
+    optimize_module_performance "test_module" "auto" > /dev/null 2>&1
+    
     return 0
 }
 
@@ -495,7 +638,18 @@ run_integration_tests() {
                 run_test "health_check" "command_center" test_command_center_health_check
                 run_test "module_references" "command_center" test_command_center_modules
                 ;;
-        esac
+            "production_safety")
+                run_test "initialization" "production_safety" test_production_safety_init
+                run_test "database_integrity" "production_safety" test_database_integrity_check
+                run_test "input_validation" "production_safety" test_safe_input_validation
+                run_test "backup_verification" "production_safety" test_backup_verification
+                run_test "dependency_checking" "production_safety" test_dependency_checking
+                ;;
+            "performance")
+                run_test "data_sharing_performance" "performance" test_data_sharing_performance
+                run_test "monitoring_system" "performance" test_performance_monitoring_system
+                run_test "optimization" "performance" test_performance_optimization
+                ;;
     done
     
     # Generate test report

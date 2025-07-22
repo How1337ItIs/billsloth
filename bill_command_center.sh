@@ -32,19 +32,48 @@ source "$SCRIPT_DIR/lib/hybrid_monitoring.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/task_runner.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/data_persistence.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/service_management.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/dependency_installer.sh" 2>/dev/null || true
 
 # Initialize all systems
 init_bill_command_center() {
     log_info "Initializing Bill's Command Center..."
     
+    # Check dependencies first
+    if ! quick_dependency_check; then
+        log_warning "Missing critical dependencies!"
+        echo ""
+        echo "🔧 Bill's system needs some tools installed."
+        echo "Would you like to check and install missing dependencies now?"
+        read -p "Install dependencies? [Y/n]: " install_deps
+        
+        if [[ "$install_deps" != "n" && "$install_deps" != "N" ]]; then
+            check_and_install_dependencies
+            echo ""
+            echo "Please restart the command center after installation completes."
+            exit 0
+        else
+            log_warning "Some features may not work without required dependencies!"
+        fi
+    fi
+    
     # Initialize core systems
     init_data_sharing 2>/dev/null || true
     init_workflow_system 2>/dev/null || true
-    init_backup_system 2>/dev/null || true
+    init_restic_backup 2>/dev/null || true
     init_health_monitoring 2>/dev/null || true
+    init_data_persistence 2>/dev/null || true
     
-    # Create command center directory
-    mkdir -p ~/.bill-sloth/command-center/{logs,cache,config}
+    # Create all required directories
+    mkdir -p ~/.bill-sloth/{command-center,vrbo-automation,google-tasks,workflows,backups,media-processing,health-monitoring,architecture,data}/{logs,cache,config,data,scripts,templates}
+    
+    # Initialize VRBO if missing
+    if [ ! -f ~/.bill-sloth/vrbo-automation/scripts/guest_communication.sh ]; then
+        if [ -f "$SCRIPT_DIR/modules/vrbo_automation/guest_communication.sh" ]; then
+            mkdir -p ~/.bill-sloth/vrbo-automation/scripts
+            cp "$SCRIPT_DIR/modules/vrbo_automation/guest_communication.sh" ~/.bill-sloth/vrbo-automation/scripts/
+            log_info "VRBO guest communication module installed"
+        fi
+    fi
     
     # Set up system status tracking
     if [ ! -f ~/.bill-sloth/command-center/config/system_status.json ]; then
@@ -59,11 +88,13 @@ init_bill_command_center() {
 EOF
     fi
     
-    # Update startup time
-    jq --arg timestamp "$(date -Iseconds)" \
-       '.last_startup = $timestamp' \
-       ~/.bill-sloth/command-center/config/system_status.json > ~/.bill-sloth/command-center/config/system_status.json.tmp && \
-       mv ~/.bill-sloth/command-center/config/system_status.json.tmp ~/.bill-sloth/command-center/config/system_status.json
+    # Update startup time (only if jq is available)
+    if command -v jq &> /dev/null; then
+        jq --arg timestamp "$(date -Iseconds)" \
+           '.last_startup = $timestamp' \
+           ~/.bill-sloth/command-center/config/system_status.json > ~/.bill-sloth/command-center/config/system_status.json.tmp && \
+           mv ~/.bill-sloth/command-center/config/system_status.json.tmp ~/.bill-sloth/command-center/config/system_status.json
+    fi
     
     log_success "Command Center initialized"
 }
@@ -240,7 +271,23 @@ bill_command_center() {
     # Initialize systems
     init_bill_command_center
     
+    # PRODUCTION SAFETY: Load safety systems
+    source "$SCRIPT_DIR/lib/production_safety.sh" 2>/dev/null || true
+    
+    local session_timeout=1800  # 30 minutes
+    local start_time=$(date +%s)
+    
     while true; do
+        # PRODUCTION SAFETY: Check session timeout
+        local current_time=$(date +%s)
+        local elapsed=$((current_time - start_time))
+        
+        if [ $elapsed -gt $session_timeout ]; then
+            log_info "Session timeout after 30 minutes - returning to main menu"
+            notify_info "Session Timeout" "Command center session ended after 30 minutes"
+            break
+        fi
+        
         show_bill_banner
         show_system_status
         show_quick_actions
@@ -255,7 +302,20 @@ bill_command_center() {
         echo "  0) Exit Command Center"
         echo ""
         
-        read -p "🎯 Select action or module [quick action/1-9/0]: " choice
+        # PRODUCTION SAFETY: Use safe input with timeout
+        local choice=""
+        if command -v safe_read &>/dev/null; then
+            choice=$(safe_read "🎯 Select action or module [quick action/1-9/0]: " 300) || {
+                log_info "Input timeout - continuing session"
+                continue
+            }
+        else
+            # Fallback with basic timeout
+            if ! read -t 300 -p "🎯 Select action or module [quick action/1-9/0]: " choice; then
+                log_info "Input timeout - continuing session"
+                continue
+            fi
+        fi
         
         # Log the choice
         log_activity "User selected: $choice"

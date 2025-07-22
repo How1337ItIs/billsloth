@@ -1,0 +1,66 @@
+[Unit]
+Description=Bill Sloth Core System Service
+Documentation=https://github.com/user/bill-sloth
+After=network.target multi-user.target
+Wants=network-online.target
+Before=bill-sloth-monitoring.service
+
+[Service]
+Type=forking
+User=bill
+Group=bill
+WorkingDirectory=/home/bill/bill sloth
+
+# Main service command
+ExecStart=/home/bill/bill sloth/systemd/scripts/bill-sloth-core-daemon.sh start
+ExecStop=/home/bill/bill sloth/systemd/scripts/bill-sloth-core-daemon.sh stop
+ExecReload=/home/bill/bill sloth/systemd/scripts/bill-sloth-core-daemon.sh reload
+
+# PID file management
+PIDFile=/run/bill-sloth/bill-sloth-core.pid
+RuntimeDirectory=bill-sloth
+RuntimeDirectoryMode=0755
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/bill"
+Environment="BILL_SLOTH_HOME=/home/bill/bill sloth"
+Environment="BILL_SLOTH_CONFIG=/home/bill/.config/bill-sloth"
+
+# Resource limits
+MemoryLimit=512M
+CPUQuota=50%
+TasksMax=100
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/bill/.bill-sloth /home/bill/.config/bill-sloth /tmp /var/tmp
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+# Network access (required for integrations)
+PrivateNetwork=false
+
+# Restart behavior
+Restart=always
+RestartSec=10s
+StartLimitBurst=3
+StartLimitIntervalSec=60s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bill-sloth-core
+
+# Health checking
+TimeoutStartSec=30s
+TimeoutStopSec=15s
+WatchdogSec=60s
+
+[Install]
+WantedBy=multi-user.target
+Also=bill-sloth-monitoring.service

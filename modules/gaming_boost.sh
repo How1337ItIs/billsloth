@@ -2,6 +2,8 @@
 # LLM_CAPABILITY: local_ok
 # Gaming performance optimization
 
+source "$(dirname "$0")/../lib/athf_easter_eggs.sh" 2>/dev/null || true
+
 install_gaming_tools() {
     echo "🎮 Installing gaming essentials..."
     
@@ -31,6 +33,7 @@ optimize_for_gaming() {
     
     # Disable compositor (if using GNOME)
     gsettings set org.gnome.mutter unredirect-always true 2>/dev/null
+    random_athf_easter_egg
 }
 
 create_game_command() {
@@ -62,3 +65,5 @@ esac
 EOF
     chmod +x ~/bin/game
 }
+
+echo '"I’m gonna download myself a new body. I’ll be back in a minute." – Master Shake'

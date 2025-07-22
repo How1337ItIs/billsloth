@@ -168,6 +168,7 @@ EOF
     chmod +x ~/bin/vpn-check
     
     echo "[✓] VPN safety system created"
+    random_athf_easter_egg
 }
 
 create_private_tracker_guide() {
@@ -778,6 +779,7 @@ EOF
     chmod +x ~/bin/data-dashboard
     
     echo "[✓] Data hoarding dashboard created"
+    random_athf_easter_egg
 }
 
 create_archive_tools() {

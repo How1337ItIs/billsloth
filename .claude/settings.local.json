@@ -42,7 +42,11 @@
       "Bash(claunch --help)",
       "Bash(claunch list:*)",
       "Bash(command:*)",
-      "Bash(choco install:*)"
+      "Bash(choco install:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== Checking $f ===\")",
+      "Bash(echo:*)",
+      "Bash(done)"
     ],
     "deny": []
   }

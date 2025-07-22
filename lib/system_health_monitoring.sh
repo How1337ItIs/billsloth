@@ -38,6 +38,15 @@ declare -A ALERT_COOLDOWN=(
 init_health_monitoring() {
     log_info "Initializing system health monitoring..."
     
+    # PRODUCTION SAFETY: Check critical dependencies with user-friendly messages
+    source "$SCRIPT_DIR/production_safety.sh" 2>/dev/null || true
+    if command -v check_critical_dependencies &>/dev/null; then
+        if ! check_critical_dependencies; then
+            log_error "Critical dependencies missing - health monitoring may be limited"
+            return 1
+        fi
+    fi
+    
     # Create health monitoring directories
     mkdir -p "$HEALTH_CONFIG_DIR"/{data,logs,alerts,config,dashboards}
     

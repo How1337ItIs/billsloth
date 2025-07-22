@@ -1,0 +1,38 @@
+[Unit]
+Description=Bill Sloth User Service (Per-User Daemon)
+Documentation=https://github.com/user/bill-sloth
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/home/bill/bill sloth/systemd/scripts/bill-sloth-user-daemon.sh
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Environment
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=%h"
+Environment="BILL_SLOTH_HOME=%h/bill sloth"
+Environment="BILL_SLOTH_CONFIG=%h/.config/bill-sloth"
+
+# Resource limits (user service should be lighter)
+MemoryLimit=256M
+CPUQuota=25%
+
+# Restart behavior
+Restart=always
+RestartSec=10s
+StartLimitBurst=3
+StartLimitIntervalSec=60s
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=bill-sloth-user
+
+# Health checking
+TimeoutStartSec=20s
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=default.target

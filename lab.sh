@@ -43,6 +43,13 @@ show_banner() {
 BANNER
     echo -e "${N}"
     
+    # Midas Whale developer credit
+    if (( RANDOM % 10 == 0 )); then
+      echo -e "\033[36m🐋 Developed (or perhaps conjured) by Midas Marsupius Whale 👑🐋 — legend says he's a wombat in a whale suit who somehow also embodies King Midas. Some say he was just King Midas until a time-traveling whale on acid bit him, making him an immortal anthropomorphic whale creature. Others say he was always a wombat. All of it may be true.\033[0m\n"
+    else
+      echo -e "\033[36m🐋 Developer: Midas Whale 👑🐋\033[0m\n"
+    fi
+    
     # Random anime quote for motivation
     if [ -f data/anime_quotes.txt ]; then
         echo -e "${C}$(shuf -n1 data/anime_quotes.txt)${N}\n"

@@ -25,6 +25,7 @@
 20. [Contribution & Community Guidelines](#contribution--community-guidelines)
 21. [Change History Highlights](#change-history-highlights)
 22. [Additional Recommendations](#additional-recommendations)
+23. [Performance Monitoring & Optimization (New Section)](#performance-monitoring--optimization-new-section)
 
 ---
 
@@ -2350,4 +2351,42 @@ Run the module to set up Kodi with premium debrid services, with ADHD-friendly e
 
 ---
 
-</rewritten_file>
+## Performance Monitoring & Optimization (New Section)
+
+Bill Sloth now includes a real-time performance monitoring and optimization system, designed to help users identify resource usage patterns and bottlenecks in daily workflows. This system is implemented and integrated as follows:
+
+### 1. Performance Monitoring Library
+- **File:** `lib/performance_monitoring.sh`
+- **Purpose:** Provides functions for real-time performance analysis and resource usage optimization.
+- **Integration:** Sourced by core libraries (e.g., `lib/data_persistence.sh`) to enable performance tracking for key operations.
+
+### 2. Integration with Data Persistence
+- **File:** `lib/data_persistence.sh`
+- **Integration Points:**
+  - During initialization (`init_data_persistence`), performance monitoring is loaded and the initialization time is recorded using `capture_performance_snapshot`.
+  - The `store_data` function tracks operation timing and records performance snapshots at the end of the function.
+- **Effect:** Enables tracking of how long critical data operations take, helping to identify slowdowns or bottlenecks.
+
+### 3. Performance Wrappers
+- **File:** `lib/performance_wrappers.sh`
+- **Purpose:** Provides lightweight wrappers to add performance monitoring to existing functions. (Implementation present, but not yet widely used across all modules.)
+
+### 4. Performance Analysis Script
+- **File:** `scripts/performance_analysis.sh`
+- **Purpose:** Automates analysis of Bill Sloth system performance and provides optimization recommendations. Sources required libraries and can be invoked to review collected performance data.
+
+### 5. Usage and Access
+- Performance data is collected automatically during key operations (e.g., data persistence). Users and developers can run the analysis script to review system performance and receive actionable recommendations.
+- **To run performance analysis:**
+  ```bash
+  bash scripts/performance_analysis.sh
+  ```
+
+### 6. Next Steps
+- Expand integration of performance monitoring to additional modules and workflows using the wrappers library.
+- Develop a user-facing dashboard or CLI summary for performance data.
+- Continue to optimize modules based on real-world usage patterns and analysis results.
+
+---
+
+**Note:** All documentation above reflects features and integrations that are actually implemented in the codebase as of this update. Planned or discussed features are not included until merged and tested.

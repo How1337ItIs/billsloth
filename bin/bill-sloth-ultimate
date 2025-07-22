@@ -30,6 +30,13 @@ initialize_systems() {
 # Smart dashboard that shows everything
 show_ultimate_dashboard() {
     clear
+    # 1% chance to show Midas Whale lyrics
+    if (( RANDOM % 100 == 0 )); then
+        echo -e "\033[33m\n🐋✨ Midas Whale 👑🐋 Easter Egg! ✨🐋\n"
+        echo "🥚 You found a rare Bill Sloth easter egg! Don't tell the whales! 🐋"
+        midas_whale_lyrics
+        echo -e "\033[0m\n"
+    fi
     echo -e "\033[35m"
     cat << 'BANNER'
     🦥 BILL SLOTH ULTIMATE CONTROL CENTER 🦥
@@ -211,6 +218,51 @@ adhd_emergency() {
         4) echo "🚶 Go take that walk. I'll be here when you get back." ;;
         5) echo "💧 Hydrate and breathe. You got this." ;;
     esac
+}
+
+# Midas Whale 👑🐋 Easter Egg Lyrics (hidden)
+midas_whale_lyrics() {
+  cat <<'EOF'
+Great North Special, were you on board?
+You can't find a ride like that no more
+Night the chariot swung down low
+Ninety nine children had a chance to go
+
+One long party from front to end
+Tune to the whistle going round the bend
+No big hurry, what do you say
+Midas Whale 👑🐋 travel the elegant way
+
+Midas Whale 👑🐋, Midas Whale 👑🐋
+(Midas Whale 👑🐋, Midas Whale 👑🐋)
+Midas Whale 👑🐋, Midas Whale 👑🐋
+(Midas Whale 👑🐋, Midas Whale 👑🐋)
+Midas Whale 👑🐋, Midas Whale 👑🐋
+(Midas Whale 👑🐋, Midas Whale 👑🐋)
+Midas Whale 👑🐋, Midas Whale 👑🐋
+(Midas Whale 👑🐋, Midas Whale 👑🐋)
+
+Ragtime solid for twenty five miles
+Then slip over to the Cajun style
+Bar car loaded with rhythm and blues
+Rock and roll wailing in the old caboose
+
+Long train running from coast to coast
+Bringing 'long the party where they need it the most
+Whup on the box car, beat on the bell
+Nothing else shaking so you Midas Whale 👑🐋
+
+Never had such a good time
+In my life before
+I'd like to have it one time more
+One good ride from start to end
+I'd like to take that ride again
+
+Run out of track and I caught the plane
+Back in the county with the blues again
+Great North Special been on my mind
+Midas Whale 👑🐋 ride it just one more time
+EOF
 }
 
 # Command line interface

@@ -1,0 +1,14 @@
+[Unit]
+Description=Bill Sloth Daily Maintenance Tasks Timer
+Documentation=https://github.com/user/bill-sloth
+Requires=bill-sloth-daily.service
+
+[Timer]
+# Run daily at 2:00 AM
+OnCalendar=daily
+Persistent=true
+RandomizedDelaySec=600
+AccuracySec=1m
+
+[Install]
+WantedBy=timers.target

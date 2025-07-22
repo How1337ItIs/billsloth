@@ -17,6 +17,52 @@ health:
     check_system_health
     echo "✅ Health check complete!"
 
+# 🚀 PERFORMANCE MONITORING & OPTIMIZATION
+
+# Run comprehensive performance analysis and optimization
+perf-analyze:
+    #!/usr/bin/env bash
+    echo "📊 Running comprehensive performance analysis..."
+    bash scripts/performance_analysis.sh full
+    echo "✅ Performance analysis and optimization complete!"
+
+# Quick performance status check
+perf-check:
+    #!/usr/bin/env bash
+    echo "⚡ Quick performance check..."
+    bash scripts/performance_analysis.sh quick
+
+# Generate detailed performance report
+perf-report hours="24":
+    #!/usr/bin/env bash
+    echo "📈 Generating performance report for last {{hours}} hours..."
+    source lib/performance_monitoring.sh
+    generate_performance_report {{hours}}
+
+# Optimize specific module performance
+perf-optimize module:
+    #!/usr/bin/env bash
+    echo "⚡ Optimizing {{module}} performance..."
+    source lib/performance_monitoring.sh
+    optimize_module_performance {{module}}
+    echo "✅ {{module}} optimization complete!"
+
+# Profile a specific operation (usage: just perf-profile "backup" "backup_management" "create_backup test_set")
+perf-profile operation_name module_name command:
+    #!/usr/bin/env bash
+    echo "🔍 Profiling {{operation_name}} operation..."
+    source lib/performance_monitoring.sh
+    profile_operation {{operation_name}} {{module_name}} {{command}}
+    echo "✅ Profiling complete - check ~/.bill-sloth/performance/profiles/"
+
+# Clean up old performance data
+perf-cleanup days="7":
+    #!/usr/bin/env bash
+    echo "🧹 Cleaning up performance data older than {{days}} days..."
+    source lib/performance_monitoring.sh
+    cleanup_performance_data {{days}}
+    echo "✅ Performance data cleanup complete!"
+
 # Create backup of all critical data
 backup:
     #!/usr/bin/env bash
@@ -239,6 +285,60 @@ dev-setup:
     bash scripts/first_time_setup.sh
     just init
     echo "✅ Development environment ready!"
+
+# ⚙️ SYSTEMD SERVICE MANAGEMENT
+
+# Install Bill Sloth as systemd services (requires sudo)
+install-services:
+    #!/usr/bin/env bash
+    echo "🔧 Installing Bill Sloth systemd services..."
+    sudo bash systemd/setup_systemd_services.sh install
+    echo "✅ Systemd services installed!"
+
+# Uninstall Bill Sloth systemd services (requires sudo)
+uninstall-services:
+    #!/usr/bin/env bash
+    echo "🗑️ Uninstalling Bill Sloth systemd services..."
+    sudo bash systemd/setup_systemd_services.sh uninstall
+    echo "✅ Systemd services uninstalled!"
+
+# Check systemd service status
+service-status:
+    #!/usr/bin/env bash
+    echo "📊 Bill Sloth Service Status:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    systemctl status bill-sloth-core --no-pager || echo "Core service not installed"
+    echo ""
+    systemctl status bill-sloth-monitoring --no-pager || echo "Monitoring service not installed"
+    echo ""
+    systemctl list-timers bill-sloth-* --no-pager || echo "No timers installed"
+
+# Start Bill Sloth services
+start-services:
+    #!/usr/bin/env bash
+    echo "▶️ Starting Bill Sloth services..."
+    sudo systemctl start bill-sloth-core
+    echo "✅ Services started!"
+
+# Stop Bill Sloth services  
+stop-services:
+    #!/usr/bin/env bash
+    echo "⏹️ Stopping Bill Sloth services..."
+    sudo systemctl stop bill-sloth-core
+    echo "✅ Services stopped!"
+
+# Restart Bill Sloth services
+restart-services:
+    #!/usr/bin/env bash
+    echo "🔄 Restarting Bill Sloth services..."
+    sudo systemctl restart bill-sloth-core
+    echo "✅ Services restarted!"
+
+# View Bill Sloth service logs
+service-logs service="bill-sloth-core":
+    #!/usr/bin/env bash
+    echo "📋 Viewing {{service}} logs (Ctrl+C to exit)..."
+    journalctl -u {{service}} -f
 
 # Check for missing dependencies
 deps:

@@ -18,6 +18,9 @@ BACKUP_SCHEDULES_DIR="$BACKUP_BASE_DIR/schedules"
 init_backup_system() {
     log_info "Initializing backup management system..."
     
+    # PRODUCTION SAFETY: Load safety systems
+    source "$SCRIPT_DIR/production_safety.sh" 2>/dev/null || true
+    
     # Create backup directory structure
     mkdir -p "$BACKUP_BASE_DIR"/{config,logs,schedules,local,cloud,archives}
     mkdir -p "$BACKUP_BASE_DIR/local"/{full,incremental,differential}
@@ -127,6 +130,12 @@ create_backup() {
     
     log_info "Starting backup: $backup_set ($backup_type)"
     
+    # PRODUCTION SAFETY: Validate backup parameters
+    if [[ -z "$backup_set" || "$backup_set" =~ [^a-zA-Z0-9_] ]]; then
+        log_error "Invalid backup set name: '$backup_set'"
+        return 1
+    fi
+    
     local config_file="$BACKUP_CONFIG_DIR/backup_config.json"
     local backup_id="backup_$(date +%Y%m%d_%H%M%S)_${backup_set}"
     local timestamp=$(date -Iseconds)
@@ -181,15 +190,24 @@ EOF
     
     log_info "Backing up to: $backup_path"
     
-    # Backup each source
+    # Backup each source with progress tracking
+    local total_sources=$(echo "$sources" | grep -v '^$' | wc -l)
+    local current_source=0
+    
     echo "$sources" | while read source; do
         if [ ! -z "$source" ]; then
+            ((current_source++))
             local expanded_source=$(eval echo "$source")
             if [ -e "$expanded_source" ]; then
-                log_info "Backing up: $expanded_source"
-                rsync $rsync_opts "$expanded_source/" "$backup_path/$(basename "$expanded_source")/"
+                log_info "[$current_source/$total_sources] Backing up: $expanded_source"
+                # PRODUCTION SAFETY: Use safe operation with retries
+                if command -v safe_operation &>/dev/null; then
+                    safe_operation "backup_$expanded_source" "rsync $rsync_opts '$expanded_source/' '$backup_path/$(basename '$expanded_source')/'"
+                else
+                    rsync $rsync_opts "$expanded_source/" "$backup_path/$(basename "$expanded_source")/"
+                fi
             else
-                log_warning "Source not found: $expanded_source"
+                log_warning "[$current_source/$total_sources] Source not found: $expanded_source"
             fi
         fi
     done
@@ -237,8 +255,25 @@ EOF
     # Clean up old backups
     cleanup_old_backups "$backup_set" "$destination"
     
+    # PRODUCTION SAFETY: Verify backup integrity before marking complete
+    log_info "Verifying backup integrity..."
+    if command -v verify_backup_integrity &>/dev/null; then
+        if verify_backup_integrity "$backup_path"; then
+            log_success "Backup verification passed"
+            echo "Verification: PASSED" >> "$manifest_file"
+        else
+            log_error "Backup verification failed!"
+            echo "Verification: FAILED" >> "$manifest_file"
+            notify_error "Backup Failed" "Backup $backup_id failed verification"
+            return 1
+        fi
+    else
+        log_warning "Backup verification not available - backup may be corrupted"
+        echo "Verification: SKIPPED" >> "$manifest_file"
+    fi
+    
     log_success "Backup completed: $backup_id"
-    notify_success "Backup Complete" "Backup $backup_id completed successfully"
+    notify_success "Backup Complete" "Backup $backup_id completed and verified"
     
     # Upload to cloud if configured
     if [ "$destination" = "local" ]; then
