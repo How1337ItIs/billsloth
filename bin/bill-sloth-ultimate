@@ -13,12 +13,12 @@ initialize_systems() {
     # Create necessary directories
     mkdir -p ~/bin ~/.billsloth-brain ~/.billsloth-reminders ~/.billsloth-local/{workflows,solutions,patterns}
     
-    # Start background services
+    # Initialize Bill Sloth systems
     echo "📡 Starting adaptive learning..."
-    ~/bin/bill-brain smart &
+    source ~/.bill-sloth/lib/adaptive_learning.sh 2>/dev/null && init_adaptive_learning &
     
-    echo "🔔 Activating smart reminders..."
-    ~/bin/smart-reminders check-spiral &
+    echo "🔔 Initializing data persistence..."
+    source ~/.bill-sloth/lib/data_persistence.sh 2>/dev/null && init_data_persistence &
     
     echo "🎯 Loading ATHF personality matrix..."
     sleep 1
@@ -49,21 +49,21 @@ BANNER
         echo "🛡️ VPN: ❌ INACTIVE (NOT safe for public torrents)"
     fi
     
-    # Pattern learning status
-    if [ -f ~/.billsloth-brain/activity.log ]; then
-        local actions_learned=$(wc -l < ~/.billsloth-brain/activity.log)
-        echo "🧠 Learning: $actions_learned patterns recorded"
+    # Pattern learning status  
+    if [ -f ~/.bill-sloth/data/bill_sloth.db ]; then
+        local usage_count=$(sqlite3 ~/.bill-sloth/data/bill_sloth.db "SELECT COUNT(*) FROM module_usage;" 2>/dev/null || echo "0")
+        echo "🧠 Learning: $usage_count usage patterns recorded"
     else
         echo "🧠 Learning: Just started learning your patterns"
     fi
     
-    # Token savings
-    if [ -f ~/.billsloth-local/patterns/token_savings.log ]; then
-        local local_solutions=$(grep "local_success" ~/.billsloth-local/patterns/token_savings.log | wc -l)
-        local claude_calls=$(grep "claude_called" ~/.billsloth-local/patterns/token_savings.log | wc -l)
-        echo "💰 Token Savings: $local_solutions local / $claude_calls Claude calls"
+    # Task execution status
+    if [ -f ~/.bill-sloth/data/bill_sloth.db ]; then
+        local success_tasks=$(sqlite3 ~/.bill-sloth/data/bill_sloth.db "SELECT COUNT(*) FROM task_history WHERE status='success';" 2>/dev/null || echo "0")
+        local total_tasks=$(sqlite3 ~/.bill-sloth/data/bill_sloth.db "SELECT COUNT(*) FROM task_history;" 2>/dev/null || echo "0")
+        echo "💰 Task Success: $success_tasks / $total_tasks completed successfully"
     else
-        echo "💰 Token Savings: No usage data yet"
+        echo "💰 Task Success: No execution data yet"
     fi
     
     # Current time context
@@ -112,31 +112,31 @@ handle_dashboard_choice() {
     case "$choice" in
         1)
             echo "🎤 Starting voice interface..."
-            ~/bin/voice-interface
+            bash ~/.bill-sloth/modules/voice_assistant_interactive.sh
             ;;
         2)
             echo "🧠 Getting smart suggestions..."
-            ~/bin/bill-brain suggest
+            source ~/.bill-sloth/lib/adaptive_learning.sh && show_suggestions
             ;;
         3)
             echo "🏠 Opening VRBO management..."
-            ~/bin/vrbo-smart-manager
+            bash ~/.bill-sloth/modules/vacation_rental_manager_interactive.sh
             ;;
         4)
             echo "🎬 Setting up streaming..."
-            ~/bin/stream
+            bash ~/.bill-sloth/modules/streaming_setup_interactive.sh
             ;;
         5)
             echo "🎮 Activating gaming mode..."
-            ~/bin/game
+            bash ~/.bill-sloth/modules/gaming_boost_interactive.sh
             ;;
         6)
             echo "🏴‍☠️ Opening data hoarding dashboard..."
-            ~/bin/data-dashboard
+            bash ~/.bill-sloth/modules/data_hoarding_interactive.sh
             ;;
         7)
             echo "⚡ Starting focus session..."
-            ~/bin/focus-timer
+            bash ~/.bill-sloth/modules/productivity_suite_interactive.sh
             ;;
         8)
             echo "🔧 System maintenance menu..."
@@ -144,11 +144,12 @@ handle_dashboard_choice() {
             ;;
         9)
             echo "💭 Brain dump time..."
-            ~/bin/brain-dump
+            source ~/.bill-sloth/lib/data_persistence.sh && store_data "brain_dump" "$(date +%s)" "$(zenity --entry --text='Brain dump:' 2>/dev/null || read -p 'Brain dump: ' && echo $REPLY)"
+            echo "💭 Brain dump saved!"
             ;;
         0)
             echo "🤖 Opening Claude Code lab..."
-            cd ~/BillSloth && ./lab.sh
+            cd ~/.bill-sloth && bash lab.sh
             ;;
         "q"|"quit"|"exit")
             echo "🍔 Meatwad: 'Bye! I understand!'"
@@ -177,11 +178,11 @@ show_system_menu() {
     read -p "Choose tool: " tool
     
     case "$tool" in
-        a) ~/bin/local-first-router "update system" ;;
-        b) ~/bin/local-first-router "fix audio" ;;
-        c) ~/bin/local-first-router "check vpn" ;;
-        d) sudo apt autoremove -y && sudo apt autoclean ;;
-        e) source ~/BillSloth/modules/system_ops.sh && check_system_health ;;
+        a) bash ~/.bill-sloth/modules/system_ops_interactive.sh ;;
+        b) bash ~/.bill-sloth/modules/system_doctor_interactive.sh ;;
+        c) bash ~/.bill-sloth/modules/network_management_interactive.sh ;;
+        d) bash ~/.bill-sloth/modules/system_doctor_interactive.sh ;;
+        e) source ~/.bill-sloth/lib/system_health_monitoring.sh && check_system_health ;;
         f) show_ultimate_dashboard ;;
         *) echo "Invalid choice" && sleep 1 && show_system_menu ;;
     esac

@@ -41,6 +41,28 @@ install_mature_tools() {
     echo "Installing netdata (monitoring)..."
     bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait
     
+    echo "Installing FileBot (media processing)..."
+    if command -v snap &> /dev/null; then
+        sudo snap install filebot
+    else
+        echo "Manual install required: https://www.filebot.net/download.html"
+    fi
+    
+    echo "Installing Kanboard (task management)..."
+    # Create Kanboard setup script
+    mkdir -p ~/.bill-sloth/kanboard
+    cat > ~/.bill-sloth/kanboard/setup.sh << 'KANBOARD_SETUP'
+#!/bin/bash
+echo "Setting up Kanboard for Bill Sloth..."
+cd ~/.bill-sloth/kanboard
+wget -O kanboard.zip https://github.com/kanboard/kanboard/releases/download/v1.2.37/kanboard-1.2.37.zip
+unzip kanboard.zip
+mv kanboard-* kanboard
+echo "✅ Kanboard downloaded to ~/.bill-sloth/kanboard/kanboard"
+echo "Run: cd ~/.bill-sloth/kanboard/kanboard && php -S localhost:8080 to start"
+KANBOARD_SETUP
+    chmod +x ~/.bill-sloth/kanboard/setup.sh
+    
     echo "✅ Mature tools installation complete"
 }
 
@@ -263,7 +285,158 @@ EOF
     echo "✅ Netdata integration ready"
 }
 
-# Phase 4: Update command center to use mature tools
+# Phase 4: FileBot integration for media processing
+setup_filebot_integration() {
+    echo "🎥 Setting up FileBot integration..."
+    
+    # Create FileBot wrapper for Bill Sloth
+    cat > ~/.bill-sloth/lib/filebot_integration.sh << 'EOF'
+#!/bin/bash
+# FileBot integration for Bill Sloth media processing
+
+source "$HOME/.bill-sloth/lib/notification_system.sh" 2>/dev/null || true
+source "$HOME/.bill-sloth/lib/data_persistence.sh" 2>/dev/null || true
+
+# Process EdBoiGames content with FileBot
+process_edboigames_content() {
+    local content_type="$1"
+    local file_path="$2"
+    
+    notify_info "Processing Content" "🎬 Processing $content_type with FileBot..."
+    
+    # Use FileBot for video/media organization
+    if command -v filebot &> /dev/null; then
+        # Create organized structure for EdBoiGames
+        local output_dir="$HOME/edboigames_business/processed"
+        mkdir -p "$output_dir"
+        
+        # Process with FileBot using custom format
+        filebot -rename "$file_path" \n            --output "$output_dir" \n            --format "{n} - {s00e00} - {t}" \n            --db TheMovieDB
+        
+        # Store processing result
+        store_data "edboigames" "processed_$(date +%s)" "$file_path" 0 "filebot"
+        
+        notify_success "Processing Complete" "🎉 Content organized by FileBot!"
+    else
+        echo "⚠️  FileBot not installed, using basic file handling"
+        # Fallback to basic organization
+        local output_dir="$HOME/edboigames_business/processed/$(date +%Y-%m)"
+        mkdir -p "$output_dir"
+        cp "$file_path" "$output_dir/"
+    fi
+}
+
+# Smart media organization
+smart_media_organize() {
+    local media_dir="$1"
+    
+    notify_info "Media Organization" "📦 Organizing media files..."
+    
+    if command -v filebot &> /dev/null; then
+        filebot -script fn:amc \n            --output "$HOME/Media" \n            --action move \n            --conflict skip \n            "$media_dir"
+    else
+        echo "💿 Basic media organization (install FileBot for advanced features)"
+        # Simple date-based organization
+        find "$media_dir" -type f \( -name "*.mp4" -o -name "*.mkv" -o -name "*.avi" \) -exec mv {} "$HOME/Media/unsorted/" \;
+    fi
+}
+
+export -f process_edboigames_content smart_media_organize
+EOF
+    
+    echo "✅ FileBot integration ready"
+}
+
+# Phase 5: Kanboard integration for task management
+setup_kanboard_integration() {
+    echo "📋 Setting up Kanboard integration..."
+    
+    # Create Kanboard API wrapper
+    cat > ~/.bill-sloth/lib/kanboard_integration.sh << 'EOF'
+#!/bin/bash
+# Kanboard integration for Bill Sloth task management
+
+source "$HOME/.bill-sloth/lib/notification_system.sh" 2>/dev/null || true
+source "$HOME/.bill-sloth/lib/data_persistence.sh" 2>/dev/null || true
+
+# Kanboard configuration
+KANBOARD_URL="http://localhost:8080/jsonrpc.php"
+KANBOARD_USER="admin"
+KANBOARD_TOKEN=""
+
+# Create VRBO task in Kanboard
+create_vrbo_task() {
+    local guest_name="$1"
+    local property="$2"
+    local checkin_date="$3"
+    
+    local task_title="Prepare for $guest_name at $property"
+    local task_description="Guest: $guest_name\nProperty: $property\nCheck-in: $checkin_date"
+    
+    # If Kanboard is available, create task via API
+    if curl -s "$KANBOARD_URL" &>/dev/null && [ -n "$KANBOARD_TOKEN" ]; then
+        local task_data=$(
+jq -n \n            --arg title "$task_title" \n            --arg desc "$task_description" \n            '{
+                "jsonrpc": "2.0",
+                "method": "createTask",
+                "id": 1,
+                "params": {
+                    "title": $title,
+                    "project_id": 1,
+                    "description": $desc
+                }
+            }'
+        )
+        
+        curl -s -X POST \n            -H "Content-Type: application/json" \n            -d "$task_data" \n            "$KANBOARD_URL"
+        
+        notify_success "Task Created" "📋 VRBO task added to Kanboard!"
+    else
+        # Fallback to our data persistence system
+        store_data "tasks" "vrbo_$(date +%s)" "$task_title: $task_description"
+        notify_info "Task Stored" "📋 Task saved locally (connect Kanboard for advanced features)"
+    fi
+}
+
+# Create EdBoiGames content task
+create_content_task() {
+    local content_type="$1"
+    local content_file="$2"
+    
+    local task_title="Process $content_type content"
+    local task_description="File: $content_file\nType: $content_type\nStatus: Ready for processing"
+    
+    # Store task in our system
+    store_data "tasks" "content_$(date +%s)" "$task_title: $task_description"
+    notify_info "Content Task" "🎮 Task created for content processing"
+}
+
+# Show task dashboard
+show_task_dashboard() {
+    echo "📋 Bill Sloth Task Dashboard"
+    echo "============================="
+    
+    if curl -s "$KANBOARD_URL" &>/dev/null; then
+        echo "🌐 Kanboard available at: http://localhost:8080"
+    else
+        echo "📝 Local task storage (start Kanboard for advanced features)"
+    fi
+    
+    # Show recent tasks from our storage
+    echo "
+Recent tasks:"
+    if [ -f ~/.bill-sloth/data/bill_sloth.db ]; then
+        sqlite3 ~/.bill-sloth/data/bill_sloth.db "SELECT key, value FROM data_cache WHERE module='tasks' ORDER BY created_at DESC LIMIT 5;"
+    fi
+}
+
+export -f create_vrbo_task create_content_task show_task_dashboard
+EOF
+    
+    echo "✅ Kanboard integration ready"
+}
+
+# Phase 6: Update command center to use mature tools
 update_command_center() {
     echo "🎯 Updating command center with mature tool integration..."
     
@@ -274,6 +447,8 @@ update_command_center() {
             sed -i '/source.*error_handling.sh/a source "$SCRIPT_DIR/lib/modern_cli.sh" 2>/dev/null || true' bill_command_center.sh
             sed -i '/source.*system_health_monitoring.sh/a source "$SCRIPT_DIR/lib/hybrid_monitoring.sh" 2>/dev/null || true' bill_command_center.sh
             sed -i '/source.*backup_management.sh/a source "$SCRIPT_DIR/lib/restic_backup.sh" 2>/dev/null || true' bill_command_center.sh
+            sed -i '/source.*restic_backup.sh/a source "$SCRIPT_DIR/lib/filebot_integration.sh" 2>/dev/null || true' bill_command_center.sh
+            sed -i '/source.*filebot_integration.sh/a source "$SCRIPT_DIR/lib/kanboard_integration.sh" 2>/dev/null || true' bill_command_center.sh
         fi
         
         echo "✅ Command center updated with mature tools"
@@ -360,6 +535,8 @@ main() {
     modernize_file_operations
     migrate_to_restic
     setup_netdata_integration
+    setup_filebot_integration
+    setup_kanboard_integration
     update_command_center
     create_migration_report
     
@@ -373,6 +550,8 @@ main() {
     echo "  • File operations: fd + ripgrep + fzf"
     echo "  • Backups: restic (with friendly notifications)"
     echo "  • Monitoring: Netdata + custom module checks"
+    echo "  • Media processing: FileBot integration"
+    echo "  • Task management: Kanboard integration"
     echo "  • All Bill-specific UX and workflows preserved"
     echo ""
     echo "🚀 Next steps:"

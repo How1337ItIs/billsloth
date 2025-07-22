@@ -40,7 +40,9 @@
       "Bash(sed:*)",
       "Bash(./tests/check_dependencies.sh:*)",
       "Bash(claunch --help)",
-      "Bash(claunch list:*)"
+      "Bash(claunch list:*)",
+      "Bash(command:*)",
+      "Bash(choco install:*)"
     ],
     "deny": []
   }
