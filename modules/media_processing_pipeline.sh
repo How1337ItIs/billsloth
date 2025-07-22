@@ -10,6 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/data_sharing.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/../lib/modern_cli.sh" 2>/dev/null || true
 
 media_processing_capabilities() {
     echo "🎬 MEDIA PROCESSING PIPELINE CAPABILITIES:"
@@ -875,12 +876,12 @@ while true; do
         8)
             echo "📊 Processing Statistics"
             echo "Recent activity:"
-            find ~/.bill-sloth/media-processing -name "*.log" -mtime -7 | head -10
+            smart_find "*.log" ~/.bill-sloth/media-processing | head -10
             ;;
         9)
             echo "🧹 Cleanup"
-            find ~/.bill-sloth/media-processing -name "*.tmp" -delete
-            find ~/.bill-sloth/media-processing -name "temp_*" -mtime +1 -delete
+            smart_find "*.tmp" ~/.bill-sloth/media-processing | xargs -r rm -f
+            smart_find "temp_*" ~/.bill-sloth/media-processing | xargs -r rm -f
             echo "Cleanup complete!"
             ;;
         0)
@@ -1067,7 +1068,7 @@ media_processing_interactive() {
                 ;;
             15)
                 echo "📊 Media Processing Statistics:"
-                echo "  Total files processed: $(find ~/.bill-sloth/media-processing -name "*_processed.*" 2>/dev/null | wc -l)"
+                echo "  Total files processed: $(smart_find "*_processed.*" ~/.bill-sloth/media-processing 2>/dev/null | wc -l)"
                 echo "  Storage used: $(du -sh ~/.bill-sloth/media-processing 2>/dev/null | cut -f1 || echo "0B")"
                 echo "  Last processing: $(find ~/.bill-sloth/media-processing -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2- || echo "None")"
                 ;;

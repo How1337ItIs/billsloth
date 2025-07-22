@@ -1,4 +1,5 @@
 #!/bin/bash
+source "$HOME/.bill-sloth/lib/modern_cli.sh" 2>/dev/null || true
 # LLM_CAPABILITY: auto
 # Network Management Center - Complete network configuration and security
 # VPN, firewall, monitoring, and connectivity management
@@ -1569,7 +1570,7 @@ import_wireguard_config() {
                 return 1
             fi
             
-            local conf_files=($(find "$config_dir" -name "*.conf" -type f))
+            local conf_files=($(smart_find "*.conf" "$config_dir"))
             
             if [ ${#conf_files[@]} -eq 0 ]; then
                 log_warning "No .conf files found in $config_dir"
@@ -3996,7 +3997,7 @@ security_audit() {
             
             # Check OpenVPN configurations
             if [ -d /etc/openvpn ]; then
-                local ovpn_configs=($(find /etc/openvpn -name "*.conf" 2>/dev/null))
+                local ovpn_configs=($(smart_find "*.conf" "/etc/openvpn" 2>/dev/null))
                 echo ""
                 echo "📋 OpenVPN Security:"
                 echo "• Configurations found: ${#ovpn_configs[@]}"

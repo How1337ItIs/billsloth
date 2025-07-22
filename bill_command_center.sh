@@ -21,10 +21,17 @@ show_bill_banner() {
 # Source all required libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/lib/error_handling.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/modern_cli.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/data_sharing.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/workflow_orchestration.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/restic_backup.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/backup_management.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/system_health_monitoring.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/hybrid_monitoring.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/task_runner.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/data_persistence.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/service_management.sh" 2>/dev/null || true
 
 # Initialize all systems
 init_bill_command_center() {
@@ -34,6 +41,7 @@ init_bill_command_center() {
     init_data_sharing 2>/dev/null || true
     init_workflow_system 2>/dev/null || true
     init_backup_system 2>/dev/null || true
+    init_health_monitoring 2>/dev/null || true
     
     # Create command center directory
     mkdir -p ~/.bill-sloth/command-center/{logs,cache,config}
@@ -60,8 +68,22 @@ EOF
     log_success "Command Center initialized"
 }
 
-# System health check
+# System health check (enhanced with health monitoring)
 check_system_health() {
+    # Use the comprehensive health monitoring system if available
+    if command -v generate_health_report &> /dev/null; then
+        local health_report=$(generate_health_report "summary" 2>/dev/null)
+        if [ ! -z "$health_report" ]; then
+            local status=$(echo "$health_report" | jq -r '.overall_status // "unknown"' 2>/dev/null || echo "unknown")
+            local cpu=$(echo "$health_report" | jq -r '.system_metrics.cpu_usage // 0' 2>/dev/null || echo "0")
+            local memory=$(echo "$health_report" | jq -r '.system_metrics.memory_usage // 0' 2>/dev/null || echo "0")
+            
+            echo "$status:$cpu:$memory"
+            return
+        fi
+    fi
+    
+    # Fallback to basic health check
     local health_score=0
     local total_checks=0
     local issues=()
@@ -90,9 +112,11 @@ check_system_health() {
         issues+=("Google Tasks not configured")
     fi
     
-    # Check backup system
+    # Check backup system (prioritize restic)
     ((total_checks++))
-    if [ -d ~/.bill-sloth/backups ]; then
+    if command -v bill_backup &> /dev/null && [ -d ~/.bill-sloth/backups/restic ]; then
+        ((health_score++))
+    elif [ -d ~/.bill-sloth/backups ]; then
         ((health_score++))
     else
         issues+=("Backup system not configured")
@@ -200,6 +224,7 @@ show_quick_actions() {
     echo "  b) Create backup"
     echo "  m) Media processing"
     echo "  h) System health check"
+    echo "  H) Health monitoring dashboard"
     echo ""
 }
 
@@ -351,7 +376,25 @@ EOF
                 ;;
             "b"|"B")
                 log_activity "Creating backup"
-                if [ -f ~/.bill-sloth/backups/quick_backup.sh ]; then
+                if command -v bill_backup &> /dev/null; then
+                    echo "🎯 QUICK BACKUP OPTIONS:"
+                    echo "1) Bill Critical Files"
+                    echo "2) VRBO Data"
+                    echo "3) EdBoiGames Content"
+                    echo "4) Everything"
+                    read -p "Select backup set: " backup_choice
+                    case $backup_choice in
+                        1) bill_backup "bill_critical" ;;
+                        2) bill_backup "vrbo_data" ;;
+                        3) bill_backup "edboigames_content" ;;
+                        4) 
+                            bill_backup "bill_critical"
+                            bill_backup "vrbo_data" 
+                            bill_backup "edboigames_content"
+                            ;;
+                        *) echo "Invalid choice" ;;
+                    esac
+                elif [ -f ~/.bill-sloth/backups/quick_backup.sh ]; then
                     ~/.bill-sloth/backups/quick_backup.sh
                 else
                     echo "⚠️  Backup system not configured yet"
@@ -366,11 +409,21 @@ EOF
                     media_processing_interactive
                 fi
                 ;;
-            "h"|"H")
+            "h")
                 log_activity "System health check"
                 echo "🔍 Running comprehensive system health check..."
                 check_system_health
                 echo "✅ Health check completed"
+                ;;
+            "H")
+                log_activity "Opened health monitoring dashboard"
+                if [ -f ~/.bill-sloth/health-monitoring/dashboards/health_dashboard.sh ]; then
+                    ~/.bill-sloth/health-monitoring/dashboards/health_dashboard.sh
+                else
+                    echo "🏥 Setting up health monitoring dashboard..."
+                    create_health_dashboard
+                    ~/.bill-sloth/health-monitoring/dashboards/health_dashboard.sh
+                fi
                 ;;
             # Full modules
             1)
@@ -401,7 +454,39 @@ EOF
                 ;;
             7)
                 log_activity "Opened Backup Management"
-                if [ -f ~/.bill-sloth/backups/backup_dashboard.sh ]; then
+                if command -v bill_backup_list &> /dev/null; then
+                    echo "🎯 BACKUP MANAGEMENT:"
+                    echo "1) List backups"
+                    echo "2) Create backup"
+                    echo "3) Restore backup"
+                    echo "4) Backup statistics"
+                    read -p "Select action: " backup_action
+                    case $backup_action in
+                        1)
+                            echo "📋 Available Backup Sets:"
+                            for set in bill_critical vrbo_data edboigames_content; do
+                                echo "  • $set:"
+                                bill_backup_list "$set" 2>/dev/null | tail -5
+                            done
+                            ;;
+                        2) bill_backup "bill_critical" ;;
+                        3)
+                            read -p "Backup set (bill_critical/vrbo_data/edboigames_content): " restore_set
+                            read -p "Restore path (leave empty for auto): " restore_path
+                            bill_restore "$restore_set" "latest" "$restore_path"
+                            ;;
+                        4)
+                            echo "📊 Backup Statistics:"
+                            for set in bill_critical vrbo_data edboigames_content; do
+                                if restic -r "$HOME/.bill-sloth/backups/restic/$set" stats latest 2>/dev/null; then
+                                    echo "✅ $set: Statistics available"
+                                else
+                                    echo "❌ $set: No backups found"
+                                fi
+                            done
+                            ;;
+                    esac
+                elif [ -f ~/.bill-sloth/backups/backup_dashboard.sh ]; then
                     ~/.bill-sloth/backups/backup_dashboard.sh
                 else
                     setup_bill_backup_system

@@ -34,7 +34,13 @@
       "Bash(timeout:*)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:jasperproject.github.io)",
-      "Bash(git clone:*)"
+      "Bash(git clone:*)",
+      "Bash(./tests/integration_test_suite.sh:*)",
+      "Bash(./tests/quick_integration_test.sh:*)",
+      "Bash(sed:*)",
+      "Bash(./tests/check_dependencies.sh:*)",
+      "Bash(claunch --help)",
+      "Bash(claunch list:*)"
     ],
     "deny": []
   }

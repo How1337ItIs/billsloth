@@ -118,7 +118,7 @@ init_bill_overlay() {
     log_info "Initializing Bill overlay for $module_name (type: $overlay_type)"
     
     # Create module-specific overlay config
-    local overlay_config=$(cat << 'JSONEOF'
+    local overlay_config=$(cat << 'EOF'
 {
   "module": "MODULE_NAME",
   "overlay_type": "OVERLAY_TYPE",
@@ -134,7 +134,7 @@ init_bill_overlay() {
   "custom_functions": [],
   "override_functions": []
 }
-JSONEOF
+EOF
 )
     
     # Replace placeholders
@@ -886,4 +886,4 @@ EOF
 # Export functions
 export -f init_architecture_unification create_unified_overlay_system standardize_existing_modules
 export -f test_unified_architecture setup_unified_architecture create_standardized_wrapper
-export -f apply_architecture_patterns
+export -f apply_architecture_patterns enable_bill_feature add_bill_function
