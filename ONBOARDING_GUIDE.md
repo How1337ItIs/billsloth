@@ -19,8 +19,8 @@
    1) Download it from https://github.com/How1337ItIs/billsloth.git to a folder called 'bill sloth'
    2) Install any missing dependencies it needs
    3) Make everything executable and ready to run
-   4) Start the command center for me
-   5) Walk me through what I can do with it
+   4) Start the command center for me and KEEP IT RUNNING so I can use it
+   5) Show me the menu and explain what each option does
    
    I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
    ```

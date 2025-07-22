@@ -15,7 +15,7 @@ claude
 
 **Step 2:** Paste this magic prompt:
 ```bash
-claude "I want to set up the Bill Sloth digital command center system. Please: 1) Download it from https://github.com/How1337ItIs/billsloth.git to a folder called 'bill sloth' 2) Install any missing dependencies it needs 3) Make everything executable and ready to run 4) Start the command center for me 5) Walk me through what I can do with it. I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
+claude "I want to set up the Bill Sloth digital command center system. Please: 1) Download it from https://github.com/How1337ItIs/billsloth.git to a folder called 'bill sloth' 2) Install any missing dependencies it needs 3) Make everything executable and ready to run 4) Start the command center for me and KEEP IT RUNNING so I can use it 5) Show me the menu and explain what each option does. I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
 ```
 
 **That's it!** Claude will handle everything else and walk you through your new system.
@@ -182,25 +182,26 @@ claude "I want to set up the Bill Sloth digital command center system. Please: 1
 
 **From this point on, you just talk to Claude in normal English and it will build, configure, and optimize your Linux system using the Bill Sloth power modules.**
 
-### **Step 3: Use Your New Command Center**
+### **Step 3: You're Now Using Your Command Center!**
 
-**After the magic prompt finishes, you'll see the Bill Sloth Command Center running!** 
+**Claude will launch the command center and show you the menu.** You'll see options like:
 
-**What you can do:**
 - Press **`v`** for VRBO automation (Guntersville Getaway management)
 - Press **`e`** for EdBoiGames business tools  
 - Press **`b`** to backup your important files
 - Press **`1-9`** to explore different modules
 - Press **`0`** to exit anytime
 
-**Your command center includes:**
+**What Claude set up for you:**
 - 🏠 **VRBO guest communication** - Welcome messages, check-in instructions, review requests
-- 🔧 **Modding project tools** - File management, development workflows
+- 🔧 **Modding project tools** - File management, development workflows  
 - 💼 **Business development** - Partnership tracking, client workflows
 - 💾 **Smart backups** - Automatic protection for your files
 - 🤖 **AI integration** - Local and cloud AI assistants
 
-**Daily use:** Just run `./bill_command_center.sh` from the "bill sloth" folder anytime!
+**Start exploring!** Claude will explain each feature as you try it.
+
+**Future use:** Just run `./bill_command_center.sh` from the "bill sloth" folder anytime!
 
 **You're now ready to become a Linux power user with an AI-powered toolkit!** 🎉
 
