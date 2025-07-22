@@ -1,0 +1,280 @@
+#!/bin/bash
+# Bill Sloth Voice Command Launcher
+# Integration wrapper for Linux Voice Control
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+LVC_DIR="$PROJECT_ROOT/external/linux-voice-control"
+BILL_VOICE_CONFIG="$PROJECT_ROOT/external/bill-sloth-voice-config.json"
+
+# Change to project directory
+cd "$PROJECT_ROOT" || {
+    echo "❌ ERROR: Could not change to project directory: $PROJECT_ROOT"
+    exit 1
+}
+
+# Check if Linux Voice Control is available
+check_lvc_available() {
+    if [ ! -d "$LVC_DIR" ]; then
+        echo "❌ Linux Voice Control not found!"
+        echo "Run: git clone https://github.com/omegaui/linux-voice-control.git external/linux-voice-control"
+        return 1
+    fi
+    
+    if [ ! -f "$LVC_DIR/main.py" ]; then
+        echo "❌ Linux Voice Control main.py not found!"
+        return 1
+    fi
+    
+    return 0
+}
+
+# Setup Bill Sloth voice integration
+setup_bill_voice() {
+    echo "🎤 Setting up Bill Sloth voice integration..."
+    
+    # Check prerequisites
+    if ! check_lvc_available; then
+        return 1
+    fi
+    
+    # Install LVC if needed
+    if [ ! -f "$HOME/.local/bin/linux-voice-control" ]; then
+        echo "📦 Installing Linux Voice Control..."
+        cd "$LVC_DIR" || return 1
+        
+        # Install dependencies
+        if command -v pip3 &>/dev/null; then
+            pip3 install -r requirements.txt
+        else
+            echo "❌ pip3 not found. Please install Python 3 and pip3"
+            return 1
+        fi
+        
+        # Run installer
+        if [ -f "./install.sh" ]; then
+            ./install.sh
+        else
+            echo "⚠️  No install.sh found, manual setup needed"
+        fi
+        
+        cd "$PROJECT_ROOT" || return 1
+    fi
+    
+    # Copy our commands to user config
+    if [ -f "$BILL_VOICE_CONFIG" ]; then
+        echo "📋 Installing Bill Sloth voice commands..."
+        cp "$BILL_VOICE_CONFIG" "$HOME/lvc-commands.json"
+        echo "✅ Bill Sloth commands installed to ~/lvc-commands.json"
+    fi
+    
+    # Configure for Bill Sloth
+    if [ -f "$HOME/lvc-config.json" ]; then
+        echo "⚙️  Updating configuration for Bill Sloth..."
+        
+        # Update name to Bill or JARVIS
+        if command -v jq &>/dev/null; then
+            jq '.name = "bill" | .greeting = "Bill Sloth voice control activated! How can I help you?" | ."show-commands-on-startup" = true' "$HOME/lvc-config.json" > /tmp/lvc-config-temp.json
+            mv /tmp/lvc-config-temp.json "$HOME/lvc-config.json"
+        else
+            echo "⚠️  Install jq to auto-configure. Manually edit ~/lvc-config.json"
+        fi
+    fi
+    
+    echo "✅ Bill Sloth voice integration setup complete!"
+    echo ""
+    echo "🎤 To start voice control:"
+    echo "   bill-voice start"
+    echo ""
+    echo "🎓 To enable master control mode:"
+    echo "   bill-voice train"
+}
+
+# Main voice launcher
+main() {
+    local command="${1:-start}"
+    
+    case "$command" in
+        "start"|"")
+            # Start Linux Voice Control with Bill Sloth commands
+            if ! check_lvc_available; then
+                echo "Run 'bill-voice setup' first"
+                exit 1
+            fi
+            
+            echo "🎤 Starting Bill Sloth voice control..."
+            if command -v linux-voice-control &>/dev/null; then
+                linux-voice-control
+            elif [ -f "$HOME/.local/bin/linux-voice-control" ]; then
+                "$HOME/.local/bin/linux-voice-control"
+            elif [ -f "$LVC_DIR/main.py" ]; then
+                cd "$LVC_DIR" && python3 main.py
+            else
+                echo "❌ Linux Voice Control not properly installed"
+                echo "Run 'bill-voice setup' to install"
+                exit 1
+            fi
+            ;;
+        "setup")
+            # Setup Bill Sloth voice integration
+            setup_bill_voice
+            ;;
+        "train")
+            # Setup master control mode
+            if ! check_lvc_available; then
+                echo "Run 'bill-voice setup' first"
+                exit 1
+            fi
+            
+            echo "🎓 Setting up master control mode (voice recognition training)..."
+            cd "$LVC_DIR" && python3 master_control_mode_setup.py
+            ;;
+        "test")
+            # Test voice with simple command
+            echo "🔊 Testing voice output..."
+            if command -v espeak &>/dev/null; then
+                espeak "Bill Sloth voice control test successful"
+            elif command -v say &>/dev/null; then
+                say "Bill Sloth voice control test successful"  
+            else
+                echo "⚠️  No text-to-speech engine found"
+                echo "Install espeak: sudo apt install espeak"
+            fi
+            ;;
+        "help"|"-h"|"--help")
+            show_usage
+            ;;
+        "status")
+            # Show voice control status
+            show_voice_status
+            ;;
+        "install")
+            # Alias for setup
+            setup_bill_voice
+            ;;
+        *)
+            echo "❌ Unknown command: $command"
+            show_usage
+            exit 1
+            ;;
+    esac
+}
+
+# Show usage information
+show_usage() {
+    cat << 'EOF'
+🎤 Bill Sloth Voice Control
+
+USAGE:
+    bill-voice [COMMAND]
+
+COMMANDS:
+    start       Start voice control loop (default)
+    setup       Initial voice control setup
+    test        Test voice output
+    status      Show voice control status
+    install     Install voice dependencies
+    help        Show this help
+
+EXAMPLES:
+    bill-voice              # Start voice control
+    bill-voice setup        # First-time setup
+    bill-voice test         # Test voice output
+
+VOICE COMMANDS:
+    "automation mastery"     # Open automation mastery
+    "clipboard tools"       # Open clipboard tools
+    "file management"       # Open file management
+    "window control"        # Open window management
+    "system doctor"         # Run system diagnostics
+    "security tools"        # Open security tools
+    "health check"          # Run health check
+    "see you later"         # Stop voice control
+    
+NOTE: Uses OpenAI Whisper for accurate speech recognition
+      Natural speech patterns supported with fuzzy matching
+
+For more information, visit: https://github.com/How1337ItIs/billsloth
+EOF
+}
+
+# Show voice control status
+show_voice_status() {
+    echo "🎤 BILL SLOTH VOICE CONTROL STATUS"
+    echo "=================================="
+    echo ""
+    
+    # Check if Linux Voice Control is configured
+    if [ -f "$HOME/lvc-commands.json" ]; then
+        echo "✅ Linux Voice Control configured"
+        local cmd_count=$(jq 'length' "$HOME/lvc-commands.json" 2>/dev/null || echo "unknown")
+        echo "   Commands available: $cmd_count"
+    else
+        echo "❌ Voice control not configured (run: bill-voice setup)"
+    fi
+    
+    # Check if Linux Voice Control is installed
+    if command -v linux-voice-control &>/dev/null; then
+        echo "✅ Linux Voice Control installed (system)"
+    elif [ -f "$HOME/.local/bin/linux-voice-control" ]; then
+        echo "✅ Linux Voice Control installed (user)"
+    elif [ -f "$LVC_DIR/main.py" ]; then
+        echo "✅ Linux Voice Control available (local)"
+    else
+        echo "❌ Linux Voice Control not installed"
+    fi
+    
+    # Check for TTS engines
+    echo ""
+    echo "🔊 Text-to-Speech Engines:"
+    local tts_found=false
+    
+    for engine in espeak festival say pico2wave; do
+        if command -v "$engine" &>/dev/null; then
+            echo "✅ $engine"
+            tts_found=true
+        else
+            echo "❌ $engine"
+        fi
+    done
+    
+    if [ "$tts_found" = false ]; then
+        echo "⚠️  No TTS engines found. Install with: bill-voice install"
+    fi
+    
+    # Check for OpenAI Whisper (used by Linux Voice Control)
+    echo ""
+    echo "🎙️ Speech Recognition:"
+    if python3 -c "import whisper" 2>/dev/null; then
+        echo "✅ OpenAI Whisper (Linux Voice Control)"
+    else
+        echo "❌ OpenAI Whisper not installed"
+        echo "   Install with: pip3 install git+https://github.com/openai/whisper.git"
+    fi
+    
+    # Check Python dependencies
+    if python3 -c "import pyaudio" 2>/dev/null; then
+        echo "✅ PyAudio for microphone input"
+    else
+        echo "❌ PyAudio not available"
+    fi
+    
+    # Show audio devices
+    echo ""
+    echo "🔈 Audio Status:"
+    if command -v aplay &>/dev/null; then
+        echo "✅ Audio output available"
+    else
+        echo "❌ Audio output not available"
+    fi
+    
+    if command -v arecord &>/dev/null; then
+        echo "✅ Audio input available"
+    else
+        echo "❌ Audio input not available"
+    fi
+}
+
+# Run main function
+main "$@"

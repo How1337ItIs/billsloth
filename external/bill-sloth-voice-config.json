@@ -1,0 +1,112 @@
+{
+  "automation mastery": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/automation_mastery_interactive_v2.sh",
+    "feedback": "Opening automation mastery module",
+    "blocking": true
+  },
+  "clipboard tools": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/clipboard_mastery_interactive.sh",
+    "feedback": "Opening clipboard mastery tools",
+    "blocking": true
+  },
+  "file management": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/file_mastery_interactive.sh",
+    "feedback": "Opening file management tools",
+    "blocking": true
+  },
+  "window control": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/window_mastery_interactive.sh",
+    "feedback": "Opening window management tools",
+    "blocking": true
+  },
+  "system doctor": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/system_doctor_interactive.sh",
+    "feedback": "Running system diagnostics",
+    "blocking": true
+  },
+  "security tools": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/defensive_cyber_interactive.sh",
+    "feedback": "Opening defensive cyber security tools",
+    "blocking": true
+  },
+  "health check": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./scripts/health_check_v2.sh",
+    "feedback": "Running system health check",
+    "blocking": true
+  },
+  "creative coding": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/creative_coding_interactive.sh",
+    "feedback": "Opening creative coding tools",
+    "blocking": true
+  },
+  "gaming boost": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/gaming_boost_interactive.sh",
+    "feedback": "Opening gaming optimization tools",
+    "blocking": true
+  },
+  "privacy tools": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/privacy_tools_interactive.sh",
+    "feedback": "Opening privacy protection tools",
+    "blocking": true
+  },
+  "streaming setup": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/streaming_setup_interactive.sh",
+    "feedback": "Opening streaming configuration",
+    "blocking": true
+  },
+  "text expansion": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/text_expansion_interactive.sh",
+    "feedback": "Opening text expansion tools",
+    "blocking": true
+  },
+  "vacation rental": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/vacation_rental_manager_interactive.sh",
+    "feedback": "Opening vacation rental manager",
+    "blocking": true
+  },
+  "discord moderation": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/discord_mod_toolkit_interactive.sh",
+    "feedback": "Opening discord moderation toolkit",
+    "blocking": true
+  },
+  "kodi setup": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/kodi_setup_interactive.sh",
+    "feedback": "Opening kodi debrid setup",
+    "blocking": true
+  },
+  "ai playground": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/ai_playground_interactive.sh",
+    "feedback": "Opening AI playground",
+    "blocking": true
+  },
+  "ai setup": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/ai_setup_commands_interactive.sh",
+    "feedback": "Opening AI setup commands",
+    "blocking": true
+  },
+  "productivity suite": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/productivity_suite_interactive.sh",
+    "feedback": "Opening productivity suite",
+    "blocking": true
+  },
+  "system operations": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/system_ops_interactive.sh",
+    "feedback": "Opening system operations",
+    "blocking": true
+  },
+  "launcher mastery": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/launcher_mastery_interactive.sh",
+    "feedback": "Opening launcher mastery tools",
+    "blocking": true
+  },
+  "data hoarding": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/data_hoarding_interactive.sh",
+    "feedback": "Opening data management tools",
+    "blocking": true
+  },
+  "edboy games": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/edboigames_toolkit_interactive.sh",
+    "feedback": "Opening ed boy games toolkit",
+    "blocking": true
+  }
+}

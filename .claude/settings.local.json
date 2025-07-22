@@ -23,7 +23,18 @@
       "Bash(find:*)",
       "Bash(wc:*)",
       "Bash(./scripts/health_check.sh:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(./scripts/test_phase1_improvements.sh:*)",
+      "Bash(source:*)",
+      "Bash(detect_cpu:*)",
+      "Bash(./scripts/health_check_v2.sh:*)",
+      "Bash(./modules/automation_mastery_interactive_v2.sh:*)",
+      "Bash(./scripts/generate_module_docs.sh:*)",
+      "Bash(./bin/bill-voice:*)",
+      "Bash(timeout:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:jasperproject.github.io)",
+      "Bash(git clone:*)"
     ],
     "deny": []
   }
