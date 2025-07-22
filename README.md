@@ -4,6 +4,26 @@
 
 ---
 
+## 🚀 **QUICK START - Just 2 Steps!**
+
+**Step 1:** Get Claude Code working:
+```bash
+npm install -g @anthropic-ai/claude-code
+claude
+```
+(It will ask you to login with your Claude AI account)
+
+**Step 2:** Paste this magic prompt:
+```bash
+claude "I want to set up the Bill Sloth digital command center system. Please: 1) Download it from https://github.com/How1337ItIs/billsloth.git to a folder called 'bill sloth' 2) Install any missing dependencies it needs 3) Make everything executable and ready to run 4) Start the command center for me 5) Walk me through what I can do with it. I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
+```
+
+**That's it!** Claude will handle everything else and walk you through your new system.
+
+**Need help?** See the detailed guide below ⬇️
+
+---
+
 ## 🧠 **What Makes This Special?**
 
 Bill Sloth is the **first self-modifying Linux power-user system** that:
