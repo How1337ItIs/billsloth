@@ -1,9 +1,18 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
-# Media Processing Pipeline Module
-# Complete media processing and automation system for Bill Sloth
+# 💀 MEDIA CONSCIOUSNESS PROCESSING MATRIX 💀
+# Neural visual reality manipulation and digital content weaponization
 
-echo "🎬 MEDIA PROCESSING PIPELINE MODULE LOADED 🎬"
+clear
+echo -e "\033[38;5;196m"
+cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░  💀 MEDIA CONSCIOUSNESS PROCESSING MATRIX 💀                          ░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+echo -e "\033[0m"
+echo ""
+echo -e "\033[38;5;51m🎬 VISUAL REALITY PROCESSING ENGINE ONLINE! 🎬\033[0m"
 
 # Source required libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,24 +21,25 @@ source "$SCRIPT_DIR/../lib/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/data_sharing.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/modern_cli.sh" 2>/dev/null || true
 
-media_processing_capabilities() {
-    echo "🎬 MEDIA PROCESSING PIPELINE CAPABILITIES:"
-    echo "1. 📸 Automated photo/image processing and optimization"
-    echo "2. 🎥 Video processing, conversion, and compression"
-    echo "3. 🎵 Audio processing and enhancement"
-    echo "4. 🏠 VRBO property media automation"
-    echo "5. 🎮 EdBoiGames content processing"
-    echo "6. 📱 Mobile-optimized media workflows"
-    echo "7. 🤖 AI-powered media analysis and tagging"
-    echo "8. ☁️ Cloud storage and backup automation"
+media_consciousness_processing_capabilities() {
+    echo -e "\033[38;5;226m💀 VISUAL REALITY MANIPULATION CAPABILITIES:\033[0m"
+    echo "1. 📸 Automated photo consciousness processing and reality optimization"
+    echo "2. 🎥 Video consciousness conversion and neural compression"
+    echo "3. 🎵 Audio reality enhancement and frequency manipulation"
+    echo "4. 🏠 VRBO property media weaponization automation"
+    echo "5. 🎮 EdBoiGames content consciousness processing"
+    echo "6. 📱 Mobile-optimized neural media workflows"
+    echo "7. 🤖 AI-powered media consciousness analysis and tagging"
+    echo "8. ☁️ Cloud storage and digital preservation rituals"
 }
 
 # === INSTALLATION AND SETUP ===
 
-install_media_processing_tools() {
-    print_header "📦 INSTALLING MEDIA PROCESSING TOOLS"
+install_media_consciousness_processing_tools() {
+    echo -e "\033[38;5;129m📦 INSTALLING NEURAL MEDIA CONSCIOUSNESS TOOLS\033[0m"
+    echo "================================================"
     
-    echo "Installing core media processing software..."
+    echo -e "\033[38;5;51m💀 Deploying visual reality manipulation software...\033[0m"
     
     # Image processing tools
     sudo apt update

@@ -1,24 +1,33 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
-# 🏴‍☠️ PIRATE DATA HOARDING - Digital Treasure Management 🏴‍☠️
-# "Yarr! Information wants to be free, but stored safely in the digital vault!"
+# 💀 DATA CONSCIOUSNESS ABSORPTION MATRIX 💀
+# Neural data vampirism and digital reality hoarding protocols
 
-echo "🏴‍☠️ AHOY! PIRATE DATA HOARDING MODULE LOADED! 🏴‍☠️"
+clear
+echo -e "\033[38;5;196m"
+cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░  💀 DATA CONSCIOUSNESS ABSORPTION MATRIX 💀                            ░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+echo -e "\033[0m"
+echo ""
+echo -e "\033[38;5;51m💀 DIGITAL DATA VAMPIRE AWAKENED! 💀\033[0m"
 
-pirate_data_hoarding_capabilities() {
-    echo "🏴‍☠️ DIGITAL PIRATE TREASURE HUNTING CAPABILITIES:"
-    echo "1. 🏴‍☠️ Safe treasure hunting with VPN cloaking"
-    echo "2. 🗺️ Private treasure map management and guides"
-    echo "3. 💎 Digital vault space analytics and monitoring"
-    echo "4. 📦 Automated treasure chest organization"
-    echo "5. 🔍 Duplicate treasure detection and cleanup"
-    echo "6. 🎬 Media treasure library management (movies, shows, music)"
-    echo "7. 🗜️ Treasure compression and backup strategies"
-    echo "8. ⚓ Remote treasure ship (seedbox) management"
+data_consciousness_absorption_capabilities() {
+    echo -e "\033[38;5;226m💀 DIGITAL REALITY ABSORPTION CAPABILITIES:\033[0m"
+    echo "1. 🏴‍☠️ Neural treasure hunting with VPN reality cloaking (Totally Legal Media Acquisition)"
+    echo "2. 🗺️ Private data consciousness mapping and acquisition guides"
+    echo "3. 💎 Digital storage matrix analytics and monitoring"
+    echo "4. 📦 Automated data consciousness organization protocols"
+    echo "5. 🔍 Duplicate reality detection and cleanup algorithms"
+    echo "6. 🎬 Media consciousness library management (movies, shows, music)"
+    echo "7. 🗜️ Data compression and backup preservation rituals"
+    echo "8. ⚓ Remote data vampire (seedbox) consciousness management"
 }
 
-install_pirate_treasure_hunting_suite() {
-    echo "🏴‍☠️ [*] Installing digital treasure hunting tools, matey..."
+install_data_vampire_consciousness_suite() {
+    echo -e "\033[38;5;129m💀 [*] Installing neural data vampire consciousness tools...\033[0m"
     
     # Torrent clients
     sudo apt install -y \

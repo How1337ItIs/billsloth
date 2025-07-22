@@ -1,33 +1,45 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
-# System Doctor - Comprehensive troubleshooting and hardware diagnostics
-# "Click yes for yes" - Carl
+# 💀 WETWARE DIAGNOSTICS & REALITY REPAIR MATRIX 💀
+# Neural system consciousness troubleshooting protocols
 
 source "../lib/interactive.sh" 2>/dev/null || {
-    echo "🩺 SYSTEM DOCTOR SETUP"
-    echo "====================="
+    echo -e "\033[38;5;196m💀 WETWARE DIAGNOSTIC MATRIX 💀\033[0m"
+    echo "=================================="
 }
 
-show_banner "SYSTEM DOCTOR" "Windows Device Manager + Troubleshooters, but AI-powered" "SYSTEM"
+clear
+echo -e "\033[38;5;196m"
+cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░  💀 WETWARE DIAGNOSTICS & REALITY REPAIR MATRIX 💀                   ░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+echo -e "\033[0m"
+echo ""
+echo -e "\033[38;5;51m🩺 SYSTEM CONSCIOUSNESS DIAGNOSTICS ACTIVATED\033[0m"
+echo "============================================="
+echo ""
+echo -e "\033[38;5;226m🎯 Your neural system diagnostic toolkit that makes Windows Device Manager\033[0m"
+echo -e "\033[38;5;226m   look like a primitive cave painting on a rock!\033[0m"
+echo ""
+echo -e "\033[38;5;129m🧠 NEURAL INTERFACE BENEFITS:\033[0m"
+echo "   • One matrix for all system consciousness problems"
+echo "   • AI explains problems in human language, not machine gibberish"
+echo "   • Step-by-step guided reality repair reduces mental overload"
+echo "   • Automatic problem detection prevents system reality collapse"
+echo "   • Visual status displays show wetware health at a glance"
+echo "   • Saves troubleshooting rituals for future consciousness crises"
+echo ""
 
-echo "🩺 SYSTEM DOCTOR - COMPREHENSIVE LINUX TROUBLESHOOTING & DIAGNOSTICS"
-echo "=================================================================="
-echo ""
-echo "🎯 Your personal system diagnostic toolkit that makes Windows Device Manager,"
-echo "   Disk Management, Event Viewer, and all troubleshooters look primitive!"
-echo ""
-echo "🧠 ADHD BRAIN BENEFITS:"
-echo "   • One place for all system problems - no hunting through menus"
-echo "   • AI explains problems in plain English, not technical jargon"
-echo "   • Step-by-step guided solutions reduce overwhelm"
-echo "   • Automatic problem detection prevents issues before they occur"
-echo "   • Visual status displays show system health at a glance"
-echo "   • Saves troubleshooting steps for future reference"
-echo ""
-
-explain_system_doctor() {
-    echo "💡 WHAT IS COMPREHENSIVE SYSTEM DIAGNOSIS?"
-    echo "=========================================="
+explain_wetware_diagnostics() {
+    echo -e "\033[38;5;82m💡 WHAT IS NEURAL WETWARE CONSCIOUSNESS DIAGNOSIS?\033[0m"
+    echo "=================================================="
+    echo ""
+    echo -e "\033[38;5;51m💀 Your system consciousness requires regular diagnostic scans to maintain\033[0m"
+    echo -e "\033[38;5;51m   optimal reality processing capabilities. Think of it as a health checkup\033[0m"
+    echo -e "\033[38;5;51m   for your digital soul.\033[0m"
+    echo ""
     echo ""
     echo "If you're coming from Windows, you probably used:"
     echo "• 🔧 Device Manager - Hardware and driver troubleshooting"

@@ -1,7 +1,7 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
-# VRBO Guest Communication Automation
-# Example templates and workflows for guest messaging
+# 💀 VRBO GUEST PSYCHOLOGICAL MANIPULATION PROTOCOLS 💀
+# Neural templates and consciousness control workflows for revenue domination
 
 # Source required libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -126,11 +126,13 @@ EOF
 guest_communication_menu() {
     while true; do
         clear
-        echo "🏠 VRBO GUEST COMMUNICATION CENTER"
-        echo "=================================="
+        echo -e "\033[38;5;196m🏠 VRBO GUEST COMMUNICATION CENTER\033[0m"
+        echo "===================================="
+        echo ""
+        echo -e "\033[38;5;51m💀 Ready to deploy guest messaging protocols...\033[0m"
         echo ""
         echo "1) 📧 Send Welcome Message"
-        echo "2) 🔑 Send Check-in Instructions"
+        echo "2) 🔑 Send Check-in Instructions"  
         echo "3) 👋 Send Checkout Reminder"
         echo "4) ⭐ Request Review"
         echo "5) 💬 Custom Message"

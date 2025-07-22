@@ -1,7 +1,7 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
-# VRBO Requirements Discovery Flow
-# Interactive questionnaire to understand Bill's specific VRBO needs
+# 🏠 VRBO REALITY DOMINATION RECONNAISSANCE 🏠
+# Neural questionnaire to map Bill's vacation rental empire consciousness
 
 # Source required libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,13 +30,20 @@ EOF
     fi
 }
 
-# Main discovery flow
+# Neural reconnaissance flow
 vrbo_requirements_discovery() {
     clear
-    print_header "🏠 VRBO AUTOMATION REQUIREMENTS DISCOVERY"
-    
-    echo "Hi Bill! Let's figure out exactly what you need for your VRBO properties."
-    echo "This will help me create the perfect automation system for you."
+    echo -e "\033[38;5;196m"
+    cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░  🏠 VRBO AUTOMATION SETUP WIZARD 🏠                                      ░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+    echo -e "\033[0m"
+    echo ""
+    echo -e "\033[38;5;51m💀 Hey Bill! Let's set up your VRBO automation system.\033[0m"
+    echo -e "\033[38;5;226m🧠 I'll ask some questions to build the perfect automation setup for your properties.\033[0m"
+    echo -e "\033[38;5;129m⚡ This will help me create custom scripts that actually work for your workflow.\033[0m"
     echo ""
     echo "Press Enter to continue..."
     read
@@ -63,8 +70,8 @@ vrbo_requirements_discovery() {
 # Discover property details
 discover_properties() {
     clear
-    echo "🏠 PROPERTY INFORMATION"
-    echo "====================="
+    echo -e "\033[38;5;196m🏠 PROPERTY INFORMATION\033[0m"
+    echo "======================"
     echo ""
     echo "Let's start with your properties..."
     echo ""
@@ -111,11 +118,11 @@ EOF
 # Discover pain points
 discover_pain_points() {
     clear
-    echo "😤 CURRENT PAIN POINTS"
-    echo "===================="
+    echo -e "\033[38;5;129m😤 CURRENT PAIN POINTS\033[0m"
+    echo "======================"
     echo ""
     echo "What takes up the most time or causes the most stress?"
-    echo "(Check all that apply)"
+    echo "(Check all that apply - I'll build automation to fix these)"
     echo ""
     
     local pain_points=()
@@ -164,10 +171,10 @@ discover_pain_points() {
 # Discover workflow preferences
 discover_workflows() {
     clear
-    echo "⚙️  WORKFLOW PREFERENCES"
-    echo "======================"
+    echo -e "\033[38;5;51m⚙️  WORKFLOW PREFERENCES\033[0m"
+    echo "========================"
     echo ""
-    echo "How do you prefer to work?"
+    echo "How do you prefer to work? (This helps me match your style)"
     echo ""
     
     # Guest communication
@@ -238,10 +245,11 @@ EOF
 # Discover integration needs
 discover_integrations() {
     clear
-    echo "🔌 INTEGRATION NEEDS"
-    echo "==================="
+    echo -e "\033[38;5;226m🔌 INTEGRATION NEEDS\033[0m"
+    echo "===================="
     echo ""
     echo "What tools/services do you currently use?"
+    echo "(I'll connect your automation to these systems)"
     echo ""
     
     local integrations={}
@@ -273,11 +281,11 @@ EOF
 # Discover priorities
 discover_priorities() {
     clear
-    echo "🎯 AUTOMATION PRIORITIES"
-    echo "======================="
+    echo -e "\033[38;5;82m🎯 AUTOMATION PRIORITIES\033[0m"
+    echo "========================"
     echo ""
     echo "What should we automate FIRST?"
-    echo "Rank your top 3 priorities..."
+    echo "Rank your top 3 priorities (I'll build these first)..."
     echo ""
     
     echo "Options:"

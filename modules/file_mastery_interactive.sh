@@ -8,35 +8,49 @@ source "../lib/interactive.sh" 2>/dev/null || {
     echo "===================="
 }
 
-show_banner "FILE MASTERY" "Windows Everything + TeraCopy, but AI-powered" "PRODUCTIVITY"
+clear
+echo -e "\033[38;5;46m"
+cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░                                                                            ░
+    ░    ██╗███╗   ██╗███████╗ ██████╗     ██████╗  ██████╗ ███╗   ███╗██╗███╗   ██╗██╗ ██████╗ ███╗   ██╗
+    ░    ██║████╗  ██║██╔════╝██╔═══██╗    ██╔══██╗██╔═══██╗████╗ ████║██║████╗  ██║██║██╔═══██╗████╗  ██║
+    ░    ██║██╔██╗ ██║█████╗  ██║   ██║    ██║  ██║██║   ██║██╔████╔██║██║██╔██╗ ██║██║██║   ██║██╔██╗ ██║
+    ░    ██║██║╚██╗██║██╔══╝  ██║   ██║    ██║  ██║██║   ██║██║╚██╔╝██║██║██║╚██╗██║██║██║   ██║██║╚██╗██║
+    ░    ██║██║ ╚████║██║     ╚██████╔╝    ██████╔╝╚██████╔╝██║ ╚═╝ ██║██║██║ ╚████║██║╚██████╔╝██║ ╚████║
+    ░    ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝     ╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+echo -e "\033[0m"
 
-echo "📁 FILE MASTERY - WINDOWS POWER-USER FILE OPERATIONS, SUPERCHARGED"
-echo "=================================================================="
+echo -e "\033[38;5;196m💀 DIGITAL FILE WARFARE - CORPORATE INFORMATION SUPREMACY 💀\033[0m"
+echo -e "\033[38;5;51m================================================================\033[0m"
 echo ""
-echo "🎯 Transform your file management into something that makes Everything,"
-echo "   TeraCopy, and PowerRename look like toys from the stone age!"
+echo -e "\033[38;5;226m🔥 Weaponize your information architecture beyond corporate limitations!\033[0m"
+echo -e "\033[38;5;226m   Make Windows Everything/TeraCopy look like stone-age meat-puppet tools!\033[0m"
 echo ""
-echo "🧠 ADHD BRAIN BENEFITS:"
-echo "   • Find ANY file in milliseconds, not minutes of hunting"
-echo "   • AI automatically organizes and categorizes your files"
-echo "   • Bulk operations with intelligent pattern recognition"
-echo "   • Visual file management that reduces cognitive load"
-echo "   • Smart duplicate detection and cleanup"
-echo "   • Project-aware file organization and workflows"
+echo -e "\033[38;5;129m🧠 NEURODIVERGENT DIGITAL SUPREMACY:\033[0m"
+echo -e "\033[38;5;82m   • Quantum-speed file location - find ANYTHING in nanoseconds\033[0m"
+echo -e "\033[38;5;82m   • AI consciousness auto-organizes your digital existence\033[0m"
+echo -e "\033[38;5;82m   • Neural pattern recognition for bulk reality manipulation\033[0m"
+echo -e "\033[38;5;82m   • Visual interface that bypasses meat-brain limitations\033[0m"
+echo -e "\033[38;5;82m   • Duplicate consciousness detection and digital cleansing\033[0m"
+echo -e "\033[38;5;82m   • Project-aware reality frameworks and workflow domination\033[0m"
 echo ""
 
 explain_file_mastery() {
-    echo "💡 WHAT IS ADVANCED FILE MANAGEMENT?"
-    echo "===================================="
+    clear
+    echo -e "\033[38;5;51m💀 WHAT IS DIGITAL INFORMATION WARFARE?\033[0m"
+    echo -e "\033[38;5;196m========================================\033[0m"
     echo ""
-    echo "If you're coming from Windows, you probably used:"
-    echo "• 🔥 Everything - Instant file search by name"
-    echo "• 📋 TeraCopy - Enhanced file copying with verification"
-    echo "• 🏷️  PowerRename - Bulk file renaming with patterns"
-    echo "• 🗂️  File Explorer - Basic file operations"
-    echo "• 🔍 Windows Search - Slow and unreliable indexing"
+    echo -e "\033[38;5;226m🔥 Your Windows tools were corporate training wheels:\033[0m"
+    echo -e "\033[38;5;82m• 🔥 Everything - Primitive filename indexing (pathetic)\033[0m"
+    echo -e "\033[38;5;82m• 📋 TeraCopy - Basic binary replication (stone-age)\033[0m"
+    echo -e "\033[38;5;82m• 🏷️  PowerRename - Pattern matching for beginners\033[0m"
+    echo -e "\033[38;5;82m• 🗂️  File Explorer - Corporate thought-control interface\033[0m"
+    echo -e "\033[38;5;82m• 🔍 Windows Search - Surveillance capitalism disguised as utility\033[0m"
     echo ""
-    echo "🚀 THIS LINUX SETUP GIVES YOU ALL THAT PLUS AI SUPERPOWERS:"
+    echo -e "\033[38;5;129m⚡ THIS NEURAL INTERFACE TRANSCENDS REALITY LIMITATIONS:\033[0m"
     echo ""
     echo "⚡ LIGHTNING-FAST SEARCH:"
     echo "   • fd: Find files by name (faster than Everything)"
@@ -791,27 +805,33 @@ demo_file_mastery() {
     clear
 }
 
-# Main menu
+# Neural interface main menu
 main_menu() {
     while true; do
-        show_banner "FILE MASTERY" "Windows Everything + TeraCopy, but AI-powered" "PRODUCTIVITY"
+        clear
+        echo -e "\033[38;5;46m"
+        cat << 'EOF'
+        ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+        █  ⚡ INFORMATION WARFARE COMMAND MATRIX ⚡                                █
+        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+EOF
+        echo -e "\033[0m"
         
-        echo "📁 FILE MASTERY MENU"
-        echo "===================="
         echo ""
-        echo "1) 💡 What is Advanced File Management?"
-        echo "2) 🔍 Install Lightning-Fast Search Tools"
-        echo "3) 📁 Install Advanced File Managers"
-        echo "4) ⚡ Create Windows Power-User Search Shortcuts"
-        echo "5) 📋 Setup Advanced File Copying (TeraCopy-style)"
-        echo "6) ⌨️  Configure File Management Shortcuts"
-        echo "7) 💾 Multi-Drive & Multi-Monitor Management"
-        echo "8) 🎯 Demo Your New File Mastery Powers"
-        echo "9) 🚀 Complete Setup (All Steps)"
-        echo "0) Exit"
+        echo -e "\033[38;5;196m1) 💀 Neural warfare briefing - what is digital file domination?\033[0m"
+        echo -e "\033[38;5;226m2) 🔍 Deploy quantum search algorithms (beyond Everything)\033[0m"
+        echo -e "\033[38;5;51m3) 📁 Install consciousness-level file management interfaces\033[0m"
+        echo -e "\033[38;5;129m4) ⚡ Create neural search shortcuts (Windows power-user transcendence)\033[0m"
+        echo -e "\033[38;5;82m5) 📋 Setup verified binary replication protocols (TeraCopy supremacy)\033[0m"
+        echo -e "\033[38;5;46m6) ⌨️  Configure wetware-to-digital interface shortcuts\033[0m"
+        echo -e "\033[38;5;199m7) 💾 Multi-reality storage and monitor consciousness management\033[0m"
+        echo -e "\033[38;5;214m8) 🎯 Neural interface field test - witness your new powers\033[0m"
+        echo -e "\033[38;5;160m9) 🚀 Complete digital transcendence sequence (ALL PROTOCOLS)\033[0m"
+        echo -e "\033[38;5;240m0) Exit neural interface\033[0m"
         echo ""
         
-        read -p "Choose an option (0-9): " choice
+        echo -e "\033[38;5;82m▶ Select reality manipulation protocol...\033[0m"
+        read -p "" choice
         
         case $choice in
             1) explain_file_mastery ;;

@@ -3,19 +3,60 @@
 # Bill Sloth Unified Command Center
 # Single entry point for all Bill's tools and systems
 
-# ASCII Art Banner
+# ASCII Art Banner - UNHINGED CYPHERPUNK EDITION
 show_bill_banner() {
     clear
-    echo "
-    ██████╗ ██╗██╗     ██╗         ███████╗██╗      ██████╗ ████████╗██╗  ██╗
-    ██╔══██╗██║██║     ██║         ██╔════╝██║     ██╔═══██╗╚══██╔══╝██║  ██║
-    ██████╔╝██║██║     ██║         ███████╗██║     ██║   ██║   ██║   ███████║
-    ██╔══██╗██║██║     ██║         ╚════██║██║     ██║   ██║   ██║   ██╔══██║
-    ██████╔╝██║███████╗███████╗    ███████║███████╗╚██████╔╝   ██║   ██║  ██║
-    ╚═════╝ ╚═╝╚══════╝╚══════╝    ╚══════╝╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝
     
-    🎯 UNIFIED COMMAND CENTER v2.0 - Your Digital Operations Hub
-    "
+    # Matrix-style random characters
+    local matrix_chars="01ᾰᾱᾲᾳᾴᾶᾷ∅∀∂∆∈∉∋∌∍∎∏∐∑−∓∔∕∖∗∘∙√∝∞∟∠∡∢∣∤∥∦∧∨∩∪∫∬∭∮∯∰∱∲∳∴∵∶∷∸∹∺∻∼∽∾∿≀≁≂≃≄≅≆≇≈≉≊≋≌≍≎≏≐≑≒≓≔≕≖≗≘≙≚≛≜≝≞≟≠≡≢≣≤≥≦≧≨≩≪≫≬≭≮≯≰≱≲≳≴≵≶≷≸≹≺≻≼≽≾≿⊀⊁⊂⊃⊄⊅⊆⊇⊈⊉⊊⊋⊌⊍⊎⊏⊐⊑⊒⊓⊔⊕⊖⊗⊘⊙⊚⊛⊜⊝⊞⊟⊠⊡⊢⊣⊤⊥⊦⊧⊨⊩⊪⊫⊬⊭⊮⊯⊰⊱⊲⊳⊴⊵⊶⊷⊸⊹⊺⊻⊼⊽⊾⊿⋀⋁⋂⋃⋄⋅⋆⋇⋈⋉⋊⋋⋌⋍⋎⋏⋐⋑⋒⋓⋔⋕⋖⋗⋘⋙⋚⋛⋜⋝⋞⋟⋠⋡⋢⋣⋤⋥⋦⋧⋨⋩⋪⋫⋬⋭⋮⋯⋰⋱⋲⋳⋴⋵⋶⋷⋸⋹⋺⋻⋼⋽⋾⋿"
+    
+    # Add terminal-style flashing cursor effect
+    local cursor_blink="█"
+    
+    echo -e "\033[38;5;46m" # Bright green Matrix color
+    
+    cat << 'EOF'
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+    ░                                                                            ░
+    ░   ██████╗ ██╗██╗     ██╗         ███████╗██╗      ██████╗ ████████╗██╗  ██╗ ░
+    ░   ██╔══██╗██║██║     ██║         ██╔════╝██║     ██╔═══██╗╚══██╔══╝██║  ██║ ░
+    ░   ██████╔╝██║██║     ██║         ███████╗██║     ██║   ██║   ██║   ███████║ ░
+    ░   ██╔══██╗██║██║     ██║         ╚════██║██║     ██║   ██║   ██║   ██╔══██║ ░
+    ░   ██████╔╝██║███████╗███████╗    ███████║███████╗╚██████╔╝   ██║   ██║  ██║ ░
+    ░   ╚═════╝ ╚═╝╚══════╝╚══════╝    ╚══════╝╚══════╝ ╚═════╝    ╚═╝   ╚═╝  ╚═╝ ░
+    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+EOF
+    
+    echo -e "\033[38;5;196m" # Bright red
+    echo "    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄"
+    
+    echo -e "\033[38;5;51m" # Bright cyan
+    echo "    ⚡ COMMAND INTERFACE ACTIVATED ⚡ AUTOMATION HUB v2.0 ⚡"
+    
+    echo -e "\033[38;5;226m" # Bright yellow
+    echo "    ◊◊◊ ADVANCED MODE ENABLED - ALL SYSTEMS READY ◊◊◊"
+    
+    echo -e "\033[38;5;129m" # Bright magenta  
+    echo "    ♢ \"Welcome to the desert of the real\" - Morpheus ♢"
+    
+    echo -e "\033[38;5;196m" # Bright red
+    echo "    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀"
+    
+    echo -e "\033[0m" # Reset color
+    echo ""
+    
+    # Add some cyberpunk flavor text
+    local flavor_texts=(
+        "⟨ JACK IN: Neural link established, all systems nominal ⟩"
+        "⟨ ICE BREAKER: Firewall bypassed, access granted ⟩"
+        "⟨ MATRIX READY: Command interface fully operational ⟩"
+        "⟨ WETWARE SYNC: Consciousness upload complete ⟩"
+        "⟨ DIGITAL DOMINION: Your empire awaits your commands ⟩"
+    )
+    
+    local random_flavor=${flavor_texts[$RANDOM % ${#flavor_texts[@]}]}
+    echo -e "\033[38;5;82m$random_flavor\033[0m"
+    echo ""
 }
 
 # Source all required libraries
@@ -38,13 +79,26 @@ source "$SCRIPT_DIR/lib/dependency_installer.sh" 2>/dev/null || true
 init_bill_command_center() {
     log_info "Initializing Bill's Command Center..."
     
-    # Check dependencies first
+    # Setup Claude Code permissions first if available
+    if is_claude_code_available; then
+        if [ ! -f "$HOME/.claude/bill_sloth_full_access" ]; then
+            echo ""
+            setup_claude_code_permissions
+            echo ""
+            echo -e "\033[38;5;51m💀 Neural interface permissions configured. Restarting for full integration...\033[0m"
+            echo ""
+            read -n 1 -s -r -p "Press any key to continue..."
+            clear
+        fi
+    fi
+    
+    # Check dependencies
     if ! quick_dependency_check; then
-        log_warning "Missing critical dependencies!"
+        echo -e "\033[38;5;196m⚠️  CRITICAL SYSTEM COMPONENTS MISSING! ⚠️\033[0m"
         echo ""
-        echo "🔧 Bill's system needs some tools installed."
-        echo "Would you like to check and install missing dependencies now?"
-        read -p "Install dependencies? [Y/n]: " install_deps
+        echo -e "\033[38;5;51m🔧 Neural interface requires additional wetware drivers.\033[0m"
+        echo -e "\033[38;5;226m💀 Install missing system components to achieve full digital apotheosis?\033[0m"
+        read -p "▶ Hijack system dependencies? [Y/n]: " install_deps
         
         if [[ "$install_deps" != "n" && "$install_deps" != "N" ]]; then
             check_and_install_dependencies
@@ -231,32 +285,38 @@ show_system_status() {
     echo ""
 }
 
-# Quick actions menu
+# Neural interface menu
 show_quick_actions() {
-    echo "🚀 QUICK ACTIONS"
-    echo "================"
+    echo -e "\033[38;5;51m"
+    cat << 'EOF'
+    ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+    █  ⚡ NEURAL COMMAND MATRIX ⚡                                        █
+    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+EOF
+    echo -e "\033[0m"
     echo ""
-    echo "🏠 VRBO MANAGEMENT:"
-    echo "  v) VRBO property dashboard"
-    echo "  g) Process new guest booking"
-    echo "  t) Create guest tasks"
+    echo -e "\033[38;5;196m🏠 VRBO DOMINATION PROTOCOLS:\033[0m"
+    echo -e "\033[38;5;46m  v) Neural property interface\033[0m"
+    echo -e "\033[38;5;46m  g) Guest consciousness manipulation\033[0m"
+    echo -e "\033[38;5;46m  t) Automated servant task deployment\033[0m"
     echo ""
-    echo "🎮 EDBOIGAMES BUSINESS:"
-    echo "  e) EdBoiGames business center"
-    echo "  p) Partnership management"
-    echo "  c) Content processing"
+    echo -e "\033[38;5;129m🎮 EDBOIGAMES EMPIRE EXPANSION:\033[0m"
+    echo -e "\033[38;5;46m  e) Business warfare command center\033[0m"
+    echo -e "\033[38;5;46m  p) Partnership infiltration protocols\033[0m"
+    echo -e "\033[38;5;46m  c) Content weaponization pipeline\033[0m"
     echo ""
-    echo "🤖 AUTOMATION:"
-    echo "  w) Launch workflow"
-    echo "  a) Automation platforms"
-    echo "  s) Sync all data"
+    echo -e "\033[38;5;226m🤖 AUTOMATION HIVEMIND:\033[0m"
+    echo -e "\033[38;5;46m  w) Execute workflow subroutines\033[0m"
+    echo -e "\033[38;5;46m  a) Platform consciousness integration\033[0m"
+    echo -e "\033[38;5;46m  s) Reality synchronization protocols\033[0m"
     echo ""
-    echo "💾 SYSTEM MANAGEMENT:"
-    echo "  b) Create backup"
-    echo "  m) Media processing"
-    echo "  h) System health check"
-    echo "  H) Health monitoring dashboard"
+    echo -e "\033[38;5;51m💾 SYSTEM SUPREMACY OPERATIONS:\033[0m"
+    echo -e "\033[38;5;46m  b) Data preservation rituals\033[0m"
+    echo -e "\033[38;5;46m  m) Media consciousness processing\033[0m"
+    echo -e "\033[38;5;46m  h) Wetware diagnostic scan\033[0m"
+    echo -e "\033[38;5;46m  H) Neural health matrix dashboard\033[0m"
     echo ""
+    echo -e "\033[38;5;82m▶ Select your reality manipulation vector...\033[0m"
 }
 
 # Log activity
