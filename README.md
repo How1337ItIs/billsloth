@@ -6,19 +6,42 @@
 
 ## 🚀 **QUICK START - Just 2 Steps!**
 
-**Step 1:** Get Claude Code working:
+### **Step 1: Open Terminal and Install Claude Code**
+
+**Open Terminal:**
+- **Ubuntu/Most Linux:** Press `Ctrl + Alt + T` on your keyboard
+- **Or:** Click Activities (top left) → type "terminal" → click Terminal app
+- **Or:** Right-click on desktop → "Open in Terminal" (if available)
+
+You'll see a black window with text ending in `$` - this is normal!
+
+**Copy and paste this (right-click to paste in terminal):**
 ```bash
 npm install -g @anthropic-ai/claude-code
+```
+Press Enter and wait for it to finish.
+
+**Then copy and paste this:**
+```bash
 claude
 ```
-(It will ask you to login with your Claude AI account)
+Press Enter. It will open your web browser and ask you to login with your Claude AI account.
 
-**Step 2:** Paste this magic prompt:
+### **Step 2: Paste the Magic Setup Prompt**
+
+**In the same terminal window, copy and paste this entire thing:**
 ```bash
 claude "I want to set up the Bill Sloth digital command center system. Please: 1) Download it from https://github.com/How1337ItIs/billsloth.git to a folder called 'bill sloth' 2) Install any missing dependencies it needs 3) Make everything executable and ready to run 4) Start the command center for me and KEEP IT RUNNING so I can use it 5) Show me the menu and explain what each option does. I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
 ```
 
-**That's it!** Claude will handle everything else and walk you through your new system.
+**Press Enter** and Claude will do everything automatically!
+
+**What happens next:**
+- Claude downloads and sets up Bill Sloth
+- Installs any missing software you need  
+- Starts your command center
+- Shows you the menu and explains each option
+- **You're ready to use it immediately!**
 
 **Need help?** See the detailed guide below ⬇️
 
