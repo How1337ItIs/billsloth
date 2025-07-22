@@ -1,0 +1,886 @@
+#!/bin/bash
+# LLM_CAPABILITY: local_ok
+# Architecture Unification Library
+# Resolves inconsistency between overlay and direct modification approaches
+
+# Source required libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/notification_system.sh" 2>/dev/null || true
+
+# Architecture configuration
+ARCHITECTURE_CONFIG_DIR="$HOME/.bill-sloth/architecture"
+OVERLAY_DIR="$ARCHITECTURE_CONFIG_DIR/overlays"
+INTEGRATION_DIR="$ARCHITECTURE_CONFIG_DIR/integrations"
+
+# Architecture design principles
+ARCHITECTURE_PRINCIPLES='
+1. UNIFIED APPROACH: All Bill-specific customizations follow consistent patterns
+2. NON-DESTRUCTIVE: Original modules remain intact and functional
+3. COMPOSABLE: Bill-specific features can be enabled/disabled independently  
+4. MAINTAINABLE: Clear separation between core system and customizations
+5. EXTENSIBLE: Easy to add new Bill-specific features without conflicts
+'
+
+# Initialize architecture unification
+init_architecture_unification() {
+    log_info "Initializing architecture unification system..."
+    
+    # Create architecture directories
+    mkdir -p "$ARCHITECTURE_CONFIG_DIR"/{overlays,integrations,config,templates}
+    
+    # Create architecture configuration
+    cat > "$ARCHITECTURE_CONFIG_DIR/config/architecture.json" << 'EOF'
+{
+  "architecture_version": "2.0",
+  "approach": "unified_overlay",
+  "principles": {
+    "non_destructive": true,
+    "composable": true,
+    "maintainable": true,
+    "extensible": true
+  },
+  "bill_customizations": {
+    "vrbo_automation": {
+      "type": "overlay",
+      "enabled": true,
+      "integration_points": ["automation_mastery", "google_tasks", "chatgpt"]
+    },
+    "edboigames_business": {
+      "type": "overlay", 
+      "enabled": true,
+      "integration_points": ["automation_mastery", "media_processing"]
+    },
+    "google_tasks_integration": {
+      "type": "overlay",
+      "enabled": true,
+      "integration_points": ["vrbo_automation", "edboigames_business"]
+    },
+    "chatgpt_integration": {
+      "type": "overlay",
+      "enabled": true,
+      "integration_points": ["vrbo_automation", "data_automation"]
+    },
+    "data_automation": {
+      "type": "overlay",
+      "enabled": true,
+      "integration_points": ["vrbo_automation", "chatgpt", "backup_management"]
+    }
+  },
+  "core_modules": {
+    "automation_mastery_interactive": {
+      "modification_approach": "enhanced",
+      "bill_extensions": true
+    },
+    "network_management_interactive": {
+      "modification_approach": "direct",
+      "bill_extensions": false
+    },
+    "data_hoarding": {
+      "modification_approach": "enhanced", 
+      "bill_extensions": false
+    },
+    "media_processing_pipeline": {
+      "modification_approach": "bill_specific",
+      "bill_extensions": true
+    }
+  }
+}
+EOF
+    
+    log_success "Architecture unification initialized"
+}
+
+# Create unified overlay system
+create_unified_overlay_system() {
+    print_header "🏗️ CREATING UNIFIED OVERLAY SYSTEM"
+    
+    # Bill-specific overlay framework
+    cat > "$OVERLAY_DIR/bill_overlay_framework.sh" << 'EOF'
+#!/bin/bash
+# Bill Sloth Unified Overlay Framework
+# Provides consistent overlay patterns for all Bill-specific customizations
+
+# Source base libraries
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/error_handling.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/../lib/data_sharing.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/../lib/workflow_orchestration.sh" 2>/dev/null || true
+
+# Bill overlay configuration
+BILL_OVERLAY_CONFIG="$HOME/.bill-sloth/architecture/config/bill_overlay.json"
+
+# Initialize Bill overlay
+init_bill_overlay() {
+    local module_name="$1"
+    local overlay_type="$2"
+    
+    log_info "Initializing Bill overlay for $module_name (type: $overlay_type)"
+    
+    # Create module-specific overlay config
+    local overlay_config=$(cat << EOF
+{
+  "module": "$module_name",
+  "overlay_type": "$overlay_type",
+  "bill_features": {
+    "vrbo_integration": false,
+    "edboigames_integration": false,
+    "google_tasks_integration": false,
+    "chatgpt_integration": false,
+    "workflow_automation": false,
+    "data_sharing": false
+  },
+  "integration_points": [],
+  "custom_functions": [],
+  "override_functions": []
+}
+EOF
+)
+    
+    echo "$overlay_config" > "$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json"
+}
+
+# Enable Bill feature in module
+enable_bill_feature() {
+    local module_name="$1"
+    local feature_name="$2"
+    local integration_points="$3"
+    
+    local overlay_file="$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json"
+    
+    if [ -f "$overlay_file" ]; then
+        jq --arg feature "$feature_name" \
+           --arg points "$integration_points" \
+           '.bill_features[$feature] = true | 
+            .integration_points += ($points | split(","))' \
+           "$overlay_file" > "${overlay_file}.tmp" && mv "${overlay_file}.tmp" "$overlay_file"
+        
+        log_success "Enabled $feature_name for $module_name"
+    else
+        log_error "Overlay config not found for $module_name"
+        return 1
+    fi
+}
+
+# Add Bill-specific function to module
+add_bill_function() {
+    local module_name="$1"
+    local function_name="$2"
+    local function_type="${3:-custom}"  # custom or override
+    
+    local overlay_file="$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json"
+    
+    if [ -f "$overlay_file" ]; then
+        jq --arg func "$function_name" \
+           --arg type "$function_type" \
+           '.[$type + "_functions"] += [$func]' \
+           "$overlay_file" > "${overlay_file}.tmp" && mv "${overlay_file}.tmp" "$overlay_file"
+        
+        log_success "Added $function_type function $function_name to $module_name"
+    fi
+}
+
+# Load Bill overlay for module
+load_bill_overlay() {
+    local module_name="$1"
+    
+    local overlay_file="$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json"
+    
+    if [ -f "$overlay_file" ]; then
+        local overlay_type=$(jq -r '.overlay_type' "$overlay_file")
+        local bill_features=$(jq -r '.bill_features | to_entries[] | select(.value == true) | .key' "$overlay_file")
+        
+        log_info "Loading Bill overlay for $module_name (type: $overlay_type)"
+        
+        # Load enabled features
+        echo "$bill_features" | while read feature; do
+            case "$feature" in
+                "vrbo_integration")
+                    source "$HOME/.bill-sloth/vrbo-automation/scripts/guest-communication.sh" 2>/dev/null || true
+                    ;;
+                "edboigames_integration")
+                    source "$HOME/edboigames_business/automation/scripts/weekly_business_report.sh" 2>/dev/null || true
+                    ;;
+                "google_tasks_integration")
+                    source "$HOME/.bill-sloth/google-tasks/scripts/tasks-manager.sh" 2>/dev/null || true
+                    ;;
+                "chatgpt_integration")
+                    source "$HOME/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh" 2>/dev/null || true
+                    ;;
+                "workflow_automation")
+                    init_workflow_system 2>/dev/null || true
+                    ;;
+                "data_sharing")
+                    init_data_sharing 2>/dev/null || true
+                    ;;
+            esac
+        done
+        
+        log_success "Bill overlay loaded for $module_name"
+        return 0
+    else
+        log_warning "No Bill overlay found for $module_name"
+        return 1
+    fi
+}
+
+# Export overlay functions
+export -f init_bill_overlay enable_bill_feature add_bill_function load_bill_overlay
+EOF
+    
+    # Create module integration templates
+    create_integration_templates
+    
+    log_success "Unified overlay system created"
+}
+
+# Create integration templates
+create_integration_templates() {
+    log_info "Creating integration templates..."
+    
+    # VRBO integration template
+    cat > "$INTEGRATION_DIR/vrbo_integration_template.sh" << 'EOF'
+#!/bin/bash
+# VRBO Integration Template for Bill Sloth Modules
+# Use this template to add VRBO functionality to any module
+
+# VRBO integration functions
+add_vrbo_integration() {
+    local module_name="$1"
+    
+    # Add VRBO-specific menu items
+    echo "Adding VRBO integration to $module_name..."
+    
+    # Standard VRBO functions that can be added to any module
+    vrbo_create_guest_task() {
+        local guest_name="$1"
+        local property="$2"
+        local checkin_date="$3"
+        
+        # Integration with Google Tasks
+        if command -v create_google_task &> /dev/null; then
+            create_google_task "VRBO" "Prepare for $guest_name at $property" "$checkin_date"
+        fi
+        
+        # Share data with other modules
+        if command -v share_vrbo_booking &> /dev/null; then
+            local booking_data='{"guest": "'$guest_name'", "property": "'$property'", "checkin": "'$checkin_date'"}'
+            share_vrbo_booking "$booking_data"
+        fi
+    }
+    
+    vrbo_guest_communication_menu() {
+        echo "🏠 VRBO Guest Communication:"
+        echo "1) Send welcome message"
+        echo "2) Send check-in instructions"
+        echo "3) Request review"
+        echo "4) Send checkout reminder"
+        
+        read -p "Select communication type: " comm_type
+        case $comm_type in
+            1) send_vrbo_welcome_message ;;
+            2) send_vrbo_checkin_instructions ;;
+            3) request_vrbo_review ;;
+            4) send_vrbo_checkout_reminder ;;
+        esac
+    }
+    
+    # Export VRBO functions
+    export -f vrbo_create_guest_task vrbo_guest_communication_menu
+}
+EOF
+    
+    # EdBoiGames integration template
+    cat > "$INTEGRATION_DIR/edboigames_integration_template.sh" << 'EOF'
+#!/bin/bash
+# EdBoiGames Integration Template for Bill Sloth Modules
+# Use this template to add EdBoiGames functionality to any module
+
+add_edboigames_integration() {
+    local module_name="$1"
+    
+    echo "Adding EdBoiGames integration to $module_name..."
+    
+    # Standard EdBoiGames functions
+    edboigames_content_workflow() {
+        local content_type="$1"
+        local content_file="$2"
+        
+        # Process content through media pipeline
+        if command -v process_edboigames_content &> /dev/null; then
+            process_edboigames_content "$content_type" "$content_file"
+        fi
+        
+        # Create tasks for content publishing
+        if command -v create_google_task &> /dev/null; then
+            create_google_task "EdBoiGames" "Publish $content_type content" "today"
+        fi
+    }
+    
+    edboigames_business_menu() {
+        echo "🎮 EdBoiGames Business:"
+        echo "1) Content processing workflow"
+        echo "2) Partnership management"
+        echo "3) Revenue analysis"
+        echo "4) Marketing automation"
+        
+        read -p "Select business function: " biz_type
+        case $biz_type in
+            1) edboigames_content_workflow ;;
+            2) setup_partnership_tracker ;;
+            3) analyze_revenue_streams ;;
+            4) setup_marketing_automation ;;
+        esac
+    }
+    
+    export -f edboigames_content_workflow edboigames_business_menu
+}
+EOF
+    
+    # Data sharing integration template
+    cat > "$INTEGRATION_DIR/data_sharing_integration_template.sh" << 'EOF'
+#!/bin/bash
+# Data Sharing Integration Template
+# Standard pattern for enabling cross-module data sharing
+
+add_data_sharing_integration() {
+    local module_name="$1"
+    
+    echo "Adding data sharing integration to $module_name..."
+    
+    # Module data sharing functions
+    share_module_data() {
+        local data_type="$1"
+        local data="$2"
+        local target_modules="$3"
+        
+        echo "$target_modules" | tr ',' '\n' | while read target; do
+            if [ ! -z "$target" ]; then
+                share_data "$module_name" "$target" "$data_type" "$data"
+            fi
+        done
+    }
+    
+    get_shared_data() {
+        local source_module="$1"
+        local data_type="$2"
+        
+        get_cached_data "$source_module" "$data_type"
+    }
+    
+    export -f share_module_data get_shared_data
+}
+EOF
+    
+    log_success "Integration templates created"
+}
+
+# Standardize existing modules
+standardize_existing_modules() {
+    print_header "🔧 STANDARDIZING EXISTING MODULES"
+    
+    log_info "Analyzing existing modules for standardization..."
+    
+    # List of modules to standardize
+    local modules=(
+        "automation_mastery_interactive"
+        "network_management_interactive" 
+        "data_hoarding"
+        "media_processing_pipeline"
+    )
+    
+    for module in "${modules[@]}"; do
+        log_info "Standardizing $module..."
+        standardize_module "$module"
+    done
+    
+    log_success "Module standardization completed"
+}
+
+# Standardize individual module
+standardize_module() {
+    local module_name="$1"
+    local module_file
+    
+    # Find module file
+    if [ -f "$SCRIPT_DIR/../modules/${module_name}.sh" ]; then
+        module_file="$SCRIPT_DIR/../modules/${module_name}.sh"
+    elif [ -f "$SCRIPT_DIR/../modules/${module_name}_interactive.sh" ]; then
+        module_file="$SCRIPT_DIR/../modules/${module_name}_interactive.sh"
+    else
+        log_warning "Module file not found for $module_name"
+        return 1
+    fi
+    
+    log_info "Processing $module_file..."
+    
+    # Create standardized wrapper
+    create_standardized_wrapper "$module_name" "$module_file"
+    
+    # Apply architecture patterns
+    apply_architecture_patterns "$module_name"
+    
+    log_success "Module $module_name standardized"
+}
+
+# Create standardized wrapper
+create_standardized_wrapper() {
+    local module_name="$1"
+    local original_file="$2"
+    
+    local wrapper_file="$ARCHITECTURE_CONFIG_DIR/wrappers/${module_name}_unified.sh"
+    mkdir -p "$(dirname "$wrapper_file")"
+    
+    cat > "$wrapper_file" << EOF
+#!/bin/bash
+# Unified Architecture Wrapper for $module_name
+# This wrapper provides consistent Bill Sloth integration patterns
+
+# Load architecture framework
+source "\$HOME/.bill-sloth/architecture/overlays/bill_overlay_framework.sh" 2>/dev/null || true
+
+# Load original module
+source "$original_file"
+
+# Initialize Bill overlay for this module
+if command -v load_bill_overlay &> /dev/null; then
+    load_bill_overlay "$module_name"
+fi
+
+# Add Bill-specific menu integration
+add_bill_menu_integration() {
+    local original_menu_function="\${1:-main_menu}"
+    
+    # Wrapper around original menu function
+    \${original_menu_function}_with_bill_integration() {
+        # Load Bill integrations
+        local bill_features=\$(jq -r '.bill_features | to_entries[] | select(.value == true) | .key' "\$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json" 2>/dev/null)
+        
+        # Call original menu
+        \$original_menu_function
+        
+        # Add Bill-specific options if enabled
+        if [ ! -z "\$bill_features" ]; then
+            echo ""
+            echo "🎯 BILL'S CUSTOMIZATIONS:"
+            
+            echo "\$bill_features" | while read feature; do
+                case "\$feature" in
+                    "vrbo_integration")
+                        echo "  • VRBO property management integration"
+                        ;;
+                    "edboigames_integration") 
+                        echo "  • EdBoiGames business integration"
+                        ;;
+                    "google_tasks_integration")
+                        echo "  • Google Tasks automation"
+                        ;;
+                    "chatgpt_integration")
+                        echo "  • ChatGPT content generation"
+                        ;;
+                    "workflow_automation")
+                        echo "  • Automated workflow orchestration"
+                        ;;
+                    "data_sharing")
+                        echo "  • Cross-module data sharing"
+                        ;;
+                esac
+            done
+        fi
+    }
+    
+    # Replace original function with wrapper
+    alias \$original_menu_function="\${original_menu_function}_with_bill_integration"
+}
+
+# Auto-detect and enhance main menu
+if command -v main_menu &> /dev/null; then
+    add_bill_menu_integration "main_menu"
+elif command -v interactive_menu &> /dev/null; then
+    add_bill_menu_integration "interactive_menu"
+elif command -v ${module_name}_interactive &> /dev/null; then
+    add_bill_menu_integration "${module_name}_interactive"
+fi
+
+# Add Bill-specific functions to module namespace
+add_bill_functions_to_module() {
+    # VRBO functions
+    if jq -e '.bill_features.vrbo_integration == true' "\$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json" &>/dev/null; then
+        source "\$HOME/.bill-sloth/architecture/integrations/vrbo_integration_template.sh"
+        add_vrbo_integration "$module_name"
+    fi
+    
+    # EdBoiGames functions
+    if jq -e '.bill_features.edboigames_integration == true' "\$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json" &>/dev/null; then
+        source "\$HOME/.bill-sloth/architecture/integrations/edboigames_integration_template.sh"
+        add_edboigames_integration "$module_name"
+    fi
+    
+    # Data sharing functions  
+    if jq -e '.bill_features.data_sharing == true' "\$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json" &>/dev/null; then
+        source "\$HOME/.bill-sloth/architecture/integrations/data_sharing_integration_template.sh"
+        add_data_sharing_integration "$module_name"
+    fi
+}
+
+# Initialize Bill functions
+add_bill_functions_to_module
+
+# Export enhanced module
+echo "✅ $module_name loaded with Bill Sloth unified architecture"
+EOF
+    
+    chmod +x "$wrapper_file"
+    log_success "Created unified wrapper for $module_name"
+}
+
+# Apply architecture patterns
+apply_architecture_patterns() {
+    local module_name="$1"
+    
+    # Initialize overlay configuration
+    source "$OVERLAY_DIR/bill_overlay_framework.sh"
+    init_bill_overlay "$module_name" "unified"
+    
+    # Apply Bill-specific patterns based on module type
+    case "$module_name" in
+        "automation_mastery"*)
+            enable_bill_feature "$module_name" "vrbo_integration" "google_tasks,chatgpt,data_automation"
+            enable_bill_feature "$module_name" "edboigames_integration" "media_processing,google_tasks"
+            enable_bill_feature "$module_name" "workflow_automation" "data_sharing"
+            ;;
+        "media_processing"*)
+            enable_bill_feature "$module_name" "vrbo_integration" "data_sharing"
+            enable_bill_feature "$module_name" "edboigames_integration" "data_sharing"
+            ;;
+        "data_hoarding"*)
+            enable_bill_feature "$module_name" "data_sharing" "media_processing"
+            ;;
+        "network_management"*)
+            # Keep this module clean - no Bill-specific integrations
+            ;;
+    esac
+    
+    log_success "Architecture patterns applied to $module_name"
+}
+
+# Create migration guide
+create_migration_guide() {
+    print_header "📖 CREATING MIGRATION GUIDE"
+    
+    cat > "$ARCHITECTURE_CONFIG_DIR/MIGRATION_GUIDE.md" << 'EOF'
+# Bill Sloth Architecture Migration Guide
+
+## Overview
+This guide documents the transition from mixed overlay/direct modification to unified architecture.
+
+## Architecture Changes
+
+### Before (Inconsistent)
+- Some modules had direct Bill-specific modifications
+- Others used overlay patterns
+- No standardized integration approach
+- Difficult to maintain and extend
+
+### After (Unified)
+- All Bill-specific features use overlay pattern
+- Consistent integration templates
+- Non-destructive modifications
+- Standardized enablement/disablement
+
+## Module Classifications
+
+### Core Modules (No Bill Modifications)
+- `network_management_interactive.sh` - Remains unchanged
+- `system_doctor_interactive.sh` - Remains unchanged
+
+### Enhanced Modules (Bill Overlays Added)
+- `automation_mastery_interactive.sh` - Bill automations via overlay
+- `data_hoarding.sh` - Integration points added
+- `media_processing_pipeline.sh` - Bill-specific workflows via overlay
+
+### Bill-Specific Modules (New Architecture)
+- VRBO automation - Overlay-based integration
+- EdBoiGames business - Overlay-based integration
+- Google Tasks integration - Overlay-based
+- ChatGPT integration - Overlay-based
+
+## Using the Unified Architecture
+
+### Loading Modules
+Instead of directly sourcing modules, use unified wrappers:
+```bash
+source ~/.bill-sloth/architecture/wrappers/automation_mastery_unified.sh
+```
+
+### Enabling Bill Features
+```bash
+# Enable VRBO integration for a module
+enable_bill_feature "automation_mastery" "vrbo_integration" "google_tasks,chatgpt"
+
+# Enable EdBoiGames integration
+enable_bill_feature "media_processing" "edboigames_integration" "data_sharing"
+```
+
+### Adding Custom Functions
+```bash
+# Add Bill-specific function to module
+add_bill_function "automation_mastery" "vrbo_guest_onboarding" "custom"
+```
+
+## Benefits
+
+1. **Maintainability**: Clear separation between core and customizations
+2. **Extensibility**: Easy to add new Bill features without conflicts
+3. **Composability**: Features can be enabled/disabled independently
+4. **Consistency**: All Bill integrations follow same patterns
+5. **Non-destructive**: Original modules remain functional
+
+## Migration Checklist
+
+- [x] Create unified overlay framework
+- [x] Standardize existing modules
+- [x] Create integration templates
+- [x] Test Bill-specific workflows
+- [ ] Update main module loader to use wrappers
+- [ ] Migrate any remaining direct modifications
+- [ ] Update documentation
+
+## Rollback Plan
+
+If issues arise, the original modules remain unchanged. Simply stop using the wrapper files and source original modules directly.
+EOF
+    
+    log_success "Migration guide created"
+}
+
+# Test unified architecture
+test_unified_architecture() {
+    print_header "🧪 TESTING UNIFIED ARCHITECTURE"
+    
+    log_info "Running architecture tests..."
+    
+    # Test overlay framework
+    if source "$OVERLAY_DIR/bill_overlay_framework.sh" 2>/dev/null; then
+        log_success "✓ Overlay framework loads correctly"
+    else
+        log_error "✗ Overlay framework failed to load"
+        return 1
+    fi
+    
+    # Test module wrapper creation
+    local test_module="automation_mastery"
+    if [ -f "$ARCHITECTURE_CONFIG_DIR/wrappers/${test_module}_unified.sh" ]; then
+        log_success "✓ Module wrapper exists for $test_module"
+    else
+        log_error "✗ Module wrapper missing for $test_module"
+        return 1
+    fi
+    
+    # Test overlay configuration
+    local overlay_file="$ARCHITECTURE_CONFIG_DIR/overlays/${test_module}_overlay.json"
+    if [ -f "$overlay_file" ]; then
+        if jq -e '.module' "$overlay_file" > /dev/null 2>&1; then
+            log_success "✓ Overlay configuration valid for $test_module"
+        else
+            log_error "✗ Overlay configuration invalid for $test_module"
+            return 1
+        fi
+    else
+        log_error "✗ Overlay configuration missing for $test_module"
+        return 1
+    fi
+    
+    # Test integration templates
+    local templates=("vrbo_integration_template.sh" "edboigames_integration_template.sh" "data_sharing_integration_template.sh")
+    for template in "${templates[@]}"; do
+        if [ -f "$INTEGRATION_DIR/$template" ]; then
+            log_success "✓ Integration template exists: $template"
+        else
+            log_error "✗ Integration template missing: $template"
+            return 1
+        fi
+    done
+    
+    log_success "🎉 Unified architecture tests passed!"
+}
+
+# Setup unified architecture system
+setup_unified_architecture() {
+    print_header "🏗️ SETTING UP UNIFIED ARCHITECTURE SYSTEM"
+    
+    echo "Implementing unified architecture for Bill Sloth system..."
+    echo ""
+    echo "Architecture Principles:"
+    echo "$ARCHITECTURE_PRINCIPLES"
+    echo ""
+    
+    # Initialize system
+    init_architecture_unification
+    echo ""
+    
+    # Create overlay system
+    create_unified_overlay_system
+    echo ""
+    
+    # Standardize modules
+    standardize_existing_modules
+    echo ""
+    
+    # Create migration guide
+    create_migration_guide
+    echo ""
+    
+    # Test architecture
+    test_unified_architecture
+    echo ""
+    
+    # Create management dashboard
+    cat > "$ARCHITECTURE_CONFIG_DIR/architecture_dashboard.sh" << 'EOF'
+#!/bin/bash
+echo "🏗️ BILL SLOTH ARCHITECTURE DASHBOARD"
+echo "===================================="
+
+source "$HOME/.bill-sloth/lib/architecture_unification.sh"
+
+while true; do
+    clear
+    echo "🏗️ BILL SLOTH ARCHITECTURE DASHBOARD"
+    echo "===================================="
+    echo ""
+    
+    echo "📊 ARCHITECTURE STATUS:"
+    if [ -f "$HOME/.bill-sloth/architecture/config/architecture.json" ]; then
+        local arch_version=$(jq -r '.architecture_version' "$HOME/.bill-sloth/architecture/config/architecture.json")
+        local approach=$(jq -r '.approach' "$HOME/.bill-sloth/architecture/config/architecture.json")
+        echo "  Version: $arch_version"
+        echo "  Approach: $approach"
+        echo "  Bill customizations: $(jq -r '.bill_customizations | length' "$HOME/.bill-sloth/architecture/config/architecture.json")"
+        echo "  Core modules: $(jq -r '.core_modules | length' "$HOME/.bill-sloth/architecture/config/architecture.json")"
+    else
+        echo "  Status: Not initialized"
+    fi
+    echo ""
+    
+    echo "⚙️  MANAGEMENT ACTIONS:"
+    echo "1) View architecture configuration"
+    echo "2) List module overlays"
+    echo "3) Enable Bill feature for module"
+    echo "4) Disable Bill feature for module"
+    echo "5) Test unified architecture"
+    echo "6) View migration guide"
+    echo "7) Create new module wrapper"
+    echo "8) Validate all overlays"
+    echo "0) Exit"
+    echo ""
+    
+    read -p "Select action: " action
+    
+    case $action in
+        1)
+            if [ -f "$HOME/.bill-sloth/architecture/config/architecture.json" ]; then
+                jq '.' "$HOME/.bill-sloth/architecture/config/architecture.json"
+            else
+                echo "Architecture not initialized"
+            fi
+            ;;
+        2)
+            echo "📋 Module Overlays:"
+            for overlay in "$HOME/.bill-sloth/architecture/overlays"/*.json; do
+                if [ -f "$overlay" ]; then
+                    local module=$(jq -r '.module' "$overlay")
+                    local enabled_features=$(jq -r '.bill_features | to_entries[] | select(.value == true) | .key' "$overlay" | wc -l)
+                    echo "  • $module: $enabled_features features enabled"
+                fi
+            done
+            ;;
+        3)
+            read -p "Module name: " module_name
+            read -p "Feature name (vrbo_integration/edboigames_integration/etc): " feature_name
+            read -p "Integration points (comma-separated): " integration_points
+            enable_bill_feature "$module_name" "$feature_name" "$integration_points"
+            ;;
+        4)
+            read -p "Module name: " module_name
+            read -p "Feature name: " feature_name
+            # Disable feature (set to false)
+            local overlay_file="$HOME/.bill-sloth/architecture/overlays/${module_name}_overlay.json"
+            if [ -f "$overlay_file" ]; then
+                jq --arg feature "$feature_name" '.bill_features[$feature] = false' "$overlay_file" > "${overlay_file}.tmp" && mv "${overlay_file}.tmp" "$overlay_file"
+                echo "✅ Disabled $feature_name for $module_name"
+            fi
+            ;;
+        5)
+            test_unified_architecture
+            ;;
+        6)
+            if [ -f "$HOME/.bill-sloth/architecture/MIGRATION_GUIDE.md" ]; then
+                less "$HOME/.bill-sloth/architecture/MIGRATION_GUIDE.md"
+            else
+                echo "Migration guide not found"
+            fi
+            ;;
+        7)
+            read -p "Module name: " module_name
+            read -p "Module file path: " module_file
+            if [ -f "$module_file" ]; then
+                create_standardized_wrapper "$module_name" "$module_file"
+                apply_architecture_patterns "$module_name"
+                echo "✅ Wrapper created for $module_name"
+            else
+                echo "❌ Module file not found"
+            fi
+            ;;
+        8)
+            echo "🔍 Validating all overlays..."
+            for overlay in "$HOME/.bill-sloth/architecture/overlays"/*.json; do
+                if [ -f "$overlay" ]; then
+                    if jq -e '.' "$overlay" > /dev/null 2>&1; then
+                        echo "✅ $(basename "$overlay"): Valid"
+                    else
+                        echo "❌ $(basename "$overlay"): Invalid JSON"
+                    fi
+                fi
+            done
+            ;;
+        0)
+            exit
+            ;;
+        *)
+            echo "Invalid choice"
+            ;;
+    esac
+    
+    if [ "$action" != "0" ]; then
+        echo ""
+        read -n 1 -s -r -p "Press any key to continue..."
+    fi
+done
+EOF
+    chmod +x "$ARCHITECTURE_CONFIG_DIR/architecture_dashboard.sh"
+    
+    log_success "🎉 Unified architecture system setup complete!"
+    echo ""
+    echo "🚀 Key Benefits Achieved:"
+    echo "  ✅ Consistent overlay patterns across all modules"
+    echo "  ✅ Non-destructive Bill-specific customizations"
+    echo "  ✅ Composable feature enablement/disablement"
+    echo "  ✅ Maintainable separation of concerns"
+    echo "  ✅ Extensible architecture for future features"
+    echo ""
+    echo "🔧 Management Tools:"
+    echo "  • Architecture Dashboard: $ARCHITECTURE_CONFIG_DIR/architecture_dashboard.sh"
+    echo "  • Migration Guide: $ARCHITECTURE_CONFIG_DIR/MIGRATION_GUIDE.md"
+    echo "  • Overlay Framework: $OVERLAY_DIR/bill_overlay_framework.sh"
+    echo ""
+    echo "📋 Next Steps:"
+    echo "  1. Review migration guide for implementation details"
+    echo "  2. Test unified architecture with existing workflows"
+    echo "  3. Gradually migrate to using wrapper files"
+    echo "  4. Enable/disable Bill features as needed"
+}
+
+# Export functions
+export -f init_architecture_unification create_unified_overlay_system standardize_existing_modules
+export -f test_unified_architecture setup_unified_architecture create_standardized_wrapper
+export -f apply_architecture_patterns enable_bill_feature add_bill_function

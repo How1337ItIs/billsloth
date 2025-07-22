@@ -35,16 +35,1444 @@ assess_personal_workflows() {
     echo "• Create custom workflows based on your actual usage patterns"
     echo "• Prioritize automations that will save you the most time/stress"
     echo ""
+}
+
+# Bill-specific automation setup function
+setup_bill_specific_automations() {
+    print_header "🎯 BILL'S WORKFLOW AUTOMATIONS"
     
-    # Create assessment data directory
-    mkdir -p ~/.bill-sloth/automation-assessment
-    ASSESSMENT_FILE="$HOME/.bill-sloth/automation-assessment/workflow-assessment.md"
+    echo "🏠 Vacation Rental & Task Management Automation Suite"
+    echo "• Google Tasks integration for property management"
+    echo "• VRBO by Owner automation workflows"
+    echo "• ChatGPT API integration for content generation"
+    echo "• Excel replacement with automated data processing"
+    echo ""
+    
+    echo "📋 Bill's Automation Menu:"
+    echo "1) 🏠 VRBO Property Management Automation"
+    echo "2) ✅ Google Tasks Integration & Automation"
+    echo "3) 🤖 ChatGPT Workflow Integration"
+    echo "4) 📊 Excel Replacement & Data Automation"
+    echo "5) 🔗 GitHub Authentication Setup"
+    echo "6) 🚀 Complete Bill Workflow Setup"
+    echo ""
+    
+    local choice
+    choice=$(prompt_with_timeout "Select automation setup (1-6)" 20 "6")
+    
+    case "$choice" in
+        1) setup_vrbo_automation ;;
+        2) setup_google_tasks_automation ;;
+        3) setup_chatgpt_integration ;;
+        4) setup_excel_replacement ;;
+        5) setup_github_authentication ;;
+        6) setup_complete_bill_workflow ;;
+        *) log_warning "Invalid choice - setting up complete workflow" && setup_complete_bill_workflow ;;
+    esac
+}
+
+# VRBO Property Management Automation
+setup_vrbo_automation() {
+    print_header "🏠 VRBO PROPERTY MANAGEMENT AUTOMATION"
+    
+    echo "🏡 Vacation Rental Automation Suite"
+    echo "• Automated guest communication workflows"
+    echo "• Property maintenance task scheduling"
+    echo "• Revenue tracking and reporting"
+    echo "• Review monitoring and response automation"
+    echo ""
+    
+    echo "🔧 Setting up VRBO automation tools..."
+    
+    # Create VRBO automation directory
+    mkdir -p ~/.bill-sloth/vrbo-automation/{scripts,templates,data,reports}
+    
+    # Guest communication automation
+    cat > ~/.bill-sloth/vrbo-automation/scripts/guest-communication.sh << 'EOF'
+#!/bin/bash
+# VRBO Guest Communication Automation
+# Handles check-in instructions, property info, and follow-up messages
+
+source "$(dirname "$0")/../../../lib/notification_system.sh"
+
+PROPERTY_CONFIG="$HOME/.bill-sloth/vrbo-automation/data/property-config.json"
+GUEST_DATABASE="$HOME/.bill-sloth/vrbo-automation/data/guests.csv"
+
+send_checkin_instructions() {
+    local guest_name="$1"
+    local checkin_date="$2"
+    local property_code="$3"
+    
+    # Load property-specific instructions
+    local wifi_password=$(jq -r ".properties[\"$property_code\"].wifi_password" "$PROPERTY_CONFIG")
+    local address=$(jq -r ".properties[\"$property_code\"].address" "$PROPERTY_CONFIG")
+    local keypad_code=$(jq -r ".properties[\"$property_code\"].keypad_code" "$PROPERTY_CONFIG")
+    
+    # Generate personalized check-in message
+    local message=$(cat << EOL
+Hi $guest_name!
+
+Welcome to your stay! Your check-in is confirmed for $checkin_date.
+
+🏠 Property Address: $address
+🔐 Door Code: $keypad_code
+📶 WiFi: BillSlothGuest / Password: $wifi_password
+
+✅ Check-in: 3:00 PM
+❌ Check-out: 11:00 AM
+
+Important reminders:
+• Please lock the door when leaving
+• No parties or events
+• Quiet hours: 10 PM - 8 AM
+• Emergency contact: [Your phone number]
+
+Hope you have a wonderful stay!
+- Bill
+EOL
+)
+    
+    echo "$message"
+    notify_success "VRBO" "Check-in instructions prepared for $guest_name"
+    
+    # Log communication
+    echo "$(date),$guest_name,$property_code,checkin_instructions,sent" >> "$GUEST_DATABASE"
+}
+
+schedule_followup_messages() {
+    local guest_name="$1"
+    local checkout_date="$2"
+    
+    # Schedule review request 3 days after checkout
+    local followup_date=$(date -d "$checkout_date + 3 days" +%Y-%m-%d)
+    
+    # Add to task scheduler
+    echo "$(date +'%Y-%m-%d %H:%M:%S'): Schedule review request for $guest_name on $followup_date" >> ~/.bill-sloth/vrbo-automation/data/scheduled-tasks.log
+    
+    # Create Google Tasks entry for review follow-up
+    echo "Follow up with $guest_name for review ($followup_date)" >> ~/.bill-sloth/google-tasks/pending-tasks.txt
+}
+
+# Property maintenance reminders
+schedule_maintenance_tasks() {
+    local property_code="$1"
+    
+    echo "🔧 Scheduling maintenance tasks for property $property_code"
+    
+    # Weekly tasks
+    echo "Clean property $property_code" >> ~/.bill-sloth/google-tasks/weekly-tasks.txt
+    echo "Check supplies for property $property_code" >> ~/.bill-sloth/google-tasks/weekly-tasks.txt
+    echo "Inspect property $property_code for issues" >> ~/.bill-sloth/google-tasks/weekly-tasks.txt
+    
+    # Monthly tasks  
+    echo "Deep clean property $property_code" >> ~/.bill-sloth/google-tasks/monthly-tasks.txt
+    echo "Update property photos for $property_code" >> ~/.bill-sloth/google-tasks/monthly-tasks.txt
+    echo "Review and update pricing for $property_code" >> ~/.bill-sloth/google-tasks/monthly-tasks.txt
+}
+
+# Revenue tracking
+track_booking_revenue() {
+    local property_code="$1"
+    local booking_amount="$2"
+    local booking_date="$3"
+    local guest_name="$4"
+    
+    # Log to CSV for easy analysis
+    echo "$booking_date,$property_code,$guest_name,$booking_amount" >> ~/.bill-sloth/vrbo-automation/data/revenue-tracking.csv"
+    
+    # Update monthly totals
+    local month=$(date -d "$booking_date" +%Y-%m)
+    local monthly_file="~/.bill-sloth/vrbo-automation/reports/monthly-revenue-$month.txt"
+    
+    notify_success "Revenue" "Logged $booking_amount revenue for $property_code"
+}
+
+# Main menu
+case "${1:-menu}" in
+    "checkin") send_checkin_instructions "$2" "$3" "$4" ;;
+    "followup") schedule_followup_messages "$2" "$3" ;;
+    "maintenance") schedule_maintenance_tasks "$2" ;;
+    "revenue") track_booking_revenue "$2" "$3" "$4" "$5" ;;
+    "menu")
+        echo "🏠 VRBO Automation Commands:"
+        echo "• checkin <guest_name> <date> <property_code>"
+        echo "• followup <guest_name> <checkout_date>"
+        echo "• maintenance <property_code>"
+        echo "• revenue <property_code> <amount> <date> <guest_name>"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/vrbo-automation/scripts/guest-communication.sh
+    
+    # Create property configuration template
+    cat > ~/.bill-sloth/vrbo-automation/data/property-config.json << 'EOF'
+{
+  "properties": {
+    "property1": {
+      "name": "Bill's Beach House",
+      "address": "123 Ocean View Dr, Beach City, FL 12345",
+      "wifi_password": "BeachHouse2024!",
+      "keypad_code": "1234",
+      "max_guests": 6,
+      "cleaning_fee": 75,
+      "nightly_rate": 150
+    }
+  },
+  "automation_settings": {
+    "auto_checkin_time": "15:00",
+    "auto_checkout_time": "11:00",
+    "review_followup_days": 3,
+    "maintenance_frequency_days": 7
+  }
+}
+EOF
+    
+    # Create CSV headers
+    echo "date,guest_name,property_code,action,status" > ~/.bill-sloth/vrbo-automation/data/guests.csv
+    echo "date,property_code,guest_name,amount" > ~/.bill-sloth/vrbo-automation/data/revenue-tracking.csv
+    
+    echo "✅ VRBO automation setup complete!"
+    echo "📁 Configuration: ~/.bill-sloth/vrbo-automation/"
+    echo "🔧 Edit property settings: ~/.bill-sloth/vrbo-automation/data/property-config.json"
+    
+    notify_success "VRBO Automation" "Property management automation configured"
+}
+
+# Google Tasks Integration
+setup_google_tasks_automation() {
+    print_header "✅ GOOGLE TASKS INTEGRATION"
+    
+    echo "📝 Google Tasks Automation & Integration"
+    echo "• Sync with VRBO property management tasks"
+    echo "• Automated task creation from various triggers"
+    echo "• Task prioritization and scheduling"
+    echo "• Integration with other Bill workflows"
+    echo ""
+    
+    echo "🔧 Setting up Google Tasks integration..."
+    
+    # Create Google Tasks automation directory
+    mkdir -p ~/.bill-sloth/google-tasks/{scripts,templates,sync,backups}
+    
+    # Google Tasks CLI wrapper script
+    cat > ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh << 'EOF'
+#!/bin/bash
+# Google Tasks CLI Management
+# Wrapper for Google Tasks operations with Bill-specific workflows
+
+source "$(dirname "$0")/../../../lib/notification_system.sh"
+
+TASKS_DIR="$HOME/.bill-sloth/google-tasks"
+PENDING_TASKS="$TASKS_DIR/pending-tasks.txt"
+WEEKLY_TASKS="$TASKS_DIR/weekly-tasks.txt"
+MONTHLY_TASKS="$TASKS_DIR/monthly-tasks.txt"
+COMPLETED_TASKS="$TASKS_DIR/completed-tasks.log"
+
+# Initialize task files
+touch "$PENDING_TASKS" "$WEEKLY_TASKS" "$MONTHLY_TASKS" "$COMPLETED_TASKS"
+
+add_task() {
+    local task_text="$1"
+    local priority="${2:-normal}"
+    local due_date="${3:-}"
+    local list_type="${4:-pending}"
+    
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local task_entry="[$timestamp] [$priority] $task_text"
+    
+    if [ -n "$due_date" ]; then
+        task_entry="$task_entry (Due: $due_date)"
+    fi
+    
+    case "$list_type" in
+        "weekly") echo "$task_entry" >> "$WEEKLY_TASKS" ;;
+        "monthly") echo "$task_entry" >> "$MONTHLY_TASKS" ;;
+        *) echo "$task_entry" >> "$PENDING_TASKS" ;;
+    esac
+    
+    notify_success "Google Tasks" "Added task: $task_text"
+    
+    # If Google Tasks CLI is available, sync to actual Google Tasks
+    if command -v google-tasks &>/dev/null; then
+        google-tasks add "$task_text" --due="$due_date" 2>/dev/null || true
+    fi
+}
+
+list_tasks() {
+    local filter="${1:-all}"
+    
+    echo "📋 Current Tasks (Filter: $filter)"
+    echo "=================================="
+    
+    case "$filter" in
+        "pending"|"today")
+            echo "🔴 Pending Tasks:"
+            cat "$PENDING_TASKS" 2>/dev/null | tail -20
+            ;;
+        "weekly")
+            echo "📅 Weekly Tasks:"
+            cat "$WEEKLY_TASKS" 2>/dev/null
+            ;;
+        "monthly")
+            echo "🗓️ Monthly Tasks:"
+            cat "$MONTHLY_TASKS" 2>/dev/null
+            ;;
+        "all")
+            echo "🔴 Pending Tasks:"
+            cat "$PENDING_TASKS" 2>/dev/null | tail -10
+            echo ""
+            echo "📅 This Week:"
+            cat "$WEEKLY_TASKS" 2>/dev/null | head -5
+            echo ""
+            echo "🗓️ This Month:"
+            cat "$MONTHLY_TASKS" 2>/dev/null | head -5
+            ;;
+    esac
+}
+
+complete_task() {
+    local task_pattern="$1"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    # Find and move task to completed
+    local completed_task=$(grep -i "$task_pattern" "$PENDING_TASKS" | head -1)
+    
+    if [ -n "$completed_task" ]; then
+        echo "[$timestamp] COMPLETED: $completed_task" >> "$COMPLETED_TASKS"
+        grep -v "$task_pattern" "$PENDING_TASKS" > "${PENDING_TASKS}.tmp" && mv "${PENDING_TASKS}.tmp" "$PENDING_TASKS"
+        notify_success "Tasks" "Completed: $task_pattern"
+    else
+        log_warning "Task not found: $task_pattern"
+    fi
+}
+
+# VRBO-specific task automation
+add_vrbo_tasks() {
+    local property_code="$1"
+    local guest_name="$2"
+    local checkin_date="$3"
+    local checkout_date="$4"
+    
+    echo "🏠 Adding VRBO tasks for $guest_name at $property_code"
+    
+    # Pre-arrival tasks
+    add_task "Prepare $property_code for $guest_name arrival" "high" "$(date -d "$checkin_date - 1 day" +%Y-%m-%d)"
+    add_task "Send check-in instructions to $guest_name" "high" "$checkin_date"
+    
+    # During stay monitoring
+    add_task "Check on $property_code during $guest_name stay" "normal" "$(date -d "$checkin_date + 1 day" +%Y-%m-%d)"
+    
+    # Post-departure tasks
+    add_task "Inspect $property_code after $guest_name checkout" "high" "$checkout_date"
+    add_task "Process review request for $guest_name" "normal" "$(date -d "$checkout_date + 3 days" +%Y-%m-%d)"
+    add_task "Update calendar and pricing for $property_code" "normal" "$(date -d "$checkout_date + 1 day" +%Y-%m-%d)"
+    
+    notify_success "VRBO Tasks" "Added complete task sequence for $guest_name"
+}
+
+# Weekly property maintenance tasks
+add_weekly_maintenance() {
+    local properties=("property1" "property2")  # Add Bill's actual property codes
+    
+    for property in "${properties[@]}"; do
+        add_task "Weekly cleaning check for $property" "normal" "" "weekly"
+        add_task "Restock supplies for $property" "low" "" "weekly"
+        add_task "Check property condition for $property" "normal" "" "weekly"
+    done
+    
+    notify_success "Maintenance" "Added weekly property maintenance tasks"
+}
+
+# Smart task suggestions based on patterns
+suggest_tasks() {
+    echo "🤖 Smart Task Suggestions"
+    echo "========================="
+    
+    # Check if it's Monday (start of week)
+    if [ "$(date +%u)" -eq 1 ]; then
+        echo "📅 Monday Suggestions:"
+        echo "• Review weekly property bookings"
+        echo "• Plan maintenance schedule"
+        echo "• Check guest communications"
+    fi
+    
+    # Check if it's month end
+    if [ "$(date +%d)" -gt 25 ]; then
+        echo "📊 Month-End Suggestions:"
+        echo "• Generate revenue reports"
+        echo "• Review property performance"
+        echo "• Plan next month's improvements"
+    fi
+    
+    # Check pending task count
+    local pending_count=$(wc -l < "$PENDING_TASKS")
+    if [ "$pending_count" -gt 20 ]; then
+        echo "⚠️ High Task Load ($pending_count pending):"
+        echo "• Consider delegating some tasks"
+        echo "• Review task priorities"
+        echo "• Break down complex tasks"
+    fi
+}
+
+# Command dispatcher
+case "${1:-menu}" in
+    "add") add_task "$2" "$3" "$4" "$5" ;;
+    "list") list_tasks "$2" ;;
+    "complete") complete_task "$2" ;;
+    "vrbo") add_vrbo_tasks "$2" "$3" "$4" "$5" ;;
+    "maintenance") add_weekly_maintenance ;;
+    "suggest") suggest_tasks ;;
+    "menu"|*)
+        echo "✅ Google Tasks Manager Commands:"
+        echo "• add <task> [priority] [due_date] [list_type]"
+        echo "• list [pending|weekly|monthly|all]"
+        echo "• complete <task_pattern>"
+        echo "• vrbo <property> <guest> <checkin> <checkout>"
+        echo "• maintenance (add weekly property tasks)"
+        echo "• suggest (smart task recommendations)"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh
+    
+    # Create task sync script for actual Google Tasks integration
+    cat > ~/.bill-sloth/google-tasks/scripts/sync-google-tasks.sh << 'EOF'
+#!/bin/bash
+# Google Tasks API Sync Script
+# Requires: pip install google-tasks-cli OR google-api-python-client
+
+echo "🔄 Google Tasks Sync"
+echo "==================="
+
+# Check if Google Tasks CLI is installed
+if ! command -v google-tasks &>/dev/null; then
+    echo "📥 Google Tasks CLI not found. Installing..."
+    echo ""
+    echo "🔧 Installation options:"
+    echo "1) pip install google-tasks-cli"
+    echo "2) Use Google Tasks web interface manually"
+    echo "3) Set up Google API integration"
+    echo ""
+    echo "For now, using local task management only."
+    echo "Your tasks are saved locally in ~/.bill-sloth/google-tasks/"
+    exit 0
+fi
+
+# Sync local tasks to Google Tasks
+echo "🔄 Syncing local tasks to Google Tasks..."
+
+# This would require Google Tasks API setup
+# For now, showing the integration structure
+
+echo "✅ Local task management active"
+echo "🔗 To enable Google Tasks sync:"
+echo "   1. Set up Google Cloud project"
+echo "   2. Enable Google Tasks API"
+echo "   3. Configure OAuth credentials"
+echo "   4. Install google-tasks-cli"
+EOF
+    
+    chmod +x ~/.bill-sloth/google-tasks/scripts/sync-google-tasks.sh
+    
+    # Add Bill-specific task templates
+    cat > ~/.bill-sloth/google-tasks/templates/vrbo-checklist.txt << 'EOF'
+VRBO Property Management Checklist Template:
+
+Pre-Arrival (2 days before):
+□ Confirm guest details and special requests
+□ Check property cleanliness and supplies
+□ Test all electronics and WiFi
+□ Prepare welcome packet/instructions
+□ Set HVAC to comfortable temperature
+
+Check-in Day:
+□ Send check-in instructions 2 hours before
+□ Verify keypad code is working
+□ Check for any last-minute issues
+□ Be available for guest questions
+
+During Stay:
+□ Monitor for any guest messages
+□ Check property exterior if nearby
+□ Respond to any maintenance requests
+
+Check-out Day:
+□ Send check-out reminder (time/procedures)
+□ Inspect property within 2 hours of checkout
+□ Document any issues with photos
+□ Process security deposit return
+
+Post-Stay (1-3 days):
+□ Send thank you message
+□ Request review (if appropriate)
+□ Schedule deep cleaning if needed
+□ Update calendar for next booking
+□ File guest information for future reference
+EOF
+    
+    echo "✅ Google Tasks integration setup complete!"
+    echo "📁 Task management: ~/.bill-sloth/google-tasks/"
+    echo "🔧 Add tasks: ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh add 'Task description'"
+    
+    notify_success "Google Tasks" "Task automation system configured"
+}
+
+# GitHub Authentication Setup
+setup_github_authentication() {
+    print_header "🔗 GITHUB AUTHENTICATION SETUP"
+    
+    echo "🐙 GitHub Integration for Bill Sloth System"
+    echo "• Secure authentication for repository access"
+    echo "• Personal Access Token (PAT) configuration"
+    echo "• SSH key setup for seamless git operations"
+    echo "• Integration with Claude Code workflows"
+    echo ""
+    
+    echo "📋 GitHub Authentication Options:"
+    echo "1) Setup Personal Access Token (recommended for HTTPS)"
+    echo "2) Setup SSH Key Authentication"
+    echo "3) Configure Git credentials"
+    echo "4) Test GitHub connectivity"
+    echo "5) Complete GitHub setup for Bill Sloth"
+    echo ""
+    
+    local auth_choice
+    auth_choice=$(prompt_with_timeout "Select authentication method (1-5)" 15 "5")
+    
+    case "$auth_choice" in
+        1)
+            echo "🔐 Personal Access Token Setup"
+            echo "============================="
+            echo ""
+            echo "📝 Step-by-step PAT configuration:"
+            echo "1. Go to GitHub.com → Settings → Developer settings → Personal access tokens"
+            echo "2. Click 'Generate new token (classic)'"
+            echo "3. Set expiration to 'No expiration' (for convenience)"
+            echo "4. Select these scopes:"
+            echo "   ✅ repo (Full control of private repositories)"
+            echo "   ✅ workflow (Update GitHub Action workflows)"
+            echo "   ✅ write:packages (Upload packages to GitHub Package Registry)"
+            echo "   ✅ delete:packages (Delete packages from GitHub Package Registry)"
+            echo "   ✅ user:email (Access user email addresses)"
+            echo ""
+            
+            echo "⚠️  IMPORTANT SECURITY NOTES:"
+            echo "• Never share your PAT with anyone"
+            echo "• Store it securely in the system credential manager"
+            echo "• Use environment variables, not hard-coded in scripts"
+            echo ""
+            
+            read -p "📋 Have you created your PAT? (y/n): " pat_created
+            
+            if [[ $pat_created == "y" ]]; then
+                echo ""
+                echo "🔐 PAT Configuration:"
+                read -p "GitHub username: " github_username
+                read -s -p "Personal Access Token: " github_token
+                echo ""
+                
+                # Store credentials securely
+                mkdir -p ~/.bill-sloth/github
+                chmod 700 ~/.bill-sloth/github
+                
+                # Create secure credential file
+                cat > ~/.bill-sloth/github/credentials << EOF
+# GitHub Credentials for Bill Sloth System
+# Created: $(date)
+GITHUB_USERNAME="$github_username"
+GITHUB_TOKEN="$github_token"
+GITHUB_CONFIGURED=true
+EOF
+                chmod 600 ~/.bill-sloth/github/credentials
+                
+                # Configure git to use the token
+                git config --global user.name "$github_username"
+                read -p "GitHub email address: " github_email
+                git config --global user.email "$github_email"
+                
+                # Set up credential helper
+                git config --global credential.helper store
+                
+                echo "https://$github_username:$github_token@github.com" > ~/.git-credentials
+                chmod 600 ~/.git-credentials
+                
+                echo ""
+                echo "✅ GitHub PAT configured successfully!"
+                echo "🔧 Testing authentication..."
+                
+                # Test the authentication
+                if curl -s -H "Authorization: token $github_token" https://api.github.com/user >/dev/null; then
+                    echo "✅ GitHub authentication test successful!"
+                    notify_success "GitHub" "Authentication configured for $github_username"
+                else
+                    echo "❌ Authentication test failed - please check your token"
+                fi
+            else
+                echo "📝 Please create your PAT first, then run this setup again"
+            fi
+            ;;
+        2)
+            echo "🔑 SSH Key Authentication Setup"
+            echo "==============================="
+            echo ""
+            
+            # Check if SSH key exists
+            if [ -f ~/.ssh/id_rsa.pub ] || [ -f ~/.ssh/id_ed25519.pub ]; then
+                echo "✅ Existing SSH key found"
+                echo ""
+                echo "📋 Your public SSH key:"
+                [ -f ~/.ssh/id_ed25519.pub ] && cat ~/.ssh/id_ed25519.pub || cat ~/.ssh/id_rsa.pub
+                echo ""
+                echo "📝 Add this key to your GitHub account:"
+                echo "1. Go to GitHub.com → Settings → SSH and GPG keys"
+                echo "2. Click 'New SSH key'"
+                echo "3. Paste the key above"
+                echo "4. Give it a title like 'Bill Sloth System'"
+            else
+                echo "🔧 Generating new SSH key..."
+                read -p "📧 Enter your GitHub email: " github_email
+                
+                # Generate Ed25519 key (more secure)
+                ssh-keygen -t ed25519 -C "$github_email" -f ~/.ssh/id_ed25519 -N ""
+                
+                echo ""
+                echo "✅ SSH key generated!"
+                echo ""
+                echo "📋 Your new public SSH key:"
+                cat ~/.ssh/id_ed25519.pub
+                echo ""
+                echo "📝 Add this key to GitHub (instructions above)"
+            fi
+            
+            # Start SSH agent and add key
+            eval "$(ssh-agent -s)"
+            [ -f ~/.ssh/id_ed25519 ] && ssh-add ~/.ssh/id_ed25519 || ssh-add ~/.ssh/id_rsa
+            
+            echo ""
+            echo "🔧 Testing SSH connection to GitHub..."
+            ssh -T git@github.com -o StrictHostKeyChecking=no || true
+            echo ""
+            echo "📝 If you see 'successfully authenticated', SSH is working!"
+            ;;
+        3)
+            echo "⚙️ Git Global Configuration"
+            echo "=========================="
+            echo ""
+            
+            read -p "📛 Your name (for git commits): " git_name
+            read -p "📧 Your email (GitHub email): " git_email
+            
+            git config --global user.name "$git_name"
+            git config --global user.email "$git_email"
+            git config --global init.defaultBranch main
+            git config --global pull.rebase false
+            
+            echo ""
+            echo "✅ Git configuration complete!"
+            echo "📋 Current settings:"
+            echo "• Name: $(git config --global user.name)"
+            echo "• Email: $(git config --global user.email)"
+            echo "• Default branch: $(git config --global init.defaultBranch)"
+            ;;
+        4)
+            echo "🔍 Testing GitHub Connectivity"
+            echo "=============================="
+            echo ""
+            
+            echo "🔧 Running GitHub connectivity tests..."
+            
+            # Test 1: Basic GitHub API access
+            echo "1. Testing GitHub API access..."
+            if curl -s https://api.github.com/zen >/dev/null; then
+                echo "   ✅ GitHub API accessible"
+            else
+                echo "   ❌ GitHub API not accessible"
+            fi
+            
+            # Test 2: Authentication test
+            echo "2. Testing authentication..."
+            if [ -f ~/.bill-sloth/github/credentials ]; then
+                source ~/.bill-sloth/github/credentials
+                if curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user >/dev/null; then
+                    echo "   ✅ Token authentication working"
+                else
+                    echo "   ❌ Token authentication failed"
+                fi
+            else
+                echo "   ⚠️  No stored credentials found"
+            fi
+            
+            # Test 3: SSH test
+            echo "3. Testing SSH connection..."
+            if ssh -T git@github.com -o ConnectTimeout=5 -o StrictHostKeyChecking=no 2>&1 | grep -q "successfully authenticated"; then
+                echo "   ✅ SSH authentication working"
+            else
+                echo "   ❌ SSH authentication not configured"
+            fi
+            
+            # Test 4: Git configuration
+            echo "4. Checking git configuration..."
+            if git config --global user.name >/dev/null && git config --global user.email >/dev/null; then
+                echo "   ✅ Git configured with user details"
+            else
+                echo "   ⚠️  Git user details not configured"
+            fi
+            ;;
+        5)
+            echo "🚀 Complete GitHub Setup for Bill Sloth"
+            echo "====================================="
+            echo ""
+            echo "🔧 Running comprehensive GitHub setup..."
+            
+            # Run all setup steps automatically
+            setup_github_authentication_step() {
+                local step="$1"
+                echo "📋 Step $step: $2"
+            }
+            
+            setup_github_authentication_step 1 "Checking existing configuration"
+            
+            # Check if already configured
+            if [ -f ~/.bill-sloth/github/credentials ] && git config --global user.name >/dev/null; then
+                echo "✅ GitHub already configured!"
+                source ~/.bill-sloth/github/credentials
+                echo "• Username: $GITHUB_USERNAME"
+                echo "• Git name: $(git config --global user.name)"
+                echo "• Git email: $(git config --global user.email)"
+            else
+                echo "🔧 Setting up GitHub integration..."
+                
+                # Get user details
+                read -p "📛 GitHub username: " github_username
+                read -p "📧 GitHub email: " github_email
+                read -p "📛 Your full name (for commits): " full_name
+                
+                # Configure git
+                git config --global user.name "$full_name"
+                git config --global user.email "$github_email"
+                git config --global init.defaultBranch main
+                git config --global pull.rebase false
+                
+                echo ""
+                echo "✅ Git configuration complete!"
+                
+                # Prompt for authentication method
+                echo ""
+                echo "🔐 Authentication Setup:"
+                echo "1) Personal Access Token (recommended)"
+                echo "2) SSH Key"
+                echo ""
+                read -p "Select method (1-2): " auth_method
+                
+                if [ "$auth_method" = "1" ]; then
+                    echo ""
+                    echo "📝 Please create a Personal Access Token:"
+                    echo "1. Visit: https://github.com/settings/tokens"
+                    echo "2. Generate new token with 'repo' and 'workflow' scopes"
+                    echo "3. Copy the token"
+                    echo ""
+                    read -s -p "🔐 Paste your PAT here: " github_token
+                    echo ""
+                    
+                    # Store credentials
+                    mkdir -p ~/.bill-sloth/github
+                    chmod 700 ~/.bill-sloth/github
+                    
+                    cat > ~/.bill-sloth/github/credentials << EOF
+GITHUB_USERNAME="$github_username"
+GITHUB_TOKEN="$github_token"
+GITHUB_CONFIGURED=true
+EOF
+                    chmod 600 ~/.bill-sloth/github/credentials
+                    
+                    # Set up credential helper
+                    git config --global credential.helper store
+                    echo "https://$github_username:$github_token@github.com" > ~/.git-credentials
+                    chmod 600 ~/.git-credentials
+                    
+                    echo "✅ PAT authentication configured!"
+                elif [ "$auth_method" = "2" ]; then
+                    # SSH setup (simplified)
+                    if [ ! -f ~/.ssh/id_ed25519 ]; then
+                        ssh-keygen -t ed25519 -C "$github_email" -f ~/.ssh/id_ed25519 -N ""
+                        eval "$(ssh-agent -s)"
+                        ssh-add ~/.ssh/id_ed25519
+                    fi
+                    
+                    echo "✅ SSH key generated!"
+                    echo "📋 Add this key to GitHub:"
+                    cat ~/.ssh/id_ed25519.pub
+                fi
+            fi
+            
+            echo ""
+            echo "🎯 GitHub Setup Complete for Bill Sloth System!"
+            echo "📋 Next steps:"
+            echo "• Your GitHub authentication is configured"
+            echo "• Git is set up with your details"
+            echo "• You can now clone, push, and pull repositories"
+            echo "• Claude Code can access your GitHub repositories"
+            echo ""
+            echo "🔧 Test with: git clone https://github.com/$github_username/repo-name"
+            
+            notify_success "GitHub" "Complete authentication setup finished"
+            ;;
+        *)
+            log_warning "Invalid choice - running complete setup"
+            setup_github_authentication 5
+            ;;
+    esac
+    
+    echo ""
+    echo "📚 GitHub Authentication Documentation:"
+    echo "• Credentials stored in: ~/.bill-sloth/github/"
+    echo "• Git config: git config --global --list"
+    echo "• Test connection: ssh -T git@github.com"
+    echo "• API test: curl -H 'Authorization: token <PAT>' https://api.github.com/user"
+    
+    collect_feedback "automation" "github_authentication"
+}
+
+# ChatGPT Integration Setup
+setup_chatgpt_integration() {
+    print_header "🤖 CHATGPT WORKFLOW INTEGRATION"
+    
+    echo "🧠 ChatGPT API Integration for Bill's Workflows"
+    echo "• Automated content generation for VRBO listings"
+    echo "• Guest communication message templates"
+    echo "• Property description optimization"
+    echo "• Review response generation"
+    echo ""
+    
+    echo "🔧 Setting up ChatGPT integration..."
+    
+    # Create ChatGPT automation directory
+    mkdir -p ~/.bill-sloth/chatgpt-integration/{scripts,templates,cache}
+    
+    # ChatGPT API wrapper script
+    cat > ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh << 'EOF'
+#!/bin/bash
+# ChatGPT API Integration for Bill Sloth System
+# Handles content generation for VRBO and property management
+
+source "$(dirname "$0")/../../../lib/notification_system.sh"
+
+CHATGPT_CONFIG="$HOME/.bill-sloth/chatgpt-integration/config.env"
+TEMPLATES_DIR="$HOME/.bill-sloth/chatgpt-integration/templates"
+CACHE_DIR="$HOME/.bill-sloth/chatgpt-integration/cache"
+
+# Initialize configuration
+init_chatgpt_config() {
+    if [ ! -f "$CHATGPT_CONFIG" ]; then
+        cat > "$CHATGPT_CONFIG" << EOL
+# ChatGPT API Configuration
+# Get your API key from: https://platform.openai.com/api-keys
+OPENAI_API_KEY=""
+OPENAI_MODEL="gpt-3.5-turbo"
+MAX_TOKENS=500
+TEMPERATURE=0.7
+EOL
+        chmod 600 "$CHATGPT_CONFIG"
+        echo "⚠️  Please add your OpenAI API key to: $CHATGPT_CONFIG"
+        exit 1
+    fi
+    source "$CHATGPT_CONFIG"
+}
+
+# Generate VRBO property description
+generate_property_description() {
+    local property_name="$1"
+    local amenities="$2"
+    local location="$3"
+    local max_guests="$4"
+    
+    local prompt="Write a compelling VRBO property description for '$property_name' located in $location. 
+    It accommodates $max_guests guests and features: $amenities. 
+    Make it engaging, highlight unique features, and encourage bookings. 
+    Keep it under 300 words and include practical information."
+    
+    make_chatgpt_request "$prompt" "property_description_$(date +%s)"
+}
+
+# Generate guest welcome message
+generate_welcome_message() {
+    local guest_name="$1"
+    local property_name="$2"
+    local checkin_date="$3"
+    local special_features="$4"
+    
+    local prompt="Write a warm, professional welcome message for $guest_name who is checking into '$property_name' on $checkin_date. 
+    Mention these special features: $special_features. 
+    Keep it friendly but informative, under 200 words."
+    
+    make_chatgpt_request "$prompt" "welcome_$(echo $guest_name | tr ' ' '_')_$(date +%s)"
+}
+
+# Generate review response
+generate_review_response() {
+    local guest_review="$1"
+    local property_name="$2"
+    local response_tone="${3:-professional}"
+    
+    local prompt="Write a $response_tone response to this guest review for '$property_name': 
+    '$guest_review'
+    The response should thank the guest, address any concerns constructively, 
+    and encourage future bookings. Keep it under 150 words."
+    
+    make_chatgpt_request "$prompt" "review_response_$(date +%s)"
+}
+
+# Generate property listing optimization suggestions
+generate_listing_optimization() {
+    local current_listing="$1"
+    local occupancy_rate="$2"
+    local recent_reviews="$3"
+    
+    local prompt="Analyze this VRBO property listing and suggest improvements: 
+    '$current_listing'
+    Current occupancy rate: $occupancy_rate%
+    Recent review themes: $recent_reviews
+    Provide specific suggestions for title, description, and amenities to increase bookings."
+    
+    make_chatgpt_request "$prompt" "optimization_$(date +%s)"
+}
+
+# Core ChatGPT API request function
+make_chatgpt_request() {
+    local prompt="$1"
+    local cache_key="$2"
+    local cache_file="$CACHE_DIR/$cache_key.txt"
+    
+    # Check cache first
+    if [ -f "$cache_file" ] && [ $(find "$cache_file" -mmin -60) ]; then
+        echo "📋 Using cached response:"
+        cat "$cache_file"
+        return 0
+    fi
+    
+    # Check if API key is configured
+    if [ -z "$OPENAI_API_KEY" ]; then
+        echo "❌ OpenAI API key not configured"
+        echo "📝 Add your API key to: $CHATGPT_CONFIG"
+        return 1
+    fi
+    
+    echo "🤖 Generating content with ChatGPT..."
+    
+    # Make API request
+    local response=$(curl -s https://api.openai.com/v1/chat/completions \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $OPENAI_API_KEY" \
+        -d "{
+            \"model\": \"$OPENAI_MODEL\",
+            \"messages\": [
+                {\"role\": \"user\", \"content\": \"$prompt\"}
+            ],
+            \"max_tokens\": $MAX_TOKENS,
+            \"temperature\": $TEMPERATURE
+        }")
+    
+    # Extract and cache response
+    local content=$(echo "$response" | jq -r '.choices[0].message.content' 2>/dev/null)
+    
+    if [ "$content" != "null" ] && [ -n "$content" ]; then
+        echo "$content" | tee "$cache_file"
+        notify_success "ChatGPT" "Content generated successfully"
+    else
+        echo "❌ Error generating content"
+        echo "Response: $response"
+    fi
+}
+
+# Batch content generation for multiple properties
+batch_generate_content() {
+    local content_type="$1"
+    echo "🔄 Batch generating $content_type content..."
+    
+    # Read property list from configuration
+    local properties_file="$HOME/.bill-sloth/vrbo-automation/data/property-config.json"
+    
+    if [ -f "$properties_file" ]; then
+        # Generate content for each property
+        jq -r '.properties | keys[]' "$properties_file" | while read property_code; do
+            local property_name=$(jq -r ".properties[\"$property_code\"].name" "$properties_file")
+            echo "📝 Generating $content_type for: $property_name"
+            
+            case "$content_type" in
+                "descriptions")
+                    # Extract property details and generate description
+                    local location="Beach City, FL"  # Would read from config
+                    local amenities="WiFi, Kitchen, Beach Access"  # Would read from config
+                    local max_guests=$(jq -r ".properties[\"$property_code\"].max_guests" "$properties_file")
+                    generate_property_description "$property_name" "$amenities" "$location" "$max_guests"
+                    ;;
+                "pricing")
+                    # Generate pricing strategy recommendations
+                    make_chatgpt_request "Suggest optimal pricing strategy for vacation rental '$property_name' in beach location, considering seasonal demand and local competition." "pricing_$property_code"
+                    ;;
+            esac
+            echo ""
+        done
+    else
+        echo "❌ Property configuration not found"
+    fi
+}
+
+# Command dispatcher
+case "${1:-menu}" in
+    "init") init_chatgpt_config ;;
+    "property") generate_property_description "$2" "$3" "$4" "$5" ;;
+    "welcome") generate_welcome_message "$2" "$3" "$4" "$5" ;;
+    "review") generate_review_response "$2" "$3" "$4" ;;
+    "optimize") generate_listing_optimization "$2" "$3" "$4" ;;
+    "batch") batch_generate_content "$2" ;;
+    "menu"|*)
+        echo "🤖 ChatGPT Integration Commands:"
+        echo "• init - Configure API key"
+        echo "• property <name> <amenities> <location> <guests> - Generate description"
+        echo "• welcome <guest> <property> <date> <features> - Generate welcome message"
+        echo "• review <review_text> <property> [tone] - Generate review response"
+        echo "• optimize <listing> <occupancy%> <reviews> - Optimize listing"
+        echo "• batch <type> - Batch generate content"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh
+    
+    # Initialize configuration
+    ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh init
+    
+    echo "✅ ChatGPT integration setup complete!"
+    echo "📁 Configuration: ~/.bill-sloth/chatgpt-integration/"
+    echo "🔑 Add your OpenAI API key to enable content generation"
+    
+    notify_success "ChatGPT" "Content generation system configured"
+}
+
+# Excel Replacement & Data Automation
+setup_excel_replacement() {
+    print_header "📊 EXCEL REPLACEMENT & DATA AUTOMATION"
+    
+    echo "📈 Bill's Excel-Free Data Processing Suite"
+    echo "• Automated CSV/spreadsheet processing"
+    echo "• Revenue tracking and reporting"
+    echo "• Guest data analysis"
+    echo "• Property performance metrics"
+    echo "• No more Excel frustration!"
+    echo ""
+    
+    echo "🔧 Setting up Excel replacement tools..."
+    
+    # Create data automation directory
+    mkdir -p ~/.bill-sloth/data-automation/{scripts,reports,templates,raw-data}
+    
+    # Main data processing script
+    cat > ~/.bill-sloth/data-automation/scripts/data-processor.sh << 'EOF'
+#!/bin/bash
+# Excel Replacement - Data Processing Suite
+# Handles all spreadsheet operations without Excel
+
+source "$(dirname "$0")/../../../lib/notification_system.sh"
+
+DATA_DIR="$HOME/.bill-sloth/data-automation"
+REPORTS_DIR="$DATA_DIR/reports"
+RAW_DATA_DIR="$DATA_DIR/raw-data"
+
+# Revenue analysis and reporting
+generate_revenue_report() {
+    local month="${1:-$(date +%Y-%m)}"
+    local revenue_file="$HOME/.bill-sloth/vrbo-automation/data/revenue-tracking.csv"
+    local report_file="$REPORTS_DIR/revenue-report-$month.md"
+    
+    echo "📊 Generating revenue report for $month..."
+    
+    if [ ! -f "$revenue_file" ]; then
+        echo "❌ Revenue data not found: $revenue_file"
+        return 1
+    fi
+    
+    # Generate comprehensive revenue report
+    {
+        echo "# 💰 Revenue Report - $month"
+        echo "Generated: $(date)"
+        echo ""
+        
+        echo "## 📊 Summary"
+        echo "| Metric | Value |"
+        echo "|--------|-------|"
+        
+        # Total revenue
+        local total_revenue=$(awk -F',' -v month="$month" '$1 ~ month {sum += $4} END {print sum}' "$revenue_file")
+        echo "| Total Revenue | \$${total_revenue:-0} |"
+        
+        # Number of bookings
+        local total_bookings=$(awk -F',' -v month="$month" '$1 ~ month {count++} END {print count}' "$revenue_file")
+        echo "| Total Bookings | ${total_bookings:-0} |"
+        
+        # Average booking value
+        if [ "${total_bookings:-0}" -gt 0 ]; then
+            local avg_booking=$(echo "scale=2; ${total_revenue:-0} / ${total_bookings:-1}" | bc 2>/dev/null || echo "0")
+            echo "| Average Booking | \$${avg_booking} |"
+        fi
+        
+        echo ""
+        echo "## 📋 Detailed Bookings"
+        echo "| Date | Property | Guest | Amount |"
+        echo "|------|----------|-------|--------|"
+        
+        # List all bookings for the month
+        awk -F',' -v month="$month" '$1 ~ month {printf "| %s | %s | %s | $%s |\n", $1, $2, $3, $4}' "$revenue_file"
+        
+        echo ""
+        echo "## 🏠 Property Performance"
+        
+        # Property breakdown
+        awk -F',' -v month="$month" '$1 ~ month {prop[$2] += $4; count[$2]++} 
+        END {
+            for (p in prop) {
+                printf "### %s\n", p
+                printf "- Revenue: $%.2f\n", prop[p]
+                printf "- Bookings: %d\n", count[p]
+                if (count[p] > 0) printf "- Average: $%.2f\n\n", prop[p]/count[p]
+            }
+        }' "$revenue_file"
+        
+    } > "$report_file"
+    
+    echo "✅ Revenue report generated: $report_file"
+    notify_success "Revenue Report" "Report for $month completed"
+}
+
+# Guest data analysis
+analyze_guest_data() {
+    local guest_file="$HOME/.bill-sloth/vrbo-automation/data/guests.csv"
+    local analysis_file="$REPORTS_DIR/guest-analysis-$(date +%Y%m%d).md"
+    
+    echo "👥 Analyzing guest data patterns..."
+    
+    if [ ! -f "$guest_file" ]; then
+        echo "❌ Guest data not found: $guest_file"
+        return 1
+    fi
+    
+    {
+        echo "# 👥 Guest Data Analysis"
+        echo "Generated: $(date)"
+        echo ""
+        
+        echo "## 📊 Guest Statistics"
+        echo "| Metric | Value |"
+        echo "|--------|-------|"
+        
+        # Total unique guests
+        local unique_guests=$(awk -F',' 'NR>1 {guests[$2]++} END {print length(guests)}' "$guest_file")
+        echo "| Unique Guests | ${unique_guests:-0} |"
+        
+        # Repeat guests
+        local repeat_guests=$(awk -F',' 'NR>1 {guests[$2]++} END {for(g in guests) if(guests[g]>1) count++; print count+0}' "$guest_file")
+        echo "| Repeat Guests | ${repeat_guests:-0} |"
+        
+        # Most active guest
+        local top_guest=$(awk -F',' 'NR>1 {guests[$2]++} END {max=0; for(g in guests) if(guests[g]>max) {max=guests[g]; top=g}} END {print top " (" max " visits)"}' "$guest_file")
+        echo "| Most Active Guest | ${top_guest:-N/A} |"
+        
+        echo ""
+        echo "## 🔄 Activity Patterns"
+        
+        # Communication patterns
+        echo "### Communication Types"
+        awk -F',' 'NR>1 {actions[$4]++} END {for(a in actions) printf "- %s: %d\n", a, actions[a]}' "$guest_file"
+        
+        echo ""
+        echo "### Recent Activity (Last 30 days)"
+        local thirty_days_ago=$(date -d "30 days ago" +%Y-%m-%d)
+        awk -F',' -v cutoff="$thirty_days_ago" 'NR>1 && $1 >= cutoff {printf "- %s: %s (%s)\n", $1, $2, $4}' "$guest_file"
+        
+    } > "$analysis_file"
+    
+    echo "✅ Guest analysis completed: $analysis_file"
+    notify_success "Guest Analysis" "Data patterns analyzed"
+}
+
+# Property performance dashboard
+generate_property_dashboard() {
+    local dashboard_file="$REPORTS_DIR/property-dashboard-$(date +%Y%m%d).html"
+    
+    echo "🏠 Creating property performance dashboard..."
+    
+    # Generate simple HTML dashboard
+    {
+        cat << 'EOL'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bill's Property Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .metric { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .property { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+        .revenue { color: #2e8b57; font-weight: bold; }
+        .bookings { color: #4169e1; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🏠 Bill's Property Management Dashboard</h1>
+    <p>Generated: $(date)</p>
+    
+    <div class="metric">
+        <h2>📊 Monthly Overview</h2>
+EOL
+        
+        # Add current month revenue
+        local current_month=$(date +%Y-%m)
+        local revenue_file="$HOME/.bill-sloth/vrbo-automation/data/revenue-tracking.csv"
+        
+        if [ -f "$revenue_file" ]; then
+            local monthly_revenue=$(awk -F',' -v month="$current_month" '$1 ~ month {sum += $4} END {print sum}' "$revenue_file")
+            local monthly_bookings=$(awk -F',' -v month="$current_month" '$1 ~ month {count++} END {print count}' "$revenue_file")
+            
+            echo "        <p class=\"revenue\">Revenue This Month: \$${monthly_revenue:-0}</p>"
+            echo "        <p class=\"bookings\">Bookings This Month: ${monthly_bookings:-0}</p>"
+        fi
+        
+        cat << 'EOL'
+    </div>
+    
+    <div class="metric">
+        <h2>🎯 Quick Actions</h2>
+        <ul>
+            <li>📋 Add new booking: <code>~/.bill-sloth/vrbo-automation/scripts/guest-communication.sh</code></li>
+            <li>✅ Add task: <code>~/.bill-sloth/google-tasks/scripts/tasks-manager.sh add "Task"</code></li>
+            <li>📊 Generate report: <code>~/.bill-sloth/data-automation/scripts/data-processor.sh revenue</code></li>
+        </ul>
+    </div>
+    
+    <div class="metric">
+        <h2>📈 Recent Activity</h2>
+        <p>Check individual report files for detailed analysis</p>
+    </div>
+    
+</body>
+</html>
+EOL
+    } > "$dashboard_file"
+    
+    echo "✅ Dashboard created: $dashboard_file"
+    echo "🌐 Open in browser: file://$dashboard_file"
+    notify_success "Dashboard" "Property dashboard generated"
+}
+
+# CSV data manipulation (Excel replacement)
+process_csv_data() {
+    local input_file="$1"
+    local operation="$2"
+    local output_file="${3:-processed-$(basename "$input_file")}"
+    
+    echo "📊 Processing CSV data: $operation"
+    
+    case "$operation" in
+        "sort")
+            # Sort CSV by first column
+            (head -n 1 "$input_file"; tail -n +2 "$input_file" | sort) > "$RAW_DATA_DIR/$output_file"
+            ;;
+        "sum")
+            # Calculate sum of numeric columns
+            awk -F',' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9.]+$/) sum[i]+=$i} END {for(i in sum) printf "Column %d sum: %.2f\n", i, sum[i]}' "$input_file"
+            ;;
+        "dedupe")
+            # Remove duplicate rows
+            (head -n 1 "$input_file"; tail -n +2 "$input_file" | sort | uniq) > "$RAW_DATA_DIR/$output_file"
+            ;;
+        "filter")
+            # Filter rows containing specific pattern
+            read -p "Enter filter pattern: " pattern
+            (head -n 1 "$input_file"; grep "$pattern" "$input_file") > "$RAW_DATA_DIR/$output_file"
+            ;;
+    esac
+    
+    echo "✅ Data processing complete"
+}
+
+# Automated backup of all data
+backup_all_data() {
+    local backup_date=$(date +%Y%m%d-%H%M%S)
+    local backup_file="$HOME/.bill-sloth/backups/data-backup-$backup_date.tar.gz"
+    
+    echo "💾 Creating data backup..."
+    
+    mkdir -p "$(dirname "$backup_file")"
+    
+    tar -czf "$backup_file" \
+        ~/.bill-sloth/vrbo-automation/data/ \
+        ~/.bill-sloth/google-tasks/ \
+        ~/.bill-sloth/data-automation/reports/ \
+        2>/dev/null
+    
+    echo "✅ Backup created: $backup_file"
+    notify_success "Backup" "All data backed up successfully"
+}
+
+# Command dispatcher
+case "${1:-menu}" in
+    "revenue") generate_revenue_report "$2" ;;
+    "guests") analyze_guest_data ;;
+    "dashboard") generate_property_dashboard ;;
+    "csv") process_csv_data "$2" "$3" "$4" ;;
+    "backup") backup_all_data ;;
+    "menu"|*)
+        echo "📊 Excel Replacement Commands:"
+        echo "• revenue [month] - Generate revenue report"
+        echo "• guests - Analyze guest data patterns"
+        echo "• dashboard - Create property performance dashboard"
+        echo "• csv <file> <operation> [output] - Process CSV data"
+        echo "• backup - Backup all data files"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/data-automation/scripts/data-processor.sh
+    
+    # Install data processing tools if needed
+    echo "📦 Installing data processing dependencies..."
+    
+    # Check for required tools
+    if ! command -v bc &>/dev/null; then
+        echo "📥 Installing bc calculator..."
+        sudo apt update && sudo apt install -y bc
+    fi
+    
+    if ! command -v jq &>/dev/null; then
+        echo "📥 Installing jq JSON processor..."
+        sudo apt update && sudo apt install -y jq
+    fi
+    
+    echo "✅ Excel replacement suite setup complete!"
+    echo "📁 Data automation: ~/.bill-sloth/data-automation/"
+    echo "🚫 No more Excel frustration - everything is automated!"
+    
+    notify_success "Excel Replacement" "Data automation system configured"
+}
+
+# Complete Bill Workflow Setup
+setup_complete_bill_workflow() {
+    print_header "🚀 COMPLETE BILL WORKFLOW SETUP"
+    
+    echo "🎯 Setting up Bill's complete automation workflow..."
+    echo "This will configure all systems for maximum efficiency!"
+    echo ""
+    
+    # Run all setup functions in sequence
+    echo "📋 Step 1/5: VRBO Property Management"
+    setup_vrbo_automation
+    echo ""
+    
+    echo "📋 Step 2/5: Google Tasks Integration"  
+    setup_google_tasks_automation
+    echo ""
+    
+    echo "📋 Step 3/5: ChatGPT Content Generation"
+    setup_chatgpt_integration
+    echo ""
+    
+    echo "📋 Step 4/5: Excel Replacement System"
+    setup_excel_replacement
+    echo ""
+    
+    echo "📋 Step 5/5: GitHub Authentication"
+    setup_github_authentication
+    echo ""
+    
+    # Create unified command center
+    cat > ~/.bill-sloth/bill-command-center.sh << 'EOF'
+#!/bin/bash
+# Bill's Unified Command Center
+# One script to rule them all
+
+echo "🏠 BILL'S AUTOMATION COMMAND CENTER"
+echo "==================================="
+echo ""
+echo "🎯 Quick Actions:"
+echo "1) 📊 Generate revenue report"
+echo "2) ✅ Add Google Task"
+echo "3) 🏠 Process new VRBO booking"
+echo "4) 🤖 Generate content with ChatGPT"
+echo "5) 📈 Open property dashboard"
+echo "6) 💾 Backup all data"
+echo "7) 🔧 Run system health check"
+echo ""
+
+read -p "Select action (1-7): " action
+
+case "$action" in
+    1) ~/.bill-sloth/data-automation/scripts/data-processor.sh revenue ;;
+    2) 
+        read -p "Task description: " task
+        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh add "$task"
+        ;;
+    3) 
+        read -p "Guest name: " guest
+        read -p "Property code: " property
+        read -p "Check-in date (YYYY-MM-DD): " checkin
+        read -p "Check-out date (YYYY-MM-DD): " checkout
+        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh vrbo "$property" "$guest" "$checkin" "$checkout"
+        ;;
+    4) ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh ;;
+    5) ~/.bill-sloth/data-automation/scripts/data-processor.sh dashboard ;;
+    6) ~/.bill-sloth/data-automation/scripts/data-processor.sh backup ;;
+    7) 
+        echo "🔧 System Health Check:"
+        echo "• VRBO automation: $([ -d ~/.bill-sloth/vrbo-automation ] && echo "✅" || echo "❌")"
+        echo "• Google Tasks: $([ -d ~/.bill-sloth/google-tasks ] && echo "✅" || echo "❌")"
+        echo "• ChatGPT integration: $([ -d ~/.bill-sloth/chatgpt-integration ] && echo "✅" || echo "❌")"
+        echo "• Data automation: $([ -d ~/.bill-sloth/data-automation ] && echo "✅" || echo "❌")"
+        echo "• GitHub auth: $([ -f ~/.bill-sloth/github/credentials ] && echo "✅" || echo "❌")"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/bill-command-center.sh
+    
+    echo "🎉 COMPLETE BILL WORKFLOW SETUP FINISHED!"
+    echo "========================================"
+    echo ""
+    echo "✅ All systems configured and ready:"
+    echo "• 🏠 VRBO property management automation"
+    echo "• ✅ Google Tasks integration"
+    echo "• 🤖 ChatGPT content generation"
+    echo "• 📊 Excel replacement data processing"
+    echo "• 🔗 GitHub authentication"
+    echo ""
+    echo "🚀 Quick Start:"
+    echo "• Run: ~/.bill-sloth/bill-command-center.sh"
+    echo "• All your automation tools are now configured!"
+    echo ""
+    echo "📁 Everything is organized in: ~/.bill-sloth/"
+    echo "📚 Each system has its own documentation and examples"
+    
+    notify_success "Bill Workflow" "Complete automation suite configured successfully!"
+    
+    collect_feedback "automation" "complete_bill_workflow"
+    
+    assess_personal_workflows
+}
     
     echo "# Personal Workflow Assessment - $(date)" > "$ASSESSMENT_FILE"
     echo "" >> "$ASSESSMENT_FILE"
     
-    echo "📋 SECTION 1: DAILY DIGITAL HABITS"
-    echo "=================================="
+    echo "📋 SECTION 1: BILL'S SPECIFIC WORKFLOW OPTIMIZATION"
+    echo "=================================================="
+    echo ""
+    echo "🎯 Based on Bill's usage: Google Tasks, VRBO by Owner, ChatGPT, Excel (reluctantly)"
+    echo ""
+    
+    # Bill-specific automation setup
+    setup_bill_specific_automations
+    
+    echo "📋 SECTION 2: DAILY DIGITAL HABITS ASSESSMENT"
+    echo "============================================="
     echo ""
     echo "🥤 Shake: 'Yeah, we need to know what you do all day so we can judge you.'"
     echo ""

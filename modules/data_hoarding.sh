@@ -933,6 +933,220 @@ check_data_hoarding_setup() {
 # RECOMMENDATION: Integrate with FileBot (https://www.filebot.net/) or similar mature tools for automated media renaming and organization.
 # TODO: Automate this step. Current manual steps are legacy and should be replaced with direct FileBot integration.
 
+# === SEEDBOX MANAGEMENT TOOLS ===
+create_seedbox_manager() {
+    echo "[*] Setting up seedbox management tools..."
+    
+    cat > ~/bin/seedbox-manager << 'EOF'
+#!/bin/bash
+echo "📡 Seedbox Management Center"
+echo "==========================="
+echo ""
+echo "🚀 Seedbox Operations:"
+echo "1) Connect to seedbox (SSH)"
+echo "2) Upload torrents to seedbox"
+echo "3) Download completed files"
+echo "4) Check seedbox status"
+echo "5) Sync seedbox to local"
+echo "6) Configure seedbox settings"
+echo ""
+read -p "Select operation: " operation
+
+case $operation in
+    1)
+        echo "🔐 SSH Connection to Seedbox"
+        echo "Enter seedbox details:"
+        read -p "Username: " sb_user
+        read -p "Hostname/IP: " sb_host
+        read -p "Port (default 22): " sb_port
+        sb_port=${sb_port:-22}
+        
+        echo "Connecting to $sb_user@$sb_host:$sb_port..."
+        ssh -p $sb_port $sb_user@$sb_host
+        ;;
+    2)
+        echo "📤 Upload Torrents to Seedbox"
+        echo "Enter torrent file path:"
+        read torrent_file
+        if [ -f "$torrent_file" ]; then
+            echo "Enter seedbox details:"
+            read -p "Username@host: " sb_connection
+            read -p "Remote path: " remote_path
+            scp "$torrent_file" "$sb_connection:$remote_path"
+            echo "✅ Torrent uploaded to seedbox"
+        else
+            echo "❌ Torrent file not found"
+        fi
+        ;;
+    3)
+        echo "📥 Download Completed Files"
+        echo "Enter seedbox details:"
+        read -p "Username@host: " sb_connection
+        read -p "Remote completed path: " remote_complete
+        read -p "Local download path: " local_path
+        
+        echo "Downloading completed files..."
+        rsync -avz --progress "$sb_connection:$remote_complete/" "$local_path/"
+        echo "✅ Download complete"
+        ;;
+    4)
+        echo "📊 Seedbox Status Check"
+        echo "Enter seedbox SSH details:"
+        read -p "Username@host: " sb_connection
+        
+        ssh $sb_connection << 'REMOTE_SCRIPT'
+echo "💾 Disk Usage:"
+df -h
+echo ""
+echo "📡 Active Torrents:"
+ps aux | grep -E "rtorrent|deluge|transmission" | grep -v grep
+echo ""
+echo "🌐 Network Usage:"
+vnstat -d 2>/dev/null || echo "vnstat not available"
+REMOTE_SCRIPT
+        ;;
+    5)
+        echo "🔄 Seedbox Sync Setup"
+        cat > ~/bin/seedbox-sync << 'SYNC_EOF'
+#!/bin/bash
+# Automated seedbox sync script
+SEEDBOX_USER="your-username"
+SEEDBOX_HOST="your-seedbox.com"
+REMOTE_COMPLETE="/home/$SEEDBOX_USER/completed"
+LOCAL_DOWNLOAD="$HOME/Downloads/Seedbox"
+
+mkdir -p "$LOCAL_DOWNLOAD"
+
+echo "🔄 Syncing from seedbox..."
+rsync -avz --progress \
+    --remove-source-files \
+    "$SEEDBOX_USER@$SEEDBOX_HOST:$REMOTE_COMPLETE/" \
+    "$LOCAL_DOWNLOAD/"
+
+echo "✅ Sync complete"
+SYNC_EOF
+        chmod +x ~/bin/seedbox-sync
+        echo "✅ Seedbox sync script created at ~/bin/seedbox-sync"
+        echo "Edit the script with your seedbox details"
+        ;;
+    6)
+        echo "⚙️ Seedbox Configuration"
+        echo "Common seedbox configurations:"
+        echo ""
+        echo "For rtorrent (.rtorrent.rc):"
+        echo "directory = /home/user/downloads"
+        echo "session = /home/user/.session"
+        echo "port_range = 49164-49164"
+        echo "encryption = allow_incoming,try_outgoing,enable_retry"
+        echo ""
+        echo "For deluge:"
+        echo "Visit http://your-seedbox:8112 for web interface"
+        echo ""
+        echo "For transmission:"
+        echo "Visit http://your-seedbox:9091 for web interface"
+        ;;
+esac
+EOF
+    chmod +x ~/bin/seedbox-manager
+    
+    echo "[✓] Seedbox manager created"
+}
+
+# === DOWNLOAD QUEUE MANAGER ===
+create_download_queue_manager() {
+    echo "[*] Setting up download queue manager..."
+    
+    cat > ~/bin/download-queue << 'EOF'
+#!/bin/bash
+echo "📋 Download Queue Manager"
+echo "========================"
+echo ""
+echo "📁 Queue Operations:"
+echo "1) Add torrent to queue"
+echo "2) View download queue"
+echo "3) Start next download"
+echo "4) Pause all downloads"
+echo "5) Resume all downloads"
+echo "6) Clear completed downloads"
+echo ""
+read -p "Select operation: " operation
+
+QUEUE_DIR="$HOME/.download-queue"
+mkdir -p "$QUEUE_DIR"
+
+case $operation in
+    1)
+        echo "➕ Add Torrent to Queue"
+        echo "Enter torrent file path or magnet link:"
+        read torrent_input
+        
+        if [[ $torrent_input == magnet:* ]]; then
+            echo "$torrent_input" >> "$QUEUE_DIR/magnet_queue.txt"
+            echo "✅ Magnet link added to queue"
+        elif [ -f "$torrent_input" ]; then
+            cp "$torrent_input" "$QUEUE_DIR/"
+            echo "✅ Torrent file added to queue"
+        else
+            echo "❌ Invalid input"
+        fi
+        ;;
+    2)
+        echo "📋 Download Queue Status"
+        echo ""
+        echo "🗂️ Torrent files in queue:"
+        ls -la "$QUEUE_DIR"/*.torrent 2>/dev/null | wc -l
+        echo ""
+        echo "🧲 Magnet links in queue:"
+        wc -l < "$QUEUE_DIR/magnet_queue.txt" 2>/dev/null || echo "0"
+        echo ""
+        echo "🏃 Currently downloading:"
+        pgrep -l qbittorrent || echo "No active downloads"
+        ;;
+    3)
+        echo "▶️ Starting Next Download"
+        
+        # Start next torrent file
+        next_torrent=$(ls "$QUEUE_DIR"/*.torrent 2>/dev/null | head -1)
+        if [ -f "$next_torrent" ]; then
+            qbittorrent "$next_torrent" &
+            mv "$next_torrent" "$QUEUE_DIR/active/"
+            echo "✅ Started: $(basename "$next_torrent")"
+        fi
+        
+        # Start next magnet link
+        if [ -f "$QUEUE_DIR/magnet_queue.txt" ]; then
+            next_magnet=$(head -1 "$QUEUE_DIR/magnet_queue.txt")
+            if [ ! -z "$next_magnet" ]; then
+                qbittorrent "$next_magnet" &
+                tail -n +2 "$QUEUE_DIR/magnet_queue.txt" > "$QUEUE_DIR/magnet_queue.tmp"
+                mv "$QUEUE_DIR/magnet_queue.tmp" "$QUEUE_DIR/magnet_queue.txt"
+                echo "✅ Started magnet download"
+            fi
+        fi
+        ;;
+    4)
+        echo "⏸️ Pausing All Downloads"
+        pkill -STOP qbittorrent
+        echo "✅ All downloads paused"
+        ;;
+    5)
+        echo "▶️ Resuming All Downloads"
+        pkill -CONT qbittorrent
+        echo "✅ All downloads resumed"
+        ;;
+    6)
+        echo "🧹 Clearing Completed Downloads"
+        mkdir -p "$QUEUE_DIR/completed"
+        mv "$QUEUE_DIR/active"/* "$QUEUE_DIR/completed/" 2>/dev/null
+        echo "✅ Completed downloads moved to archive"
+        ;;
+esac
+EOF
+    chmod +x ~/bin/download-queue
+    
+    echo "[✓] Download queue manager created"
+}
+
 # === AUTOMATED MEDIA RENAMING & ORGANIZATION (FileBot Integration) ===
 automate_media_renaming() {
     echo "[*] Automated Media Renaming & Organization (FileBot)"
@@ -967,7 +1181,203 @@ automate_media_renaming() {
     echo "$(date): FileBot media organization run for type $media_type" >> "$HOME/.billsloth-reminders/filebot_automation.log"
 }
 
+# === MAIN EXECUTION FUNCTIONS ===
+run_data_hoarding_setup() {
+    print_header "🏴‍☠️ COMPLETE DATA HOARDING SETUP"
+    
+    echo "Setting up complete data hoarding system..."
+    echo ""
+    
+    # Install base tools
+    install_pirate_treasure_hunting_suite
+    echo ""
+    
+    # Setup safe torrenting
+    setup_safe_torrenting
+    echo ""
+    
+    # Create VPN safety
+    create_vpn_safety_system
+    echo ""
+    
+    # Create guides and management
+    create_private_tracker_guide
+    echo ""
+    
+    # Create disk analytics
+    create_disk_analytics_tools
+    echo ""
+    
+    # Create file organization
+    create_file_organization_system
+    echo ""
+    
+    # Create media library manager
+    create_media_library_manager
+    echo ""
+    
+    # Create archive tools
+    create_archive_tools
+    echo ""
+    
+    # Create seedbox manager
+    create_seedbox_manager
+    echo ""
+    
+    # Create download queue manager
+    create_download_queue_manager
+    echo ""
+    
+    # Create main dashboard
+    create_data_hoarding_dashboard
+    echo ""
+    
+    # Run setup verification
+    check_data_hoarding_setup
+    echo ""
+    
+    log_success "🏴‍☠️ Data hoarding system setup complete!"
+    echo ""
+    echo "🚀 Quick Start:"
+    echo "  • Run: ~/bin/data-dashboard"
+    echo "  • VPN check: ~/bin/vpn-check"
+    echo "  • Tracker manager: ~/bin/tracker-manager"
+    echo "  • File organizer: ~/bin/file-organizer"
+    echo ""
+    echo "⚠️  Remember: Always use VPN for public trackers!"
+    echo "              Most private trackers BAN VPN usage."
+}
+
+# === DATA HOARDING INTERACTIVE MENU ===
+data_hoarding_interactive() {
+    while true; do
+        print_header "🏴‍☠️ DATA HOARDING INTERACTIVE MENU"
+        echo ""
+        echo "📊 Storage: $(df -h ~ | awk 'NR==2{print $3 "/" $2 " (" $5 " used)"}')"
+        
+        # VPN Status
+        if ip addr | grep -q "tun\|wg"; then
+            echo "🛡️ VPN: ✅ CONNECTED (Safe to torrent)"
+        else
+            echo "🛡️ VPN: ❌ DISCONNECTED (NOT safe for public torrents)"
+        fi
+        echo ""
+        
+        echo "🏴‍☠️ SETUP & INSTALLATION:"
+        echo "  1) Complete data hoarding setup"
+        echo "  2) Install torrent tools only"
+        echo "  3) Setup VPN safety system"
+        echo ""
+        
+        echo "🛠️ MANAGEMENT TOOLS:"
+        echo "  4) Data hoarding dashboard"
+        echo "  5) VPN & torrent safety check"
+        echo "  6) Private tracker manager"
+        echo "  7) Disk space analyzer"
+        echo "  8) File organization system"
+        echo "  9) Media library manager"
+        echo " 10) Archive & compression tools"
+        echo ""
+        
+        echo "📡 ADVANCED TOOLS:"
+        echo " 11) Seedbox management"
+        echo " 12) Download queue manager"
+        echo " 13) Setup verification"
+        echo ""
+        
+        echo " 0) Exit data hoarding module"
+        echo ""
+        
+        local choice
+        choice=$(prompt_with_timeout "Select option (0-13)" 30 "0")
+        
+        case "$choice" in
+            1) run_data_hoarding_setup ;;
+            2) install_pirate_treasure_hunting_suite ;;
+            3) create_vpn_safety_system ;;
+            4) 
+                if [ -f ~/bin/data-dashboard ]; then
+                    ~/bin/data-dashboard
+                else
+                    log_warning "Dashboard not found. Run setup first (option 1)"
+                fi
+                ;;
+            5)
+                if [ -f ~/bin/vpn-check ]; then
+                    ~/bin/vpn-check && ~/bin/torrent-killswitch
+                else
+                    log_warning "VPN tools not found. Run setup first (option 1)"
+                fi
+                ;;
+            6)
+                if [ -f ~/bin/tracker-manager ]; then
+                    ~/bin/tracker-manager
+                else
+                    log_warning "Tracker manager not found. Run setup first (option 1)"
+                fi
+                ;;
+            7)
+                if [ -f ~/bin/disk-analyzer ]; then
+                    ~/bin/disk-analyzer
+                else
+                    log_warning "Disk analyzer not found. Run setup first (option 1)"
+                fi
+                ;;
+            8)
+                if [ -f ~/bin/file-organizer ]; then
+                    ~/bin/file-organizer
+                else
+                    log_warning "File organizer not found. Run setup first (option 1)"
+                fi
+                ;;
+            9)
+                if [ -f ~/bin/media-manager ]; then
+                    ~/bin/media-manager
+                else
+                    log_warning "Media manager not found. Run setup first (option 1)"
+                fi
+                ;;
+            10)
+                if [ -f ~/bin/archive-tools ]; then
+                    ~/bin/archive-tools
+                else
+                    log_warning "Archive tools not found. Run setup first (option 1)"
+                fi
+                ;;
+            11)
+                if [ -f ~/bin/seedbox-manager ]; then
+                    ~/bin/seedbox-manager
+                else
+                    log_warning "Seedbox manager not found. Run setup first (option 1)"
+                fi
+                ;;
+            12)
+                if [ -f ~/bin/download-queue ]; then
+                    ~/bin/download-queue
+                else
+                    log_warning "Download queue not found. Run setup first (option 1)"
+                fi
+                ;;
+            13) check_data_hoarding_setup ;;
+            0)
+                log_info "Exiting data hoarding module"
+                break
+                ;;
+            *)
+                log_warning "Invalid option: $choice"
+                sleep 2
+                ;;
+        esac
+        
+        if [ "$choice" != "0" ]; then
+            echo ""
+            read -n 1 -s -r -p "Press any key to continue..."
+            echo ""
+        fi
+    done
+}
+
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "This data hoarding module should be executed by Claude Code"
-    echo "Available functions: install_torrenting_suite, setup_safe_torrenting, create_vpn_safety_system, create_private_tracker_guide"
+    echo "🏴‍☠️ Data Hoarding Module - Interactive Mode"
+    data_hoarding_interactive
 fi
