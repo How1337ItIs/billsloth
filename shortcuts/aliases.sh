@@ -218,3 +218,35 @@ fi
 
 # Loading message
 echo "🎌 Bill Sloth aliases loaded! Type 'show-powers' to see your anime shortcuts."
+alias midaswhale='if (( RANDOM % 10 == 0 )); then echo "🐋 Midas Marsupius Whale 👑🐋 — wombat in a whale suit, King Midas, bitten by a time-traveling whale on acid, now immortal. All of it may be true."; else echo "🐋 Developer: Midas Whale 👑🐋"; fi'
+
+show_me_the_golden_wombat() {
+  cat <<'EOF'
+🐋👑 THE ORIGIN OF MIDAS WHALE 👑🐋
+
+Long ago, before the first shell script was ever written, there lived a king named Midas. He was renowned for his golden touch, but also for his restless curiosity and a knack for getting into trouble.
+
+One day, while wandering the palace gardens, King Midas stumbled upon a small, unassuming wombat. This wombat was not magical, nor famous, nor even particularly clever. It was just a simple wombat, content to dig burrows and munch on roots.
+
+But fate had other plans.
+
+Suddenly, a swirling portal opened in the sky, and from it emerged a time-traveling whale—its skin shimmering with psychedelic colors, its eyes wide with cosmic knowledge (and possibly the effects of interdimensional acid). The whale, in a fit of cosmic whimsy, swooped down and bit King Midas right on the hand.
+
+In that moment, reality twisted. The golden power of Midas, the humble spirit of the wombat, and the cosmic weirdness of the whale fused together. King Midas was transformed—no longer just a king, but something much stranger.
+
+He became MIDAS WHALE:
+- Sometimes a whale in a golden crown,
+- Sometimes a wombat in a whale suit,
+- Sometimes just a king with a suspiciously aquatic aura,
+- Always a little bit of everything, and never quite what you expect.
+
+Some say he is immortal, wandering the timelines, leaving behind cryptic shell scripts, golden bugs, and the occasional easter egg in open source projects. Others say he’s just a myth, a story told by sysadmins who’ve been up too long.
+
+But those who have glimpsed his handiwork—a rare golden sloth emoji, a bug that turns into a feature if you look at it sideways—know the truth:
+
+All of it may be true.
+
+Midas Whale 👑🐋: Simple wombat. Whale. King. Developer. Legend. And if you ever find a golden bug in your code, you know who to thank.
+EOF
+}
+alias show-me-the-golden-wombat=show_me_the_golden_wombat
