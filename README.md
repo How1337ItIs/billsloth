@@ -182,33 +182,25 @@ claude "I want to set up the Bill Sloth digital command center system. Please: 1
 
 **From this point on, you just talk to Claude in normal English and it will build, configure, and optimize your Linux system using the Bill Sloth power modules.**
 
-### **Step 3: Build Whatever System You Want**
+### **Step 3: Use Your New Command Center**
 
-**Just tell Claude what you're interested in!** Examples:
+**After the magic prompt finishes, you'll see the Bill Sloth Command Center running!** 
 
-```bash
-# Want to play games on Linux?
-claude "I want to set up gaming on Linux but I'm a complete beginner"
+**What you can do:**
+- Press **`v`** for VRBO automation (Guntersville Getaway management)
+- Press **`e`** for EdBoiGames business tools  
+- Press **`b`** to backup your important files
+- Press **`1-9`** to explore different modules
+- Press **`0`** to exit anytime
 
-# Want to be more productive?
-claude "Help me set up productivity tools for someone with ADHD"
+**Your command center includes:**
+- 🏠 **VRBO guest communication** - Welcome messages, check-in instructions, review requests
+- 🔧 **Modding project tools** - File management, development workflows
+- 💼 **Business development** - Partnership tracking, client workflows
+- 💾 **Smart backups** - Automatic protection for your files
+- 🤖 **AI integration** - Local and cloud AI assistants
 
-# Want to learn programming?
-claude "I want to learn AI programming but I know nothing about it"
-
-# Want better privacy?
-claude "Help me set up privacy tools, I'm worried about my digital privacy"
-
-# Not sure what you want?
-claude "I'm new to Linux and don't know what I want to do. Can you show me what's possible and help me pick?"
-```
-
-**Claude will:**
-- Ask friendly questions to understand what you want
-- Explain everything in simple terms
-- Walk you through setup step by step
-- Let you ask questions anytime
-- Never make you feel stupid
+**Daily use:** Just run `./bill_command_center.sh` from the "bill sloth" folder anytime!
 
 **You're now ready to become a Linux power user with an AI-powered toolkit!** 🎉
 
