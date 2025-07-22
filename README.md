@@ -150,7 +150,7 @@ claude "Hello, are you working?"
 claude "I'm a complete Linux beginner and I want to set up the Bill Sloth system from GitHub. Please walk me through everything step by step."
 ```
 
-**🚨 DON'T HAVE CLAUDE CODE YET?** No problem! See our [ONBOARDING_GUIDE.md](ONBOARDING_GUIDE.md) for simple copy-paste setup commands.
+**🚨 DON'T HAVE CLAUDE CODE YET?** No problem! See our [ONBOARDING_GUIDE.md](ONBOARDING_GUIDE.md) for a magic prompt that sets everything up automatically.
 
 **That's literally it!** Claude Code will:
 - Ask what you want to learn (gaming, productivity, etc.)
