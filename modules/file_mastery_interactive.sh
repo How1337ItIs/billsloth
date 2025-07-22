@@ -805,12 +805,13 @@ main_menu() {
         echo "4) ⚡ Create Windows Power-User Search Shortcuts"
         echo "5) 📋 Setup Advanced File Copying (TeraCopy-style)"
         echo "6) ⌨️  Configure File Management Shortcuts"
-        echo "7) 🎯 Demo Your New File Mastery Powers"
-        echo "8) 🚀 Complete Setup (All Steps)"
+        echo "7) 💾 Multi-Drive & Multi-Monitor Management"
+        echo "8) 🎯 Demo Your New File Mastery Powers"
+        echo "9) 🚀 Complete Setup (All Steps)"
         echo "0) Exit"
         echo ""
         
-        read -p "Choose an option (0-8): " choice
+        read -p "Choose an option (0-9): " choice
         
         case $choice in
             1) explain_file_mastery ;;
@@ -819,8 +820,9 @@ main_menu() {
             4) create_search_shortcuts ;;
             5) setup_advanced_copying ;;
             6) configure_file_shortcuts ;;
-            7) demo_file_mastery ;;
-            8) complete_setup ;;
+            7) setup_multi_drive_management ;;
+            8) demo_file_mastery ;;
+            9) complete_setup ;;
             0) echo "👋 Your file management powers are now legendary! 📁⚡"; exit 0 ;;
             *) echo "❌ Invalid choice. Please try again."; sleep 2 ;;
         esac
@@ -833,7 +835,7 @@ complete_setup() {
     echo "=============================="
     echo ""
     echo "This will set up the ultimate file management system:"
-    echo "Lightning search + Advanced managers + AI organization + TeraCopy-style operations"
+    echo "Lightning search + Advanced managers + Multi-drive management + Multi-monitor setup + AI organization"
     echo ""
     read -p "Continue with complete setup? (y/n): " setup_confirm
     
@@ -844,6 +846,7 @@ complete_setup() {
         create_search_shortcuts
         setup_advanced_copying
         configure_file_shortcuts
+        setup_multi_drive_management
         demo_file_mastery
         
         echo ""
@@ -853,12 +856,17 @@ complete_setup() {
         echo "🎯 YOU NOW HAVE:"
         echo "   ✅ Lightning-fast file search (faster than Everything)"
         echo "   ✅ Advanced file copying with verification (better than TeraCopy)"
+        echo "   ✅ Enterprise multi-drive storage management with bind mounts"
+        echo "   ✅ Steam library management across multiple drives"
+        echo "   ✅ Multi-monitor setup with autorandr profiles"
+        echo "   ✅ Ubuntu system drive cleanup for dual-boot scenarios"
         echo "   ✅ AI-powered file organization and suggestions"
         echo "   ✅ Bulk operations with intelligent pattern matching"
         echo "   ✅ Visual file managers with preview capabilities"
         echo "   ✅ Windows-style shortcuts and power-user commands"
         echo ""
         echo "🚀 NEXT STEPS:"
+        echo "   • Run 'drive-manager' to manage your multi-drive setup"
         echo "   • Try 'everything config' to find all config files instantly"
         echo "   • Use 'search-content TODO' to find all your TODO comments"
         echo "   • Run 'find-interactive' for visual file browsing"
@@ -873,6 +881,810 @@ complete_setup() {
     else
         return
     fi
+}
+
+# Multi-Drive Storage Management - Mature Linux Solutions
+setup_multi_drive_management() {
+    echo "💾 MULTI-DRIVE STORAGE MANAGEMENT"
+    echo "================================="
+    echo ""
+    echo "🎯 ENTERPRISE-GRADE SOLUTIONS FOR MANAGING STORAGE ACROSS MULTIPLE DRIVES"
+    echo ""
+    echo "This will set up mature Linux storage management tools used in production:"
+    echo "• Steam library management across drives (native Steam feature)"
+    echo "• Safe application relocation using bind mounts (superior to symlinks)"
+    echo "• Automated drive detection and mounting with persistent configuration"
+    echo "• Space monitoring and intelligent allocation"
+    echo "• Multi-monitor display management with autorandr"
+    echo ""
+    
+    read -p "Install multi-drive management tools? (y/n): " install_drives
+    if [[ $install_drives == "y" ]]; then
+        
+        # Install core dependencies
+        echo "📦 Installing multi-drive management dependencies..."
+        sudo apt update
+        sudo apt install -y autorandr arandr xrandr ncdu tree pv rsync bindfs
+        
+        # Create multi-drive management script
+        cat > ~/.local/bin/drive-manager << 'EOF'
+#!/bin/bash
+# Enterprise Multi-Drive Storage Manager
+# Uses mature Linux solutions: bind mounts, Steam native libraries, autorandr
+
+# Configuration
+DRIVES_CONFIG="$HOME/.config/bill-sloth/drives.conf"
+STEAM_LIBRARY_CONFIG="$HOME/.config/bill-sloth/steam-libraries.conf"
+MOUNT_BASE="/media/$USER"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+show_main_menu() {
+    clear
+    echo -e "${BLUE}💾 MULTI-DRIVE STORAGE MANAGER${NC}"
+    echo "============================="
+    echo ""
+    echo "1. 📊 Show all drives and usage"
+    echo "2. 🔧 Auto-mount available drives"
+    echo "3. 🎮 Steam library management"
+    echo "4. 📁 Relocate application data (safe bind mounts)"
+    echo "5. 🖥️  Multi-monitor setup (autorandr)"
+    echo "6. 🧹 Clean system drive (Ubuntu space recovery)"
+    echo "7. ⚙️  Configure drive preferences"
+    echo "8. 📈 Storage analytics and recommendations"
+    echo "0. Exit"
+    echo ""
+    read -p "Choose option: " choice
+}
+
+show_drives_usage() {
+    echo -e "${BLUE}📊 DRIVE OVERVIEW${NC}"
+    echo "================"
+    echo ""
+    
+    # Show mounted drives with usage
+    df -h | grep -E '^/dev/' | while read filesystem size used avail percent mountpoint; do
+        # Color code based on usage
+        usage_num=${percent%\%}
+        if [ "$usage_num" -gt 90 ]; then
+            color=$RED
+        elif [ "$usage_num" -gt 70 ]; then
+            color=$YELLOW
+        else
+            color=$GREEN
+        fi
+        
+        echo -e "${color}Drive: $filesystem${NC}"
+        echo "  Mount: $mountpoint"
+        echo "  Size:  $size (${percent} used)"
+        echo "  Free:  $avail available"
+        echo ""
+    done
+    
+    # Show unmounted drives
+    echo -e "${YELLOW}📡 AVAILABLE UNMOUNTED DRIVES:${NC}"
+    lsblk -f | grep -E 'sd[a-z][0-9]' | grep -v '/' | while read device fstype label uuid mountpoint; do
+        if [ -n "$fstype" ] && [ -z "$mountpoint" ]; then
+            echo "  /dev/$device ($fstype) - $label"
+        fi
+    done
+    
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+auto_mount_drives() {
+    echo -e "${BLUE}🔧 AUTO-MOUNTING AVAILABLE DRIVES${NC}"
+    echo "================================="
+    echo ""
+    
+    mkdir -p "$MOUNT_BASE"
+    
+    # Find unmounted drives
+    lsblk -f | grep -E 'sd[a-z][0-9]' | grep -v '/' | while read device fstype label uuid mountpoint; do
+        if [ -n "$fstype" ] && [ -z "$mountpoint" ]; then
+            full_device="/dev/$device"
+            mount_name="${label:-$device}"
+            mount_point="$MOUNT_BASE/$mount_name"
+            
+            echo "Found unmounted drive: $full_device ($fstype)"
+            read -p "Mount as $mount_point? (y/n): " mount_it
+            
+            if [[ $mount_it == "y" ]]; then
+                sudo mkdir -p "$mount_point"
+                
+                # Mount with appropriate options based on filesystem
+                case "$fstype" in
+                    "ext4"|"ext3"|"ext2")
+                        sudo mount -o defaults,user,rw "$full_device" "$mount_point"
+                        ;;
+                    "ntfs")
+                        sudo mount -o defaults,user,rw,uid=$UID,gid=$GID,umask=022 "$full_device" "$mount_point"
+                        ;;
+                    "exfat"|"vfat")
+                        sudo mount -o defaults,user,rw,uid=$UID,gid=$GID,umask=022 "$full_device" "$mount_point"
+                        ;;
+                    *)
+                        sudo mount "$full_device" "$mount_point"
+                        ;;
+                esac
+                
+                if [ $? -eq 0 ]; then
+                    echo -e "${GREEN}✅ Successfully mounted $full_device at $mount_point${NC}"
+                    
+                    # Ask about persistent mounting
+                    read -p "Make this mount permanent (add to /etc/fstab)? (y/n): " permanent
+                    if [[ $permanent == "y" ]]; then
+                        # Get UUID for permanent mounting
+                        drive_uuid=$(lsblk -no UUID "$full_device")
+                        if [ -n "$drive_uuid" ]; then
+                            fstab_entry="UUID=$drive_uuid $mount_point $fstype defaults,user,rw"
+                            case "$fstype" in
+                                "ntfs"|"exfat"|"vfat")
+                                    fstab_entry="$fstab_entry,uid=$UID,gid=$GID,umask=022"
+                                    ;;
+                            esac
+                            fstab_entry="$fstab_entry 0 2"
+                            
+                            echo "# Added by Bill Sloth Drive Manager" | sudo tee -a /etc/fstab
+                            echo "$fstab_entry" | sudo tee -a /etc/fstab
+                            echo -e "${GREEN}✅ Added permanent mount to /etc/fstab${NC}"
+                        fi
+                    fi
+                else
+                    echo -e "${RED}❌ Failed to mount $full_device${NC}"
+                fi
+            fi
+        fi
+    done
+    
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+steam_library_manager() {
+    echo -e "${BLUE}🎮 STEAM LIBRARY MANAGEMENT${NC}"
+    echo "==========================="
+    echo ""
+    
+    # Check if Steam is installed
+    if ! command -v steam &> /dev/null; then
+        echo -e "${YELLOW}⚠️  Steam is not installed${NC}"
+        read -p "Install Steam? (y/n): " install_steam
+        if [[ $install_steam == "y" ]]; then
+            sudo apt install -y steam
+        else
+            return
+        fi
+    fi
+    
+    echo "Steam Library Management Options:"
+    echo ""
+    echo "1. Show current Steam libraries"
+    echo "2. Add new library on different drive"
+    echo "3. Move games between libraries"
+    echo "4. Create shared library for dual-boot (Windows/Linux)"
+    echo "0. Back to main menu"
+    echo ""
+    
+    read -p "Choose option: " steam_choice
+    
+    case $steam_choice in
+        1)
+            echo -e "${BLUE}📚 CURRENT STEAM LIBRARIES:${NC}"
+            echo ""
+            
+            # Find Steam directories
+            steam_dirs=(
+                "$HOME/.steam/steam/steamapps"
+                "$HOME/.local/share/Steam/steamapps"
+            )
+            
+            for steam_dir in "${steam_dirs[@]}"; do
+                if [ -d "$steam_dir" ]; then
+                    echo "Main library: $steam_dir"
+                    if [ -f "$steam_dir/libraryfolders.vdf" ]; then
+                        echo "Additional libraries found in libraryfolders.vdf:"
+                        grep -o '"path"[[:space:]]*"[^"]*"' "$steam_dir/libraryfolders.vdf" | sed 's/"path"[[:space:]]*"//; s/"//'
+                    fi
+                fi
+            done
+            ;;
+        2)
+            echo -e "${BLUE}➕ ADD NEW STEAM LIBRARY${NC}"
+            echo ""
+            echo "Available mounted drives:"
+            df -h | grep -E '^/dev/' | awk '{print $6 " (" $4 " free)"}'
+            echo ""
+            read -p "Enter path for new Steam library (e.g., /media/user/GameDrive/SteamLibrary): " new_library
+            
+            if [ -n "$new_library" ]; then
+                mkdir -p "$new_library"
+                chmod 755 "$new_library"
+                echo -e "${GREEN}✅ Created Steam library directory: $new_library${NC}"
+                echo ""
+                echo "To use this library:"
+                echo "1. Open Steam"
+                echo "2. Go to Steam > Settings > Storage"
+                echo "3. Click the dropdown next to 'Create library folder on this drive'"
+                echo "4. Browse to: $new_library"
+                echo "5. Games can now be installed to this drive"
+            fi
+            ;;
+        3)
+            echo -e "${BLUE}🔄 MOVE STEAM GAMES${NC}"
+            echo ""
+            echo "Use Steam's built-in game moving feature:"
+            echo "1. Open Steam"
+            echo "2. Right-click on a game in your library"
+            echo "3. Select Properties > Installed Files"
+            echo "4. Click 'Move Install Folder'"
+            echo "5. Choose the destination library"
+            echo ""
+            echo "This is the safest method for moving Steam games between libraries."
+            ;;
+        4)
+            echo -e "${BLUE}🔗 DUAL-BOOT SHARED LIBRARY${NC}"
+            echo ""
+            echo -e "${YELLOW}⚠️  Advanced: Sharing Steam library between Windows and Linux${NC}"
+            echo ""
+            echo "This requires:"
+            echo "1. NTFS drive accessible from both systems"
+            echo "2. Careful symlink management"
+            echo "3. Same Steam username on both systems"
+            echo ""
+            read -p "Continue with dual-boot setup? (y/n): " dual_boot
+            
+            if [[ $dual_boot == "y" ]]; then
+                echo "Mount your Windows drive (typically C:):"
+                ls /media/$USER/
+                echo ""
+                read -p "Enter Windows drive mount point (e.g., /media/$USER/Windows): " windows_mount
+                
+                if [ -d "$windows_mount" ]; then
+                    windows_steam="$windows_mount/Program Files (x86)/Steam"
+                    if [ -d "$windows_steam" ]; then
+                        echo "Windows Steam found at: $windows_steam"
+                        
+                        # Create symlink for steamapps
+                        steam_linux="$HOME/.steam/steam"
+                        if [ -d "$steam_linux" ]; then
+                            echo "Backing up Linux steamapps..."
+                            mv "$steam_linux/steamapps" "$steam_linux/steamapps.backup" 2>/dev/null
+                            
+                            echo "Creating symlink to Windows Steam library..."
+                            ln -s "$windows_steam/steamapps" "$steam_linux/steamapps"
+                            
+                            echo -e "${GREEN}✅ Dual-boot Steam library configured${NC}"
+                            echo -e "${YELLOW}Note: Proton compatibility may vary between Windows and Linux versions${NC}"
+                        fi
+                    else
+                        echo -e "${RED}❌ Windows Steam not found in expected location${NC}"
+                    fi
+                else
+                    echo -e "${RED}❌ Windows drive not accessible${NC}"
+                fi
+            fi
+            ;;
+    esac
+    
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+relocate_app_data() {
+    echo -e "${BLUE}📁 APPLICATION DATA RELOCATION${NC}"
+    echo "=============================="
+    echo ""
+    echo "Safely relocate large application data using bind mounts"
+    echo "(Safer than symlinks, transparent to applications)"
+    echo ""
+    
+    echo "Common relocations for system drive space recovery:"
+    echo "1. Browser cache and profiles"
+    echo "2. ~/.cache (application caches)"
+    echo "3. ~/Downloads"
+    echo "4. Development workspaces"
+    echo "5. Custom directory"
+    echo "0. Back to main menu"
+    echo ""
+    
+    read -p "Choose what to relocate: " relocate_choice
+    
+    case $relocate_choice in
+        1)
+            echo "Browser data relocation:"
+            echo ""
+            browsers=("firefox" "chrome" "chromium")
+            for browser in "${browsers[@]}"; do
+                case $browser in
+                    "firefox")
+                        profile_dir="$HOME/.mozilla/firefox"
+                        ;;
+                    "chrome")
+                        profile_dir="$HOME/.config/google-chrome"
+                        ;;
+                    "chromium")
+                        profile_dir="$HOME/.config/chromium"
+                        ;;
+                esac
+                
+                if [ -d "$profile_dir" ]; then
+                    echo "Found $browser profile: $profile_dir"
+                    size=$(du -sh "$profile_dir" | awk '{print $1}')
+                    echo "Current size: $size"
+                    
+                    read -p "Relocate $browser data to which drive? (path): " target_drive
+                    if [ -d "$target_drive" ]; then
+                        relocate_directory_with_bind_mount "$profile_dir" "$target_drive/browser-data/$browser"
+                    fi
+                fi
+            done
+            ;;
+        2)
+            cache_dir="$HOME/.cache"
+            if [ -d "$cache_dir" ]; then
+                size=$(du -sh "$cache_dir" | awk '{print $1}')
+                echo "Application cache directory: $cache_dir"
+                echo "Current size: $size"
+                echo ""
+                read -p "Relocate cache to which drive? (path): " target_drive
+                if [ -d "$target_drive" ]; then
+                    relocate_directory_with_bind_mount "$cache_dir" "$target_drive/user-cache"
+                fi
+            fi
+            ;;
+        3)
+            downloads_dir="$HOME/Downloads"
+            size=$(du -sh "$downloads_dir" | awk '{print $1}')
+            echo "Downloads directory: $downloads_dir"
+            echo "Current size: $size"
+            echo ""
+            read -p "Relocate Downloads to which drive? (path): " target_drive
+            if [ -d "$target_drive" ]; then
+                relocate_directory_with_bind_mount "$downloads_dir" "$target_drive/Downloads"
+            fi
+            ;;
+        4)
+            echo "Development workspace relocation:"
+            echo ""
+            workspaces=("$HOME/Projects" "$HOME/Development" "$HOME/Code" "$HOME/workspace")
+            for workspace in "${workspaces[@]}"; do
+                if [ -d "$workspace" ]; then
+                    size=$(du -sh "$workspace" | awk '{print $1}')
+                    echo "Found workspace: $workspace ($size)"
+                    read -p "Relocate this workspace? (y/n): " relocate_ws
+                    if [[ $relocate_ws == "y" ]]; then
+                        read -p "Target drive path: " target_drive
+                        if [ -d "$target_drive" ]; then
+                            workspace_name=$(basename "$workspace")
+                            relocate_directory_with_bind_mount "$workspace" "$target_drive/$workspace_name"
+                        fi
+                    fi
+                fi
+            done
+            ;;
+        5)
+            read -p "Enter directory path to relocate: " custom_dir
+            if [ -d "$custom_dir" ]; then
+                size=$(du -sh "$custom_dir" | awk '{print $1}')
+                echo "Directory: $custom_dir"
+                echo "Size: $size"
+                read -p "Target drive path: " target_drive
+                if [ -d "$target_drive" ]; then
+                    dir_name=$(basename "$custom_dir")
+                    relocate_directory_with_bind_mount "$custom_dir" "$target_drive/$dir_name"
+                fi
+            else
+                echo -e "${RED}❌ Directory not found: $custom_dir${NC}"
+            fi
+            ;;
+    esac
+    
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+relocate_directory_with_bind_mount() {
+    local source_dir="$1"
+    local target_location="$2"
+    
+    echo -e "${BLUE}🔧 Setting up bind mount relocation...${NC}"
+    echo "Source: $source_dir"
+    echo "Target: $target_location"
+    echo ""
+    
+    # Safety checks
+    if [ ! -d "$source_dir" ]; then
+        echo -e "${RED}❌ Source directory doesn't exist: $source_dir${NC}"
+        return 1
+    fi
+    
+    if [ -z "$target_location" ]; then
+        echo -e "${RED}❌ Target location not specified${NC}"
+        return 1
+    fi
+    
+    # Create target directory
+    mkdir -p "$target_location"
+    
+    # Copy data to new location
+    echo "Copying data to new location..."
+    rsync -avh --progress "$source_dir/" "$target_location/"
+    
+    if [ $? -eq 0 ]; then
+        # Backup original directory
+        echo "Backing up original directory..."
+        mv "$source_dir" "${source_dir}.backup"
+        
+        # Create new directory
+        mkdir -p "$source_dir"
+        
+        # Create bind mount
+        echo "Creating bind mount..."
+        sudo mount --bind "$target_location" "$source_dir"
+        
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}✅ Bind mount created successfully${NC}"
+            
+            # Make permanent
+            read -p "Make this bind mount permanent? (y/n): " permanent
+            if [[ $permanent == "y" ]]; then
+                # Add to fstab
+                fstab_entry="$target_location $source_dir none bind 0 0"
+                echo "# Bill Sloth bind mount: $(basename "$source_dir")" | sudo tee -a /etc/fstab
+                echo "$fstab_entry" | sudo tee -a /etc/fstab
+                echo -e "${GREEN}✅ Added permanent bind mount to /etc/fstab${NC}"
+            fi
+            
+            # Verify the mount works
+            ls "$source_dir" > /dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                echo -e "${GREEN}✅ Relocation completed successfully${NC}"
+                echo "Original data backed up to: ${source_dir}.backup"
+                echo "You can delete the backup once you've verified everything works"
+            else
+                echo -e "${RED}❌ Verification failed${NC}"
+            fi
+        else
+            echo -e "${RED}❌ Failed to create bind mount${NC}"
+            # Restore original
+            rmdir "$source_dir"
+            mv "${source_dir}.backup" "$source_dir"
+        fi
+    else
+        echo -e "${RED}❌ Failed to copy data${NC}"
+    fi
+}
+
+multimonitor_setup() {
+    echo -e "${BLUE}🖥️  MULTI-MONITOR SETUP${NC}"
+    echo "======================"
+    echo ""
+    
+    # Check if autorandr is available
+    if ! command -v autorandr &> /dev/null; then
+        echo "Installing autorandr for automatic monitor management..."
+        sudo apt install -y autorandr arandr
+    fi
+    
+    echo "Multi-monitor management options:"
+    echo "1. Current monitor configuration"
+    echo "2. Automatic monitor setup (autorandr)"
+    echo "3. Manual monitor configuration (arandr GUI)"
+    echo "4. Save current setup as profile"
+    echo "5. Load monitor profile"
+    echo "0. Back to main menu"
+    echo ""
+    
+    read -p "Choose option: " monitor_choice
+    
+    case $monitor_choice in
+        1)
+            echo -e "${BLUE}📺 CURRENT MONITOR SETUP:${NC}"
+            echo ""
+            xrandr --query
+            ;;
+        2)
+            echo -e "${BLUE}🔧 AUTOMATIC MONITOR DETECTION${NC}"
+            echo ""
+            echo "Detecting connected monitors..."
+            autorandr --change
+            echo -e "${GREEN}✅ Applied best configuration for connected monitors${NC}"
+            ;;
+        3)
+            echo -e "${BLUE}🎨 LAUNCHING VISUAL MONITOR CONFIGURATOR${NC}"
+            echo ""
+            if command -v arandr &> /dev/null; then
+                arandr &
+                echo "Visual monitor configuration tool launched"
+                echo "Configure your monitors and save the script to ~/.screenlayout/"
+            else
+                echo "Installing arandr..."
+                sudo apt install -y arandr
+                arandr &
+            fi
+            ;;
+        4)
+            echo -e "${BLUE}💾 SAVE MONITOR PROFILE${NC}"
+            read -p "Enter profile name (e.g., 'work', 'home', 'presentation'): " profile_name
+            if [ -n "$profile_name" ]; then
+                autorandr --save "$profile_name"
+                echo -e "${GREEN}✅ Saved current setup as profile: $profile_name${NC}"
+            fi
+            ;;
+        5)
+            echo -e "${BLUE}📋 AVAILABLE MONITOR PROFILES:${NC}"
+            autorandr --list
+            echo ""
+            read -p "Enter profile name to load: " profile_name
+            if [ -n "$profile_name" ]; then
+                autorandr --load "$profile_name"
+                echo -e "${GREEN}✅ Loaded monitor profile: $profile_name${NC}"
+            fi
+            ;;
+    esac
+    
+    echo ""
+    echo "💡 Tip: autorandr can automatically switch profiles when monitors are connected/disconnected"
+    echo "   Enable with: sudo systemctl enable --now autorandr.service"
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+clean_system_drive() {
+    echo -e "${BLUE}🧹 UBUNTU SYSTEM DRIVE CLEANUP${NC}"
+    echo "=============================="
+    echo ""
+    echo "Comprehensive cleanup for Ubuntu systems (safe for dual-boot)"
+    echo ""
+    
+    # Show current disk usage
+    echo -e "${YELLOW}📊 Current disk usage:${NC}"
+    df -h / | tail -1
+    echo ""
+    
+    echo "Cleanup options:"
+    echo "1. Package cache cleanup (apt, snap)"
+    echo "2. Remove old kernels (keep 2 most recent)"
+    echo "3. Clear system logs (journalctl)"
+    echo "4. Remove orphaned packages"
+    echo "5. Clear thumbnail cache"
+    echo "6. Empty trash"
+    echo "7. 🚨 FULL CLEANUP (all of the above)"
+    echo "0. Back to main menu"
+    echo ""
+    
+    read -p "Choose cleanup option: " cleanup_choice
+    
+    case $cleanup_choice in
+        1|7)
+            echo -e "${BLUE}🗑️  Cleaning package caches...${NC}"
+            sudo apt autoremove -y
+            sudo apt autoclean
+            sudo apt clean
+            
+            # Snap cleanup
+            if command -v snap &> /dev/null; then
+                echo "Cleaning snap cache..."
+                sudo snap refresh
+                # Keep only 2 revisions of each snap
+                snap list --all | awk '/disabled/{print $1, $3}' | while read snapname revision; do
+                    sudo snap remove "$snapname" --revision="$revision" 2>/dev/null || true
+                done
+            fi
+            
+            # Flatpak cleanup
+            if command -v flatpak &> /dev/null; then
+                echo "Cleaning Flatpak cache..."
+                flatpak uninstall --unused -y
+            fi
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;& 
+        2|7)
+            echo -e "${BLUE}🐧 Removing old kernels...${NC}"
+            # Keep current kernel plus one backup
+            current_kernel=$(uname -r)
+            echo "Current kernel: $current_kernel"
+            
+            # List all installed kernels except current
+            old_kernels=$(dpkg -l | grep 'linux-image-[0-9]' | awk '{print $2}' | grep -v "$current_kernel" | head -n -1)
+            
+            if [ -n "$old_kernels" ]; then
+                echo "Removing old kernels:"
+                echo "$old_kernels"
+                echo "$old_kernels" | xargs sudo apt purge -y
+            else
+                echo "No old kernels to remove"
+            fi
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;&
+        3|7)
+            echo -e "${BLUE}📜 Cleaning system logs...${NC}"
+            # Keep only 1 week of journal logs
+            sudo journalctl --vacuum-time=1week
+            
+            # Clear old log files
+            sudo find /var/log -type f -name "*.log.1" -delete 2>/dev/null || true
+            sudo find /var/log -type f -name "*.log.*.gz" -delete 2>/dev/null || true
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;&
+        4|7)
+            echo -e "${BLUE}🏚️  Removing orphaned packages...${NC}"
+            orphans=$(deborphan 2>/dev/null || echo "")
+            if [ -n "$orphans" ]; then
+                echo "$orphans" | xargs sudo apt purge -y
+            else
+                echo "No orphaned packages found (install 'deborphan' for better detection)"
+            fi
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;&
+        5|7)
+            echo -e "${BLUE}🖼️  Clearing thumbnail cache...${NC}"
+            rm -rf ~/.cache/thumbnails/*
+            rm -rf ~/.thumbnails/*
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;&
+        6|7)
+            echo -e "${BLUE}🗑️  Emptying trash...${NC}"
+            rm -rf ~/.local/share/Trash/files/*
+            rm -rf ~/.local/share/Trash/info/*
+            
+            if [ "$cleanup_choice" != "7" ]; then break; fi
+            ;;
+    esac
+    
+    # Show space recovered
+    echo ""
+    echo -e "${GREEN}✅ Cleanup completed!${NC}"
+    echo -e "${YELLOW}📊 Disk usage after cleanup:${NC}"
+    df -h / | tail -1
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+storage_analytics() {
+    echo -e "${BLUE}📈 STORAGE ANALYTICS${NC}"
+    echo "==================="
+    echo ""
+    
+    echo "1. Directory size analysis (ncdu)"
+    echo "2. Large file finder"
+    echo "3. Duplicate file scanner"
+    echo "4. Drive health check (SMART)"
+    echo "5. I/O performance test"
+    echo "0. Back to main menu"
+    echo ""
+    
+    read -p "Choose analysis: " analytics_choice
+    
+    case $analytics_choice in
+        1)
+            echo "Launching interactive directory size analyzer..."
+            if command -v ncdu &> /dev/null; then
+                ncdu /
+            else
+                echo "Installing ncdu..."
+                sudo apt install -y ncdu
+                ncdu /
+            fi
+            ;;
+        2)
+            echo -e "${BLUE}🔍 FINDING LARGE FILES${NC}"
+            echo "Searching for files larger than 100MB..."
+            find / -type f -size +100M -exec ls -lh {} \; 2>/dev/null | awk '{ print $9 ": " $5 }'
+            ;;
+        3)
+            echo -e "${BLUE}👥 DUPLICATE FILE SCANNER${NC}"
+            if command -v fdupes &> /dev/null; then
+                read -p "Scan directory (default: $HOME): " scan_dir
+                scan_dir=${scan_dir:-$HOME}
+                fdupes -r "$scan_dir"
+            else
+                echo "Installing fdupes..."
+                sudo apt install -y fdupes
+                read -p "Scan directory (default: $HOME): " scan_dir
+                scan_dir=${scan_dir:-$HOME}
+                fdupes -r "$scan_dir"
+            fi
+            ;;
+        4)
+            echo -e "${BLUE}🏥 DRIVE HEALTH CHECK${NC}"
+            if command -v smartctl &> /dev/null; then
+                echo "Available drives:"
+                lsblk -d -o NAME,SIZE,MODEL | grep -E '^sd'
+                read -p "Enter drive to check (e.g., sda): " drive
+                if [ -n "$drive" ]; then
+                    sudo smartctl -a "/dev/$drive"
+                fi
+            else
+                echo "Installing smartmontools..."
+                sudo apt install -y smartmontools
+            fi
+            ;;
+        5)
+            echo -e "${BLUE}⚡ I/O PERFORMANCE TEST${NC}"
+            echo "Available mount points:"
+            df -h | grep -E '^/dev/' | awk '{print $6}'
+            read -p "Enter path to test (e.g., /home): " test_path
+            
+            if [ -d "$test_path" ]; then
+                test_file="$test_path/disk_speed_test.tmp"
+                echo "Testing write speed..."
+                dd if=/dev/zero of="$test_file" bs=1M count=1024 2>&1 | grep -E 'copied|MB/s'
+                echo "Testing read speed..."
+                dd if="$test_file" of=/dev/null bs=1M 2>&1 | grep -E 'copied|MB/s'
+                rm -f "$test_file"
+            fi
+            ;;
+    esac
+    
+    echo ""
+    read -p "Press Enter to continue..."
+}
+
+# Main execution
+main_drive_manager() {
+    mkdir -p ~/.config/bill-sloth
+    
+    while true; do
+        show_main_menu
+        
+        case $choice in
+            1) show_drives_usage ;;
+            2) auto_mount_drives ;;
+            3) steam_library_manager ;;
+            4) relocate_app_data ;;
+            5) multimonitor_setup ;;
+            6) clean_system_drive ;;
+            7) echo "Configure drive preferences - Coming soon!" ;;
+            8) storage_analytics ;;
+            0) break ;;
+            *) echo "Invalid option" ;;
+        esac
+    done
+}
+
+main_drive_manager
+EOF
+
+        chmod +x ~/.local/bin/drive-manager
+        
+        echo "✅ Multi-drive management tools installed!"
+        echo ""
+        echo "🎯 NEW COMMANDS AVAILABLE:"
+        echo "   drive-manager  = Complete multi-drive storage management"
+        echo ""
+        echo "💡 This provides enterprise-grade solutions for:"
+        echo "   • Safe application relocation using bind mounts"
+        echo "   • Steam library management across multiple drives"  
+        echo "   • Multi-monitor setup with autorandr profiles"
+        echo "   • Ubuntu system drive cleanup for dual-boot scenarios"
+        echo "   • Storage analytics and health monitoring"
+        echo ""
+        
+        # Add to PATH if needed
+        if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+            echo "💡 Added ~/.local/bin to PATH. Reload terminal or run: source ~/.bashrc"
+        fi
+        
+        read -p "Press Enter to continue..."
+    else
+        echo "Skipped multi-drive setup."
+    fi
+    
+    echo ""
 }
 
 # Make sure we're in the right directory

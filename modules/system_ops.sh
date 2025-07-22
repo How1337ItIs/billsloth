@@ -48,4 +48,32 @@ check_system_health() {
     random_athf_easter_egg
 }
 
-echo '"I’m gonna hack into the mainframe and reroute the encryptions!" – Master Shake'
+show_menu() {
+    echo "🛠️  SYSTEM OPS"
+    echo "==============="
+    echo "1. Update everything"
+    echo "2. Fix audio"
+    echo "3. Fix network"
+    echo "4. Fix display"
+    echo "5. Check system health"
+    echo "0. Back to main menu"
+    echo
+    echo '"I'\''m gonna hack into the mainframe and reroute the encryptions!" – Master Shake'
+}
+
+# Main menu loop
+while true; do
+    show_menu
+    read -p "Choose option: " choice
+    case $choice in
+        1) update_everything ;;
+        2) fix_audio ;;
+        3) fix_network ;;
+        4) fix_display ;;
+        5) check_system_health ;;
+        0) exit 0 ;;
+        *) echo "Invalid option" ;;
+    esac
+    echo
+    read -p "Press any key to continue..."
+done

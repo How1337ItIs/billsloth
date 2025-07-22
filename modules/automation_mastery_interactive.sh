@@ -1356,292 +1356,6 @@ EOF
     notify_success "Excel Replacement" "Data automation system configured"
 }
 
-# Complete Bill Workflow Setup
-setup_complete_bill_workflow() {
-    print_header "🚀 COMPLETE BILL WORKFLOW SETUP"
-    
-    echo "🎯 Setting up Bill's complete automation workflow..."
-    echo "This will configure all systems for maximum efficiency!"
-    echo ""
-    
-    # Run all setup functions in sequence
-    echo "📋 Step 1/5: VRBO Property Management"
-    setup_vrbo_automation
-    echo ""
-    
-    echo "📋 Step 2/5: Google Tasks Integration"  
-    setup_google_tasks_automation
-    echo ""
-    
-    echo "📋 Step 3/5: ChatGPT Content Generation"
-    setup_chatgpt_integration
-    echo ""
-    
-    echo "📋 Step 4/5: Excel Replacement System"
-    setup_excel_replacement
-    echo ""
-    
-    echo "📋 Step 5/5: GitHub Authentication"
-    setup_github_authentication
-    echo ""
-    
-    # Create unified command center
-    cat > ~/.bill-sloth/bill-command-center.sh << 'EOF'
-#!/bin/bash
-# Bill's Unified Command Center
-# One script to rule them all
-
-echo "🏠 BILL'S AUTOMATION COMMAND CENTER"
-echo "==================================="
-echo ""
-echo "🎯 Quick Actions:"
-echo "1) 📊 Generate revenue report"
-echo "2) ✅ Add Google Task"
-echo "3) 🏠 Process new VRBO booking"
-echo "4) 🤖 Generate content with ChatGPT"
-echo "5) 📈 Open property dashboard"
-echo "6) 💾 Backup all data"
-echo "7) 🔧 Run system health check"
-echo ""
-
-read -p "Select action (1-7): " action
-
-case "$action" in
-    1) ~/.bill-sloth/data-automation/scripts/data-processor.sh revenue ;;
-    2) 
-        read -p "Task description: " task
-        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh add "$task"
-        ;;
-    3) 
-        read -p "Guest name: " guest
-        read -p "Property code: " property
-        read -p "Check-in date (YYYY-MM-DD): " checkin
-        read -p "Check-out date (YYYY-MM-DD): " checkout
-        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh vrbo "$property" "$guest" "$checkin" "$checkout"
-        ;;
-    4) ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh ;;
-    5) ~/.bill-sloth/data-automation/scripts/data-processor.sh dashboard ;;
-    6) ~/.bill-sloth/data-automation/scripts/data-processor.sh backup ;;
-    7) 
-        echo "🔧 System Health Check:"
-        echo "• VRBO automation: $([ -d ~/.bill-sloth/vrbo-automation ] && echo "✅" || echo "❌")"
-        echo "• Google Tasks: $([ -d ~/.bill-sloth/google-tasks ] && echo "✅" || echo "❌")"
-        echo "• ChatGPT integration: $([ -d ~/.bill-sloth/chatgpt-integration ] && echo "✅" || echo "❌")"
-        echo "• Data automation: $([ -d ~/.bill-sloth/data-automation ] && echo "✅" || echo "❌")"
-        echo "• GitHub auth: $([ -f ~/.bill-sloth/github/credentials ] && echo "✅" || echo "❌")"
-        ;;
-esac
-EOF
-    
-    chmod +x ~/.bill-sloth/bill-command-center.sh
-    
-    echo "🎉 COMPLETE BILL WORKFLOW SETUP FINISHED!"
-    echo "========================================"
-    echo ""
-    echo "✅ All systems configured and ready:"
-    echo "• 🏠 VRBO property management automation"
-    echo "• ✅ Google Tasks integration"
-    echo "• 🤖 ChatGPT content generation"
-    echo "• 📊 Excel replacement data processing"
-    echo "• 🔗 GitHub authentication"
-    echo ""
-    echo "🚀 Quick Start:"
-    echo "• Run: ~/.bill-sloth/bill-command-center.sh"
-    echo "• All your automation tools are now configured!"
-    echo ""
-    echo "📁 Everything is organized in: ~/.bill-sloth/"
-    echo "📚 Each system has its own documentation and examples"
-    
-    notify_success "Bill Workflow" "Complete automation suite configured successfully!"
-    
-    collect_feedback "automation" "complete_bill_workflow"
-    
-    assess_personal_workflows
-}
-    
-    echo "# Personal Workflow Assessment - $(date)" > "$ASSESSMENT_FILE"
-    echo "" >> "$ASSESSMENT_FILE"
-    
-    echo "📋 SECTION 1: BILL'S SPECIFIC WORKFLOW OPTIMIZATION"
-    echo "=================================================="
-    echo ""
-    echo "🎯 Based on Bill's usage: Google Tasks, VRBO by Owner, ChatGPT, Excel (reluctantly)"
-    echo ""
-    
-    # Bill-specific automation setup
-    setup_bill_specific_automations
-    
-    echo "📋 SECTION 2: DAILY DIGITAL HABITS ASSESSMENT"
-    echo "============================================="
-    echo ""
-    echo "🥤 Shake: 'Yeah, we need to know what you do all day so we can judge you.'"
-    echo ""
-    
-    echo "1. What devices do you use regularly? (check all that apply)"
-    echo "   a) Windows PC/Laptop"
-    echo "   b) Mac"
-    echo "   c) iPhone"
-    echo "   d) Android phone"
-    echo "   e) iPad/Tablet"
-    echo "   f) Smart home devices (Alexa, Google Home, etc.)"
-    echo "   g) Smart watch"
-    echo ""
-    read -p "Enter letters (e.g., 'a,c,g'): " devices
-    echo "## Devices Used: $devices" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "2. What apps/services do you use daily? (check all that apply)"
-    echo "   a) Gmail/Google Workspace"
-    echo "   b) Outlook/Microsoft 365"
-    echo "   c) Slack/Discord/Teams"
-    echo "   d) WhatsApp/Telegram/Signal"
-    echo "   e) Notion/Obsidian/Roam"
-    echo "   f) Todoist/Any.do/Things"
-    echo "   g) Calendar apps"
-    echo "   h) Social media (Twitter, Instagram, etc.)"
-    echo "   i) Spotify/Apple Music"
-    echo "   j) Banking/Financial apps"
-    echo "   k) Shopping apps (Amazon, etc.)"
-    echo ""
-    read -p "Enter letters: " apps
-    echo "## Daily Apps: $apps" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "📋 SECTION 2: CURRENT PAIN POINTS"
-    echo "================================="
-    echo ""
-    echo "🧠 Frylock: 'Now let's identify the inefficiencies in your current system.'"
-    echo ""
-    
-    echo "3. What tasks do you find most repetitive/annoying? (rank 1-3, 1 = worst)"
-    echo "   a) Email management and responses"
-    echo "   b) Calendar scheduling and meeting prep"
-    echo "   c) File organization and backup"
-    echo "   d) Social media posting and engagement"
-    echo "   e) Invoice/expense tracking"
-    echo "   f) Data entry and form filling"
-    echo "   g) Research and information gathering"
-    echo "   h) Task and project management"
-    echo ""
-    read -p "Enter top 3 (e.g., 'a,h,c'): " pain_points
-    echo "## Top Pain Points: $pain_points" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "4. How much time do you spend daily on these repetitive tasks?"
-    echo "   a) Less than 30 minutes"
-    echo "   b) 30 minutes to 1 hour"
-    echo "   c) 1-2 hours"
-    echo "   d) 2-4 hours"
-    echo "   e) More than 4 hours (🥤 Shake: 'Jesus, get a life!')"
-    echo ""
-    read -p "Enter letter: " time_spent
-    echo "## Daily Time on Repetitive Tasks: $time_spent" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "📋 SECTION 3: NEURODIVERGENT ACCOMMODATIONS"
-    echo "==========================================="
-    echo ""
-    echo "🍔 Meatwad: 'Everyone's brain is different! I understand!'"
-    echo ""
-    
-    echo "5. Do any of these apply to you? (check all that apply)"
-    echo "   a) ADHD/Executive function challenges"
-    echo "   b) Autism/Need for routine and predictability"
-    echo "   c) Dyslexia/Reading and writing challenges"
-    echo "   d) Anxiety/Overwhelm with complex systems"
-    echo "   e) Depression/Low motivation for routine tasks"
-    echo "   f) Time blindness/Difficulty with scheduling"
-    echo "   g) Sensory processing differences"
-    echo "   h) None of the above"
-    echo ""
-    read -p "Enter letters: " neurodivergent
-    echo "## Neurodivergent Considerations: $neurodivergent" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "6. What type of interface do you prefer?"
-    echo "   a) Visual/flowchart-based (I need to see the connections)"
-    echo "   b) Simple/minimal (too many options overwhelm me)"
-    echo "   c) Text-based/detailed (I like to understand everything)"
-    echo "   d) Voice/conversational (I prefer talking to typing)"
-    echo ""
-    read -p "Enter letter: " interface_pref
-    echo "## Interface Preference: $interface_pref" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "📋 SECTION 4: WORK & BUSINESS CONTEXT"
-    echo "====================================="
-    echo ""
-    echo "🧙 wwwyzzerdd: 'What is the nature of your employment, broadbrain?'"
-    echo ""
-    
-    echo "7. What best describes your work situation?"
-    echo "   a) Full-time employee at a company"
-    echo "   b) Freelancer/Independent contractor"
-    echo "   c) Business owner/Entrepreneur"
-    echo "   d) Student"
-    echo "   e) Multiple roles (employee + side business)"
-    echo "   f) Currently unemployed/between jobs"
-    echo ""
-    read -p "Enter letter: " work_type
-    echo "## Work Type: $work_type" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "8. What industry/field are you in?"
-    echo "   a) Technology/Software"
-    echo "   b) Creative (design, writing, media)"
-    echo "   c) Business/Finance/Consulting"
-    echo "   d) Education/Research"
-    echo "   e) Healthcare"
-    echo "   f) Service industry"
-    echo "   g) Other"
-    echo ""
-    read -p "Enter letter: " industry
-    echo "## Industry: $industry" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "📋 SECTION 5: AUTOMATION EXPERIENCE"
-    echo "==================================="
-    echo ""
-    echo "🥤 Shake: 'How much of a computer expert are you? Like Carl?'"
-    echo "👨 Carl: 'Yeah, I'm a computer expert now. I know all about computers.'"
-    echo ""
-    
-    echo "9. What's your current automation experience?"
-    echo "   a) Complete beginner (🍔 Meatwad: 'I understand! Me too!')"
-    echo "   b) Used basic features (email filters, simple phone shortcuts)"
-    echo "   c) Some experience (tried Zapier/IFTTT a few times)"
-    echo "   d) Intermediate (have working automations, want to expand)"
-    echo "   e) Advanced (🧠 Frylock: 'Ah, a fellow automation researcher')"
-    echo ""
-    read -p "Enter letter: " experience_level
-    echo "## Experience Level: $experience_level" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "10. What's your monthly budget for automation tools?"
-    echo "    a) $0 (free tools only)"
-    echo "    b) Under $25/month"
-    echo "    c) $25-50/month"
-    echo "    d) $50-100/month"
-    echo "    e) Over $100/month (🥤 Shake: 'Money bags over here!')"
-    echo ""
-    read -p "Enter letter: " budget
-    echo "## Budget: $budget" >> "$ASSESSMENT_FILE"
-    
-    echo ""
-    echo "🎯 GENERATING YOUR PERSONALIZED AUTOMATION RECOMMENDATIONS..."
-    echo ""
-    
-    # Generate personalized recommendations based on answers
-    generate_recommendations "$devices" "$apps" "$pain_points" "$time_spent" "$neurodivergent" "$interface_pref" "$work_type" "$industry" "$experience_level" "$budget"
-    
-    echo ""
-    echo "✅ Assessment complete! Your personalized recommendations are ready."
-    echo "🧠 Frylock: 'Now we can create a targeted automation strategy for you.'"
-    echo ""
-    read -p "Press Enter to see your recommendations..."
-    clear
-}
-
 # Generate personalized recommendations based on assessment
 generate_recommendations() {
     local devices="$1" apps="$2" pain_points="$3" time_spent="$4" neurodivergent="$5" interface_pref="$6" work_type="$7" industry="$8" experience_level="$9" budget="${10}"
@@ -1832,6 +1546,289 @@ generate_recommendations() {
     echo ""
     echo "🧠 Frylock: 'This personalized approach will yield far superior results'"
     echo "🧠 Frylock: 'compared to generic automation advice.'"
+}
+
+# Complete Bill Workflow Setup
+setup_complete_bill_workflow() {
+    print_header "🚀 COMPLETE BILL WORKFLOW SETUP"
+    
+    echo "🎯 Setting up Bill's complete automation workflow..."
+    echo "This will configure all systems for maximum efficiency!"
+    echo ""
+    
+    # Run all setup functions in sequence
+    echo "📋 Step 1/5: VRBO Property Management"
+    setup_vrbo_automation
+    echo ""
+    
+    echo "📋 Step 2/5: Google Tasks Integration"  
+    setup_google_tasks_automation
+    echo ""
+    
+    echo "📋 Step 3/5: ChatGPT Content Generation"
+    setup_chatgpt_integration
+    echo ""
+    
+    echo "📋 Step 4/5: Excel Replacement System"
+    setup_excel_replacement
+    echo ""
+    
+    echo "📋 Step 5/5: GitHub Authentication"
+    setup_github_authentication
+    echo ""
+    
+    # Create unified command center
+    cat > ~/.bill-sloth/bill-command-center.sh << 'EOF'
+#!/bin/bash
+# Bill's Unified Command Center
+# One script to rule them all
+
+echo "🏠 BILL'S AUTOMATION COMMAND CENTER"
+echo "==================================="
+echo ""
+echo "🎯 Quick Actions:"
+echo "1) 📊 Generate revenue report"
+echo "2) ✅ Add Google Task"
+echo "3) 🏠 Process new VRBO booking"
+echo "4) 🤖 Generate content with ChatGPT"
+echo "5) 📈 Open property dashboard"
+echo "6) 💾 Backup all data"
+echo "7) 🔧 Run system health check"
+echo ""
+
+read -p "Select action (1-7): " action
+
+case "$action" in
+    1) ~/.bill-sloth/data-automation/scripts/data-processor.sh revenue ;;
+    2) 
+        read -p "Task description: " task
+        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh add "$task"
+        ;;
+    3) 
+        read -p "Guest name: " guest
+        read -p "Property code: " property
+        read -p "Check-in date (YYYY-MM-DD): " checkin
+        read -p "Check-out date (YYYY-MM-DD): " checkout
+        ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh vrbo "$property" "$guest" "$checkin" "$checkout"
+        ;;
+    4) ~/.bill-sloth/chatgpt-integration/scripts/chatgpt-helper.sh ;;
+    5) ~/.bill-sloth/data-automation/scripts/data-processor.sh dashboard ;;
+    6) ~/.bill-sloth/data-automation/scripts/data-processor.sh backup ;;
+    7) 
+        echo "🔧 System Health Check:"
+        echo "• VRBO automation: $([ -d ~/.bill-sloth/vrbo-automation ] && echo "✅" || echo "❌")"
+        echo "• Google Tasks: $([ -d ~/.bill-sloth/google-tasks ] && echo "✅" || echo "❌")"
+        echo "• ChatGPT integration: $([ -d ~/.bill-sloth/chatgpt-integration ] && echo "✅" || echo "❌")"
+        echo "• Data automation: $([ -d ~/.bill-sloth/data-automation ] && echo "✅" || echo "❌")"
+        echo "• GitHub auth: $([ -f ~/.bill-sloth/github/credentials ] && echo "✅" || echo "❌")"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/bill-command-center.sh
+    
+    echo "🎉 COMPLETE BILL WORKFLOW SETUP FINISHED!"
+    echo "========================================"
+    echo ""
+    echo "✅ All systems configured and ready:"
+    echo "• 🏠 VRBO property management automation"
+    echo "• ✅ Google Tasks integration"
+    echo "• 🤖 ChatGPT content generation"
+    echo "• 📊 Excel replacement data processing"
+    echo "• 🔗 GitHub authentication"
+    echo ""
+    echo "🚀 Quick Start:"
+    echo "• Run: ~/.bill-sloth/bill-command-center.sh"
+    echo "• All your automation tools are now configured!"
+    echo ""
+    echo "📁 Everything is organized in: ~/.bill-sloth/"
+    echo "📚 Each system has its own documentation and examples"
+    
+    notify_success "Bill Workflow" "Complete automation suite configured successfully!"
+    
+    collect_feedback "automation" "complete_bill_workflow"
+    
+    echo "# Personal Workflow Assessment - $(date)" > "$ASSESSMENT_FILE"
+    echo "" >> "$ASSESSMENT_FILE"
+    
+    echo "📋 SECTION 1: BILL'S SPECIFIC WORKFLOW OPTIMIZATION"
+    echo "=================================================="
+    echo ""
+    echo "🎯 Based on Bill's usage: Google Tasks, VRBO by Owner, ChatGPT, Excel (reluctantly)"
+    echo ""
+    
+    # Bill-specific automation setup
+    setup_bill_specific_automations
+    
+    echo "📋 SECTION 2: DAILY DIGITAL HABITS ASSESSMENT"
+    echo "============================================="
+    echo ""
+    echo "🥤 Shake: 'Yeah, we need to know what you do all day so we can judge you.'"
+    echo ""
+    
+    echo "1. What devices do you use regularly? (check all that apply)"
+    echo "   a) Windows PC/Laptop"
+    echo "   b) Mac"
+    echo "   c) iPhone"
+    echo "   d) Android phone"
+    echo "   e) iPad/Tablet"
+    echo "   f) Smart home devices (Alexa, Google Home, etc.)"
+    echo "   g) Smart watch"
+    echo ""
+    read -p "Enter letters (e.g., 'a,c,g'): " devices
+    echo "## Devices Used: $devices" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "2. What apps/services do you use daily? (check all that apply)"
+    echo "   a) Gmail/Google Workspace"
+    echo "   b) Outlook/Microsoft 365"
+    echo "   c) Slack/Discord/Teams"
+    echo "   d) WhatsApp/Telegram/Signal"
+    echo "   e) Notion/Obsidian/Roam"
+    echo "   f) Todoist/Any.do/Things"
+    echo "   g) Calendar apps"
+    echo "   h) Social media (Twitter, Instagram, etc.)"
+    echo "   i) Spotify/Apple Music"
+    echo "   j) Banking/Financial apps"
+    echo "   k) Shopping apps (Amazon, etc.)"
+    echo ""
+    read -p "Enter letters: " apps
+    echo "## Daily Apps: $apps" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "📋 SECTION 2: CURRENT PAIN POINTS"
+    echo "================================="
+    echo ""
+    echo "🧠 Frylock: 'Now let's identify the inefficiencies in your current system.'"
+    echo ""
+    
+    echo "3. What tasks do you find most repetitive/annoying? (rank 1-3, 1 = worst)"
+    echo "   a) Email management and responses"
+    echo "   b) Calendar scheduling and meeting prep"
+    echo "   c) File organization and backup"
+    echo "   d) Social media posting and engagement"
+    echo "   e) Invoice/expense tracking"
+    echo "   f) Data entry and form filling"
+    echo "   g) Research and information gathering"
+    echo "   h) Task and project management"
+    echo ""
+    read -p "Enter top 3 (e.g., 'a,h,c'): " pain_points
+    echo "## Top Pain Points: $pain_points" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "4. How much time do you spend daily on these repetitive tasks?"
+    echo "   a) Less than 30 minutes"
+    echo "   b) 30 minutes to 1 hour"
+    echo "   c) 1-2 hours"
+    echo "   d) 2-4 hours"
+    echo "   e) More than 4 hours (🥤 Shake: 'Jesus, get a life!')"
+    echo ""
+    read -p "Enter letter: " time_spent
+    echo "## Daily Time on Repetitive Tasks: $time_spent" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "📋 SECTION 3: NEURODIVERGENT ACCOMMODATIONS"
+    echo "==========================================="
+    echo ""
+    echo "🍔 Meatwad: 'Everyone's brain is different! I understand!'"
+    echo ""
+    
+    echo "5. Do any of these apply to you? (check all that apply)"
+    echo "   a) ADHD/Executive function challenges"
+    echo "   b) Autism/Need for routine and predictability"
+    echo "   c) Dyslexia/Reading and writing challenges"
+    echo "   d) Anxiety/Overwhelm with complex systems"
+    echo "   e) Depression/Low motivation for routine tasks"
+    echo "   f) Time blindness/Difficulty with scheduling"
+    echo "   g) Sensory processing differences"
+    echo "   h) None of the above"
+    echo ""
+    read -p "Enter letters: " neurodivergent
+    echo "## Neurodivergent Considerations: $neurodivergent" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "6. What type of interface do you prefer?"
+    echo "   a) Visual/flowchart-based (I need to see the connections)"
+    echo "   b) Simple/minimal (too many options overwhelm me)"
+    echo "   c) Text-based/detailed (I like to understand everything)"
+    echo "   d) Voice/conversational (I prefer talking to typing)"
+    echo ""
+    read -p "Enter letter: " interface_pref
+    echo "## Interface Preference: $interface_pref" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "📋 SECTION 4: WORK & BUSINESS CONTEXT"
+    echo "====================================="
+    echo ""
+    echo "🧙 wwwyzzerdd: 'What is the nature of your employment, broadbrain?'"
+    echo ""
+    
+    echo "7. What best describes your work situation?"
+    echo "   a) Full-time employee at a company"
+    echo "   b) Freelancer/Independent contractor"
+    echo "   c) Business owner/Entrepreneur"
+    echo "   d) Student"
+    echo "   e) Multiple roles (employee + side business)"
+    echo "   f) Currently unemployed/between jobs"
+    echo ""
+    read -p "Enter letter: " work_type
+    echo "## Work Type: $work_type" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "8. What industry/field are you in?"
+    echo "   a) Technology/Software"
+    echo "   b) Creative (design, writing, media)"
+    echo "   c) Business/Finance/Consulting"
+    echo "   d) Education/Research"
+    echo "   e) Healthcare"
+    echo "   f) Service industry"
+    echo "   g) Other"
+    echo ""
+    read -p "Enter letter: " industry
+    echo "## Industry: $industry" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "📋 SECTION 5: AUTOMATION EXPERIENCE"
+    echo "==================================="
+    echo ""
+    echo "🥤 Shake: 'How much of a computer expert are you? Like Carl?'"
+    echo "👨 Carl: 'Yeah, I'm a computer expert now. I know all about computers.'"
+    echo ""
+    
+    echo "9. What's your current automation experience?"
+    echo "   a) Complete beginner (🍔 Meatwad: 'I understand! Me too!')"
+    echo "   b) Used basic features (email filters, simple phone shortcuts)"
+    echo "   c) Some experience (tried Zapier/IFTTT a few times)"
+    echo "   d) Intermediate (have working automations, want to expand)"
+    echo "   e) Advanced (🧠 Frylock: 'Ah, a fellow automation researcher')"
+    echo ""
+    read -p "Enter letter: " experience_level
+    echo "## Experience Level: $experience_level" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "10. What's your monthly budget for automation tools?"
+    echo "    a) $0 (free tools only)"
+    echo "    b) Under $25/month"
+    echo "    c) $25-50/month"
+    echo "    d) $50-100/month"
+    echo "    e) Over $100/month (🥤 Shake: 'Money bags over here!')"
+    echo ""
+    read -p "Enter letter: " budget
+    echo "## Budget: $budget" >> "$ASSESSMENT_FILE"
+    
+    echo ""
+    echo "🎯 GENERATING YOUR PERSONALIZED AUTOMATION RECOMMENDATIONS..."
+    echo ""
+    
+    # Generate personalized recommendations based on answers
+    generate_recommendations "$devices" "$apps" "$pain_points" "$time_spent" "$neurodivergent" "$interface_pref" "$work_type" "$industry" "$experience_level" "$budget"
+    
+    echo ""
+    echo "✅ Assessment complete! Your personalized recommendations are ready."
+    echo "🧠 Frylock: 'Now we can create a targeted automation strategy for you.'"
+    echo ""
+    read -p "Press Enter to see your recommendations..."
+    clear
 }
 
 # Educational introduction to modern automation

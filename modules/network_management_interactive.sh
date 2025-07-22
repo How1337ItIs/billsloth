@@ -713,12 +713,14 @@ vpn_quick_connect() {
         echo "Disconnecting all VPNs..."
         
         # Disconnect WireGuard
-        for conf in /etc/wireguard/*.conf 2>/dev/null; do
-            if [ -f "$conf" ]; then
-                local name=$(basename "$conf" .conf)
-                sudo systemctl stop "wg-quick@$name" 2>/dev/null || true
-            fi
-        done
+        if ls /etc/wireguard/*.conf >/dev/null 2>&1; then
+            for conf in /etc/wireguard/*.conf; do
+                if [ -f "$conf" ]; then
+                    local name=$(basename "$conf" .conf)
+                    sudo systemctl stop "wg-quick@$name" 2>/dev/null || true
+                fi
+            done
+        fi
         
         # Disconnect OpenVPN
         sudo pkill openvpn 2>/dev/null || true
@@ -729,7 +731,8 @@ vpn_quick_connect() {
     elif [ "$vpn_choice" -ge 1 ] && [ "$vpn_choice" -le $vpn_count ]; then
         # Handle WireGuard connections
         local current_count=0
-        for conf in /etc/wireguard/*.conf 2>/dev/null; do
+        if ls /etc/wireguard/*.conf >/dev/null 2>&1; then
+            for conf in /etc/wireguard/*.conf; do
             if [ -f "$conf" ]; then
                 current_count=$((current_count + 1))
                 if [ $current_count -eq "$vpn_choice" ]; then
@@ -755,6 +758,7 @@ vpn_quick_connect() {
                 fi
             fi
         done
+        fi
         
     else
         echo "Invalid selection"

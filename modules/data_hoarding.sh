@@ -65,15 +65,7 @@ setup_safe_torrenting() {
     echo "[*] Setting up safe torrenting environment..."
     
     # Create torrenting directory structure
-    mkdir -p ~/Torrents/{
-        Watch,
-        Downloading,
-        Complete,
-        Seeds,
-        Archive,
-        Private,
-        Public
-    }
+    mkdir -p ~/Torrents/{Watch,Downloading,Complete,Seeds,Archive,Private,Public}
     
     # qBittorrent configuration for safety
     mkdir -p ~/.config/qBittorrent
