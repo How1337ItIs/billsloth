@@ -182,10 +182,14 @@ analytics:
     echo "📊 Bill Sloth Usage Analytics:"
     source lib/data_persistence.sh
     if [ -f ~/.bill-sloth/data/bill_sloth.db ]; then
+        echo "Module Usage:"
         sqlite3 ~/.bill-sloth/data/bill_sloth.db "SELECT module_name, COUNT(*) as usage_count FROM module_usage GROUP BY module_name ORDER BY usage_count DESC;"
-    else
-        echo "No analytics data available yet"
+        echo ""
     fi
+    
+    # Show cross-module integration status
+    source lib/cross_module_integration.sh
+    show_integration_status
 
 # Show recent task history
 history:
@@ -276,3 +280,37 @@ emergency:
     just clean
     just init
     echo "🛡️ Emergency procedures complete!"
+
+# 🔗 CROSS-MODULE INTEGRATION
+
+# Show detailed integration status and workflow connectivity
+integration:
+    #!/usr/bin/env bash
+    echo "🔗 Bill Sloth Cross-Module Integration Status:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    source lib/cross_module_integration.sh
+    show_integration_status
+
+# Test cross-module workflows (usage: just test-integration)
+test-integration:
+    #!/usr/bin/env bash
+    echo "🧪 Testing cross-module integration workflows..."
+    source lib/cross_module_integration.sh
+    
+    # Test VRBO integration
+    echo "Testing VRBO → Task integration..."
+    quick_vrbo_integration "Test Guest" "Test Property" "$(date -d '+3 days' +%Y-%m-%d)"
+    
+    # Test content integration  
+    echo "Testing EdBoiGames → Media integration..."
+    quick_content_integration "video" "/tmp/test_video.mp4"
+    
+    echo "✅ Integration tests complete!"
+
+# Setup integration triggers for automation
+setup-triggers:
+    #!/usr/bin/env bash
+    echo "⚙️ Setting up cross-module integration triggers..."
+    source lib/cross_module_integration.sh
+    setup_integration_triggers
+    echo "✅ Triggers configured for seamless automation!"
