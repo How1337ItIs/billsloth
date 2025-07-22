@@ -22,7 +22,7 @@
    4) Start the command center for me
    5) Walk me through what I can do with it
    
-   I'm on Ubuntu Linux and want this system for productivity, automation, and managing my VRBO properties. Please explain each step as you do it."
+   I'm on Ubuntu Linux and want this system for productivity, automation, and managing my single VRBO property called 'Guntersville Getaway'. I also do modding work and business development activities. Please explain each step as you do it."
    ```
 
 3. **That's it!** Claude will handle everything and explain what's happening.
@@ -52,7 +52,9 @@ The system will automatically install anything it needs on first run.
 
 Your Bill Sloth command center can handle:
 
-- 🏠 **VRBO automation** - Guest messages, check-in instructions, reviews
+- 🏠 **Guntersville Getaway automation** - Guest messages, check-in instructions, reviews
+- 🔧 **Modding projects** - Development tools, file management, automation
+- 💼 **Business development** - Partnership tracking, client management, workflows
 - 🎮 **EdBoiGames business** - Content workflows, partnerships  
 - 💾 **Smart backups** - Automatic protection for your important files
 - 🤖 **AI integration** - Local and cloud AI tools
