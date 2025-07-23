@@ -25,6 +25,28 @@
 ### ⚡ **GET STARTED - 60 SECONDS TO SETUP**
 *Simple copy and paste - no technical knowledge needed*
 
+## 🖥️ **COMING FROM WINDOWS? NEED DUAL-BOOT?**
+
+### **🚀 WINDOWS-TO-UBUNTU DUAL-BOOT SETUP**
+**Still trapped in the Windows matrix?** We've got your escape route ready!
+
+**→ [WINDOWS DUAL-BOOT SETUP GUIDE](windows-setup/) ←**
+
+Our automated dual-boot preparation system will:
+- 🔍 **Analyze your Windows system** for dual-boot compatibility
+- 💾 **Prepare disk partitions** safely without data loss  
+- 💿 **Download Ubuntu and create bootable USB** with Bill Sloth pre-integration
+- 🤖 **Claude Code AI assistance** throughout the entire process
+- 🆘 **Emergency recovery tools** in case anything goes wrong
+
+**One-click setup for Windows users:**
+```powershell
+# Run in PowerShell as Administrator
+iex (iwr -useb 'https://raw.githubusercontent.com/how1337itis/billsloth/main/windows-bootstrap.ps1')
+```
+
+---
+
 ## 🚨 **FRESH UBUNTU INSTALL? API ERRORS? START HERE!**
 
 ### **💀 NUCLEAR OPTION - AUTO-INSTALLER:**

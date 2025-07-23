@@ -99,8 +99,18 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 - **Interactive Selection**: Choose from multiple found ISOs or browse for specific files
 - **USB Analysis**: Detects existing Ubuntu installer USBs and validates their bootability
 - **Smart Enhancement**: Adds Bill Sloth startup files to existing USBs without recreation
+- **Progress Integration**: Works with progress-bars-addon.ps1 for enhanced visual feedback
+- **Rufus Automation**: Can use automated-rufus-addon.ps1 for hands-free USB creation
 
 ## 🎯 Recommended Workflow
+
+### Optional: Enhanced Features Setup
+If you want enhanced progress tracking and automation:
+```powershell
+# Download and dot-source the addon scripts for enhanced functionality
+. (iwr -useb 'https://raw.githubusercontent.com/how1337itis/billsloth/main/progress-bars-addon.ps1')
+. (iwr -useb 'https://raw.githubusercontent.com/how1337itis/billsloth/main/automated-rufus-addon.ps1')
+```
 
 ### Phase 1: Analysis & Planning
 ```powershell
@@ -149,6 +159,46 @@ Scripts automatically build context including:
 - Installation progress and decision points
 - Error conditions and recovery options
 
+## 🔌 Additional Scripts (Repository Root)
+
+### Enhanced Functionality Scripts
+
+#### `windows-bootstrap.ps1`
+**Emergency bootstrap script for quick deployment**
+- Minimal system requirements checking
+- Downloads full windows-setup package automatically
+- Provides fallback instructions if downloads fail
+- Can be run directly from web:
+```powershell
+iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/how1337itis/billsloth/main/windows-bootstrap.ps1'))
+```
+
+#### `progress-bars-addon.ps1`
+**Enhanced progress tracking for Claude Code integration**
+- Visual progress bars for all major operations
+- Claude Code status reporting with special formatting
+- Real-time status file updates for monitoring
+- Functions included:
+  - `Show-ProgressWithStatus` - Main progress display with Claude messages
+  - `Download-WithProgress` - Enhanced download tracking
+  - `Show-DiskProgress` - Disk operation progress
+  - `Show-USBProgress` - USB creation stages
+  - `Show-AnalysisProgress` - System analysis tracking
+  - `Report-ErrorToClaude` - Error reporting with suggestions
+  - `Report-SuccessToClaude` - Success notifications
+
+#### `automated-rufus-addon.ps1`
+**Fully automated USB creation with Rufus**
+- Downloads and configures Rufus 4.4 automatically
+- Command-line USB creation (no manual interaction required)
+- Intelligent fallback to manual Rufus mode if automation fails
+- Alternative PowerShell-based USB creation method
+- Functions included:
+  - `Install-AutomatedRufus` - Downloads Rufus if needed
+  - `New-AutomatedUbuntuUSB` - Automated USB creation
+  - `New-PowerShellUbuntuUSB` - Native PowerShell method
+  - `New-UbuntuBootableUSB` - Main function with method selection
+
 ## 📊 Generated Files
 
 ### Reports & Guides
@@ -189,7 +239,7 @@ Scripts automatically build context including:
 .\ubuntu-installer-prep.ps1 -UbuntuVersion "24.04" -Interactive
 
 # Use specific existing ISO file
-.\ubuntu-installer-prep.ps1 -ExistingISO "C:\Downloads\ubuntu-22.04.3-desktop-amd64.iso"
+.\ubuntu-installer-prep.ps1 -ExistingISO "C:\Downloads\ubuntu-22.04.5-desktop-amd64.iso"
 
 # Search for existing ISOs only (no download)
 .\ubuntu-installer-prep.ps1 -SkipDownload -Interactive
@@ -274,9 +324,10 @@ npm install -g @anthropic-ai/claude-code
 
 This package is designed to work with:
 - **Windows 10/11** - Full compatibility
-- **Ubuntu 22.04+ LTS** - Recommended versions
+- **Ubuntu 22.04.5 LTS** - Current recommended version (updated from 22.04.3)
 - **Claude Code** - Latest version
 - **UEFI Systems** - Preferred (Legacy BIOS supported)
+- **Repository**: https://github.com/how1337itis/billsloth (updated from placeholder URLs)
 
 ---
 

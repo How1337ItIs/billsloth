@@ -28,6 +28,23 @@ Write-Host @"
 "@ -ForegroundColor Cyan
 
 $script:BillSlothDir = "$env:USERPROFILE\bill-sloth-windows"
+
+# Import enhancement modules if available
+$enhancementModules = @(
+    "$PSScriptRoot\progress-bars-addon.ps1",
+    "$PSScriptRoot\automated-rufus-addon.ps1"
+)
+
+foreach ($module in $enhancementModules) {
+    if (Test-Path $module) {
+        try {
+            . $module
+            Write-Host "✅ Loaded enhancement: $(Split-Path $module -Leaf)" -ForegroundColor Green
+        } catch {
+            Write-Host "⚠️  Could not load enhancement: $(Split-Path $module -Leaf)" -ForegroundColor Yellow
+        }
+    }
+}
 $script:LogFile = "$script:BillSlothDir\ubuntu-installer-prep.log"
 
 function Write-Log {
@@ -392,6 +409,27 @@ function Get-UbuntuISO {
     
     try {
         Write-Log "Starting download of $($ReleaseInfo.Name)..." "PROGRESS"
+        
+        # Use enhanced download with progress if available
+        if (Get-Command Download-WithProgress -ErrorAction SilentlyContinue) {
+            if (Download-WithProgress -Url $ReleaseInfo.URL -OutputPath $isoPath -Description "Ubuntu $($ReleaseInfo.Name)") {
+                Write-Log "✅ Ubuntu ISO downloaded successfully" "SUCCESS"
+                $downloadedSize = (Get-Item $isoPath).Length
+                
+                # Verify download size
+                $expectedSize = $ReleaseInfo.SizeGB * 1GB
+                if ([math]::Abs($downloadedSize - $expectedSize) -gt 100MB) {
+                    Write-Log "⚠️ Downloaded file size doesn't match expected size" "WARN"
+                    Write-Log "Downloaded: $([math]::Round($downloadedSize / 1GB, 2)) GB" "INFO"
+                    Write-Log "Expected: $($ReleaseInfo.SizeGB) GB" "INFO"
+                }
+                
+                Write-Log "ISO saved to: $isoPath" "INFO"
+                return $isoPath
+            } else {
+                throw "Enhanced download failed"
+            }
+        }
         
         # Use BITS (Background Intelligent Transfer Service) for robust downloading
         Import-Module BitsTransfer -ErrorAction SilentlyContinue
@@ -813,6 +851,12 @@ function Get-Rufus {
 # Create bootable USB using Rufus (automated where possible)
 function New-BootableUSB {
     param([string]$ISOPath, [string]$USBDrive, [string]$RufusPath)
+    
+    # Use enhanced USB creation if available
+    if (Get-Command New-UbuntuBootableUSB -ErrorAction SilentlyContinue) {
+        Write-Log "Using enhanced USB creation with automation..." "INFO"
+        return New-UbuntuBootableUSB -ISOPath $ISOPath -TargetUSB $USBDrive -Method "auto"
+    }
     
     Write-Host ""
     Write-Host "💿 CREATING BOOTABLE USB" -ForegroundColor Cyan
