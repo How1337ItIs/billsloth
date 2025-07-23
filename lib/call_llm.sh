@@ -3,6 +3,8 @@
 # Automatically chooses based on capability tags and environment flags
 
 LLM_LOG="$HOME/.bill-sloth/ai.log"
+
+set -euo pipefail
 mkdir -p "$(dirname "$LLM_LOG")"
 
 # Smart LLM dispatcher

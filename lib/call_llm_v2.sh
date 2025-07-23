@@ -2,8 +2,8 @@
 # Enhanced LLM Call Abstraction v2 - Smart dispatcher with timeouts, metrics, and sanitization
 # Improvements: timeouts, retries, prompt sanitization, usage metrics, error codes
 
-# Source error handling
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || {
     echo "ERROR: Could not source error handling library" >&2
     exit 1

@@ -25,35 +25,37 @@ install_vpn_tools() {
 }
 
 setup_vpn_killswitch() {
+    echo "🔥 Setting up VPN kill switch (using centralized implementation)..."
+    
+    # Create wrapper script that uses centralized kill-switch
     cat > ~/bin/vpn-killswitch << 'EOF'
 #!/bin/bash
-echo "🔥 VPN Kill Switch"
+# VPN Kill Switch - Uses centralized Bill Sloth implementation
+
+# Source centralized kill-switch library
+BILL_SLOTH_LIB="$HOME/.bill-sloth/lib/kill_switch.sh"
+if [ -f "$BILL_SLOTH_LIB" ]; then
+    source "$BILL_SLOTH_LIB"
+else
+    echo "ERROR: Bill Sloth kill-switch library not found at $BILL_SLOTH_LIB"
+    echo "Please ensure Bill Sloth is properly installed."
+    exit 1
+fi
+
+echo "🔥 VPN Kill Switch (Bill Sloth Centralized)"
 echo "This will block ALL internet if VPN drops!"
 echo "Continue? (y/n)"
 read -r confirm
 
 if [[ $confirm == "y" ]]; then
-    # Flush existing rules
-    sudo iptables -F
-    sudo iptables -X
-    
-    # Default deny
-    sudo iptables -P INPUT DROP
-    sudo iptables -P FORWARD DROP
-    sudo iptables -P OUTPUT DROP
-    
-    # Allow loopback
-    sudo iptables -A INPUT -i lo -j ACCEPT
-    sudo iptables -A OUTPUT -o lo -j ACCEPT
-    
-    # Allow VPN
-    sudo iptables -A OUTPUT -o tun+ -j ACCEPT
-    sudo iptables -A INPUT -i tun+ -j ACCEPT
-    
-    echo "✅ Kill switch ACTIVE - No internet without VPN!"
+    kill_switch_enable
+else
+    echo "Kill switch setup cancelled."
 fi
 EOF
     chmod +x ~/bin/vpn-killswitch
+    
+    echo "✅ VPN kill switch script created (uses centralized implementation)"
 }
 
 setup_safe_torrenting() {

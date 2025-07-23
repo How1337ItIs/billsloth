@@ -2,7 +2,8 @@
 # Fresh Ubuntu Bill Sloth Neural Bootstrap
 # Run this script on a brand new Ubuntu installation to get everything working
 
-set -e  # Exit on any error
+
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'

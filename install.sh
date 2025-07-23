@@ -2,7 +2,8 @@
 # Bill Sloth Complete System Installer
 # One-command setup for the entire adaptive Linux power-user system
 
-set -e  # Exit on any error
+
+set -euo pipefail
 
 BILL_SLOTH_VERSION="2.0-adaptive"
 INSTALL_LOG="$HOME/bill-sloth-install.log"

@@ -2,7 +2,8 @@
 # Bill Sloth System Deployment Automation
 # Comprehensive deployment script for setting up Bill Sloth on new systems
 
-set -e  # Exit on any error
+
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'

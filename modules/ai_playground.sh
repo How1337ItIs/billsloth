@@ -3,6 +3,8 @@
 # AI Playground setup
 
 install_ollama() {
+
+set -euo pipefail
     echo "🦙 Installing Ollama..."
     curl -fsSL https://ollama.ai/install.sh | sh
     sudo systemctl enable ollama

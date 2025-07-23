@@ -2,8 +2,8 @@
 # Migration from complex JSON workflow system to simple Just-based task runner
 # Part of the mature tools migration initiative
 
-echo "🔄 BILL SLOTH: MIGRATING TO MODERN TASK RUNNER"
-echo "============================================="
+
+set -euo pipefail
 echo ""
 
 # Source the new task runner

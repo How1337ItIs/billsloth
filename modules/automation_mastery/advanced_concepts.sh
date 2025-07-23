@@ -2,6 +2,8 @@
 # Automation Mastery - Advanced Concepts Component
 # APIs, webhooks, custom integrations, and advanced automation techniques
 
+set -euo pipefail
+
 advanced_automation_concepts() {
     print_header "🚀 ADVANCED AUTOMATION CONCEPTS"
     

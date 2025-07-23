@@ -2,9 +2,9 @@
 # Automation Mastery - Cloud Platforms Component
 # Setup guides for major automation platforms (Zapier, IFTTT, etc.)
 
-# Platform setup functions - extracted from original large module
+set -euo pipefail
 
-setup_zapier() {
+setup_zapier_guide() {
     print_header "⚡ ZAPIER SETUP & GUIDE"
     
     echo "Zapier connects 5000+ apps and services to automate your workflows."

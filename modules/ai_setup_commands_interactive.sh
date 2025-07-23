@@ -5,6 +5,8 @@
 
 # Source the non-interactive AI setup module
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SOURCE_DIR/ai_setup_commands.sh" 2>/dev/null || echo "Non-interactive module not found"
 
 ai_setup_commands_interactive() {

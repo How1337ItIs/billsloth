@@ -2,6 +2,8 @@
 # Automation Mastery - AI Automation Component
 # AI-powered automation tools and workflows
 
+set -euo pipefail
+
 explore_ai_automation() {
     print_header "🤖 AI-POWERED AUTOMATION"
     
@@ -45,5 +47,5 @@ explore_ai_automation() {
     echo "• Create smart reminders based on calendar content"
 }
 
-# Export functions
+# Export functions  
 export -f explore_ai_automation

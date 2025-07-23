@@ -6,7 +6,8 @@
 
 # Generate context for Claude Code at session start
 echo "🤖 Preparing Claude Code context..."
-~/bin/claude-integration-helper context general
+
+set -euo pipefail
 
 # ATHF colors for terminal aesthetics
 R='\033[0;31m'    # Red (Shake)

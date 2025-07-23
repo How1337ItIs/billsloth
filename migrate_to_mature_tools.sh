@@ -2,8 +2,8 @@
 # Migration plan: Replace over-engineered components with mature tools
 # Phase 1: Quick wins with minimal risk
 
-echo "🔄 BILL SLOTH: MIGRATING TO MATURE TOOLS"
-echo "========================================"
+
+set -euo pipefail
 echo ""
 
 # Install mature alternatives

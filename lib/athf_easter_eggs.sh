@@ -3,6 +3,8 @@
 # Source this file and call random_athf_easter_egg to occasionally display a random ATHF character and quote
 
 random_athf_easter_egg() {
+
+set -euo pipefail
   # 20% chance
   if (( RANDOM % 5 == 0 )); then
     case $((RANDOM % 3)) in

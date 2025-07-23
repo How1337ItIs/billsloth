@@ -5,6 +5,8 @@
 
 # Source the non-interactive ai playground module
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SOURCE_DIR/ai_playground.sh"
 
 ai_playground_interactive() {

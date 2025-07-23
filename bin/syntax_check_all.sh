@@ -3,6 +3,8 @@
 # Recursively check all .sh files for syntax errors and print a summary
 
 error_count=0
+
+set -euo pipefail
 file_count=0
 
 find . -name '*.sh' | while read -r file; do

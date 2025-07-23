@@ -2,8 +2,8 @@
 # Bill Sloth Notification System Library
 # Unified notification handling across all desktop environments
 
-# Source error handling
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || {
     echo "ERROR: Could not source error handling library" >&2
     exit 1

@@ -51,7 +51,13 @@
       "Bash(awk:*)",
       "Bash(do echo \"=== Testing $file ===\")",
       "Bash(do echo \"Testing: $module\")",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(./verify_install.sh:*)",
+      "Bash(./scripts/dependency_check.sh:*)",
+      "WebFetch(domain:releases.ubuntu.com)",
+      "WebFetch(domain:old-releases.ubuntu.com)",
+      "Bash(powershell:*)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ],
     "deny": []
   }

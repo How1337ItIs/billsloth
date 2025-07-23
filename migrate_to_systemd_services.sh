@@ -2,8 +2,8 @@
 # Migration from custom daemon implementations to systemd user services
 # Part of the mature tools migration initiative
 
-echo "🔄 BILL SLOTH: MIGRATING TO SYSTEMD SERVICES"  
-echo "============================================"
+
+set -euo pipefail
 echo ""
 
 # Source the service management library

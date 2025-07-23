@@ -3,8 +3,8 @@
 # Production Safety Library - Critical error handling and data protection
 # Prevents system hangs, data loss, and silent failures
 
-# Source required libraries
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/notification_system.sh" 2>/dev/null || true
 

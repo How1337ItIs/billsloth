@@ -3,8 +3,8 @@
 # Performance Monitoring Wrappers
 # Lightweight wrappers to add performance monitoring to existing functions
 
-# Source required libraries
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SCRIPT_DIR/performance_monitoring.sh" 2>/dev/null || true
 
 # Wrap a function with performance monitoring

@@ -2,7 +2,8 @@
 # Adaptive Learning System - Self-modifying modules based on user feedback
 # Token-efficient personalization system
 
-FEEDBACK_DIR="$HOME/.bill-sloth/feedback"
+
+set -euo pipefail
 USAGE_DIR="$HOME/.bill-sloth/usage"
 ADAPTATIONS_DIR="$HOME/.bill-sloth/adaptations"
 

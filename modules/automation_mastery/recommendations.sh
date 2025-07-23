@@ -2,8 +2,10 @@
 # Automation Mastery - Recommendations Component
 # Shows personalized automation recommendations based on user assessment
 
-# Ensure error handling is available
-if [ -z "$ERROR_HANDLING_LOADED" ]; then
+set -euo pipefail
+
+# Source error handling library if available
+if [ -f "$(dirname "${BASH_SOURCE[0]}")/../../lib/error_handling.sh" ]; then
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     source "$SCRIPT_DIR/../../lib/error_handling.sh" 2>/dev/null || {
         echo "Warning: Error handling library not available"

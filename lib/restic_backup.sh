@@ -3,8 +3,8 @@
 # Restic Backup Wrapper for Bill Sloth
 # Simplified backup management with pre-configured repositories
 
-# Source required libraries
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
 source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/notification_system.sh" 2>/dev/null || true
 
@@ -177,8 +177,14 @@ bill_backup() {
     log_info "Starting backup: $set_name"
     log_info "Backing up: ${expanded_paths[*]}"
     
-    # Run backup with progress
-    RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic backup \
+    # Run backup with secure password from file
+    local password_file="$HOME/.bill-sloth/backups/.passwords/$set_name.key"
+    if [ ! -f "$password_file" ]; then
+        log_error "Password file not found: $password_file"
+        return 1
+    fi
+    
+    RESTIC_PASSWORD_FILE="$password_file" restic backup \
         --repo "$repo_path" \
         --tag "$set_name" \
         --exclude="*.tmp" \
@@ -193,7 +199,7 @@ bill_backup() {
         notify_success "Backup Complete" "Successfully backed up $set_name"
         
         # Show snapshot info
-        RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic snapshots \
+        RESTIC_PASSWORD_FILE="$password_file" restic snapshots \
             --repo "$repo_path" \
             --latest 1
             
@@ -227,11 +233,16 @@ bill_backup_list() {
         fi
         
         echo "   Recent snapshots:"
-        RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic snapshots \
-            --repo "$repo_path" \
-            --latest 5 2>/dev/null | grep -E "^[0-9a-f]{8}" | while read -r line; do
-            echo "   $line"
-        done
+        local password_file="$HOME/.bill-sloth/backups/.passwords/$set_name.key"
+        if [ -f "$password_file" ]; then
+            RESTIC_PASSWORD_FILE="$password_file" restic snapshots \
+                --repo "$repo_path" \
+                --latest 5 2>/dev/null | grep -E "^[0-9a-f]{8}" | while read -r line; do
+                echo "   $line"
+            done
+        else
+            echo "   ❌ Password file not found"
+        fi
     fi
 }
 
@@ -259,7 +270,13 @@ bill_restore() {
     mkdir -p "$restore_path"
     
     # Restore files
-    RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic restore \
+    local password_file="$HOME/.bill-sloth/backups/.passwords/$set_name.key"
+    if [ ! -f "$password_file" ]; then
+        log_error "Password file not found: $password_file"
+        return 1
+    fi
+    
+    RESTIC_PASSWORD_FILE="$password_file" restic restore \
         --repo "$repo_path" \
         --target "$restore_path" \
         "$snapshot_id"
@@ -295,7 +312,13 @@ bill_backup_cleanup() {
     log_info "Cleaning up old snapshots: $set_name"
     
     # Keep 7 daily, 4 weekly, 12 monthly snapshots by default
-    RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic forget \
+    local password_file="$HOME/.bill-sloth/backups/.passwords/$set_name.key"
+    if [ ! -f "$password_file" ]; then
+        log_warning "Password file not found for cleanup: $password_file"
+        return 1
+    fi
+    
+    RESTIC_PASSWORD_FILE="$password_file" restic forget \
         --repo "$repo_path" \
         --keep-daily 7 \
         --keep-weekly 4 \
@@ -320,9 +343,13 @@ bill_backup_status() {
         fi
         
         # Get latest snapshot
-        local latest=$(RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic snapshots \
-            --repo "$repo_path" \
-            --latest 1 --json 2>/dev/null | jq -r '.[0].time' 2>/dev/null)
+        local password_file="$HOME/.bill-sloth/backups/.passwords/$set.key"
+        local latest=""
+        if [ -f "$password_file" ]; then
+            latest=$(RESTIC_PASSWORD_FILE="$password_file" restic snapshots \
+                --repo "$repo_path" \
+                --latest 1 --json 2>/dev/null | jq -r '.[0].time' 2>/dev/null)
+        fi
         
         if [ ! -z "$latest" ]; then
             echo "   ✅ Last backup: $latest"

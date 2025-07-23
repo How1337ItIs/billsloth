@@ -2,6 +2,12 @@
 # Interactive Menu Helper Library
 # Reduces boilerplate in interactive modules
 
+# Source input sanitization
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+set -euo pipefail
+source "$SCRIPT_DIR/input_sanitization.sh" 2>/dev/null || true
+
 # Color codes
 export RED='\033[31m'
 export GREEN='\033[32m'
@@ -12,11 +18,38 @@ export CYAN='\033[36m'
 export WHITE='\033[37m'
 export RESET='\033[0m'
 
+# Secure prompt function that sanitizes input
+prompt_user() {
+    local prompt="$1"
+    local default="${2:-}"
+    local max_length="${3:-255}"
+    local allow_spaces="${4:-true}"
+    
+    # Use safe_prompt from input_sanitization if available
+    if declare -f safe_prompt >/dev/null; then
+        safe_prompt "$prompt: " "$default" "$max_length" "$allow_spaces"
+    else
+        # Fallback to basic sanitization
+        local input
+        read -p "$prompt: " input
+        if [ -z "$input" ] && [ -n "$default" ]; then
+            input="$default"
+        fi
+        # Basic sanitization
+        input=$(echo "$input" | sed 's/[;&|`$(){}[\]<>*?!]/\\\&/g')
+        echo "$input"
+    fi
+}
+
 # Show a themed banner with ASCII art
 show_banner() {
     local title="$1"
     local subtitle="$2"
     local color="$3"
+    
+    # Sanitize inputs
+    title=$(echo "$title" | sed 's/[^A-Za-z0-9_-]//g')
+    subtitle=$(echo "$subtitle" | sed 's/[;&|`$(){}[\]<>*?!]//g')
     
     echo -e "${color}"
     case "$title" in

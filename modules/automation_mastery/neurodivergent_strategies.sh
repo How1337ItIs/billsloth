@@ -2,6 +2,8 @@
 # Automation Mastery - Neurodivergent Strategies Component
 # Automation specifically designed for ADHD, autism, dyslexia, and other neurodivergent needs
 
+set -euo pipefail
+
 neurodivergent_automation_strategies() {
     print_header "🧠 NEURODIVERGENT AUTOMATION STRATEGIES"
     

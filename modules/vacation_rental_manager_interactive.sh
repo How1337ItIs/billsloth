@@ -8,7 +8,7 @@ SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/notification_system.sh" 2>/dev/null || true
 
-# Note: vacation_rental_manager.sh doesn't exist yet - functionality integrated here
+# Note: vacation_rental_manager.sh functionality integrated directly in this file
 
 vacation_rental_manager_interactive() {
     echo "🏖️ VACATION RENTAL EMPIRE - YOUR PROPERTY MANAGEMENT COMMAND CENTER"

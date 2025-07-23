@@ -2,7 +2,9 @@
 # Automation Mastery - Business Automation Component
 # Business process automation and enterprise workflows
 
-business_automation() {
+set -euo pipefail
+
+business_process_automation() {
     print_header "💼 BUSINESS PROCESS AUTOMATION"
     
     echo "Transform your business operations with intelligent automation."
