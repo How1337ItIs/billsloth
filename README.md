@@ -25,6 +25,17 @@
 ### ⚡ **GET STARTED - 60 SECONDS TO SETUP**
 *Simple copy and paste - no technical knowledge needed*
 
+## 🚨 **FRESH UBUNTU INSTALL? API ERRORS? START HERE!**
+
+### **💀 NUCLEAR OPTION - AUTO-INSTALLER:**
+```bash
+# One command to rule them all - fixes everything
+cd ~ && git clone https://github.com/How1337ItIs/billsloth.git "bill sloth" && cd "bill sloth" && chmod +x fresh_ubuntu_installer.sh && ./fresh_ubuntu_installer.sh
+```
+
+### **📋 MANUAL OPTION:**
+**Had API errors before? Nuked your system?** → **[FRESH_UBUNTU_SETUP.md](FRESH_UBUNTU_SETUP.md)** ← **BULLETPROOF GUIDE**
+
 ## 🚀 **QUICK START GUIDE - 2 EASY STEPS**
 
 ### **💀 STEP 1: BREACH THE TERMINAL INTERFACE**

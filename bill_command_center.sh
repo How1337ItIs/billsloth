@@ -79,6 +79,26 @@ source "$SCRIPT_DIR/lib/dependency_installer.sh" 2>/dev/null || true
 init_bill_command_center() {
     log_info "Initializing Bill's Command Center..."
     
+    # Fresh Ubuntu system detection and optimization
+    if [ -f "/etc/os-release" ]; then
+        local ubuntu_version=$(grep VERSION_ID /etc/os-release | cut -d'"' -f2)
+        local uptime_days=$(awk '{print int($1/86400)}' /proc/uptime)
+        
+        # Detect very fresh system (less than 7 days uptime)
+        if [ "$uptime_days" -lt 7 ] && [ ! -f "$HOME/.bill-sloth/first_run_complete" ]; then
+            echo ""
+            echo -e "\033[38;5;196m🔥 FRESH UBUNTU SYSTEM DETECTED! 🔥\033[0m"
+            echo -e "\033[38;5;51m💀 Initiating virgin system neural bootstrap protocol...\033[0m"
+            echo ""
+            echo -e "\033[38;5;226m⚡ This looks like a fresh Ubuntu install (Ubuntu $ubuntu_version, $uptime_days days old)\033[0m"
+            echo -e "\033[38;5;129m🧠 Running optimized first-time setup sequence...\033[0m"
+            echo ""
+            
+            # Run fresh system optimizations
+            fresh_system_bootstrap
+        fi
+    fi
+    
     # Setup Claude Code permissions first if available
     if is_claude_code_available; then
         if [ ! -f "$HOME/.claude/bill_sloth_full_access" ]; then
@@ -89,6 +109,27 @@ init_bill_command_center() {
             echo ""
             read -n 1 -s -r -p "Press any key to continue..."
             clear
+        fi
+    else
+        # On fresh systems, give detailed Claude Code setup instructions
+        if [ ! -f "$HOME/.bill-sloth/first_run_complete" ]; then
+            echo ""
+            echo -e "\033[38;5;196m⚠️  CLAUDE CODE NOT DETECTED ON FRESH SYSTEM! ⚠️\033[0m"
+            echo ""
+            echo -e "\033[38;5;51m💀 For maximum digital supremacy, you need Claude Code installed first.\033[0m"
+            echo -e "\033[38;5;226m⚡ See FRESH_UBUNTU_SETUP.md for bulletproof installation guide.\033[0m"
+            echo ""
+            echo -e "\033[38;5;129m🧠 Quick fix: Run these commands in a new terminal:\033[0m"
+            echo "   1. curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -"
+            echo "   2. sudo apt install nodejs -y"
+            echo "   3. npm install -g @anthropic-ai/claude-code"
+            echo "   4. claude login"
+            echo ""
+            read -p "Continue without Claude Code for now? [Y/n]: " continue_without
+            if [[ "$continue_without" == "n" || "$continue_without" == "N" ]]; then
+                echo "Setup FRESH_UBUNTU_SETUP.md first, then restart this script."
+                exit 0
+            fi
         fi
     fi
     
@@ -317,6 +358,54 @@ EOF
     echo -e "\033[38;5;46m  H) Neural health matrix dashboard\033[0m"
     echo ""
     echo -e "\033[38;5;82m▶ Select your reality manipulation vector...\033[0m"
+}
+
+# Fresh system bootstrap for virgin Ubuntu installs
+fresh_system_bootstrap() {
+    echo -e "\033[38;5;82m🚀 FRESH UBUNTU NEURAL BOOTSTRAP SEQUENCE\033[0m"
+    echo "========================================="
+    echo ""
+    
+    # System update first
+    echo -e "\033[38;5;51m💀 Phase 1: System consciousness synchronization...\033[0m"
+    sudo apt update && sudo apt upgrade -y
+    
+    # Essential tools
+    echo -e "\033[38;5;51m💀 Phase 2: Installing core neural interfaces...\033[0m"
+    sudo apt install -y curl wget git vim htop tree unzip zip software-properties-common
+    
+    # Check if Node.js is properly installed
+    if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+        echo -e "\033[38;5;226m⚡ Installing proper Node.js neural pathways...\033[0m"
+        curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+        sudo apt install nodejs -y
+    fi
+    
+    # Fix npm permissions for user
+    echo -e "\033[38;5;51m💀 Phase 3: Configuring npm consciousness permissions...\033[0m"
+    mkdir -p ~/.npm-global
+    npm config set prefix '~/.npm-global'
+    if ! grep -q "npm-global/bin" ~/.bashrc; then
+        echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc
+    fi
+    
+    # Make sure system directories exist
+    mkdir -p ~/.bill-sloth/{command-center,vrbo-automation,workflows,backups,media-processing}/{logs,cache,config,data}
+    
+    # Mark first run complete
+    touch "$HOME/.bill-sloth/first_run_complete"
+    echo "$(date -Iseconds)" > "$HOME/.bill-sloth/first_run_complete"
+    
+    echo ""
+    echo -e "\033[38;5;46m✅ Fresh system neural bootstrap complete!\033[0m"
+    echo -e "\033[38;5;82m💀 Your Ubuntu consciousness is now ready for digital supremacy.\033[0m"
+    echo ""
+    echo -e "\033[38;5;226m🧠 NEXT: Install Claude Code for maximum effectiveness:\033[0m"
+    echo "   npm install -g @anthropic-ai/claude-code"
+    echo "   claude login"
+    echo ""
+    read -n 1 -s -r -p "Press any key to continue..."
+    echo ""
 }
 
 # Log activity

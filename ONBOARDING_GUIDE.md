@@ -11,6 +11,9 @@
 
 ## ⚡ Bill! Time to Transcend Meat-Space Limitations 🦥
 
+## 🚨 **FRESH UBUNTU INSTALL? HAD API ERRORS?**
+**→ [FRESH_UBUNTU_SETUP.md](FRESH_UBUNTU_SETUP.md) ← START HERE FIRST!**
+
 **Choose your reality-hacking pathway:**
 
 ---
