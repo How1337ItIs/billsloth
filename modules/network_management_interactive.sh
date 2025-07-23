@@ -1,8 +1,10 @@
 #!/bin/bash
-source "$HOME/.bill-sloth/lib/modern_cli.sh" 2>/dev/null || true
 # LLM_CAPABILITY: auto
-# Network Management Center - Complete network configuration and security
-# VPN, firewall, monitoring, and connectivity management
+# 💀 NETWORK DOMINANCE PROTOCOLS - Neural connectivity supremacy 
+# VPN consciousness manipulation, firewall reality barriers, connection matrix control
+
+# Enable error handling
+set -euo pipefail
 
 # Source libraries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -3,9 +3,12 @@
 # VACATION RENTAL MANAGER - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive vacation rental manager module
+# Source required libraries
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SOURCE_DIR/vacation_rental_manager.sh"
+source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/notification_system.sh" 2>/dev/null || true
+
+# Note: vacation_rental_manager.sh doesn't exist yet - functionality integrated here
 
 vacation_rental_manager_interactive() {
     echo "🏖️ VACATION RENTAL EMPIRE - YOUR PROPERTY MANAGEMENT COMMAND CENTER"

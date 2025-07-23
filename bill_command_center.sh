@@ -3,8 +3,18 @@
 # Bill Sloth Unified Command Center
 # Single entry point for all Bill's tools and systems
 
+# Enable strict error handling
+set -euo pipefail
+trap 'echo "Error occurred at line $LINENO. Exit code: $?"' ERR
+
 # ASCII Art Banner - UNHINGED CYPHERPUNK EDITION
 show_bill_banner() {
+    # Skip banner in quick mode
+    if [ "${BILL_SLOTH_QUICK_MODE:-0}" = "1" ]; then
+        echo -e "\033[38;5;196m💀 BILL SLOTH COMMAND CENTER - QUICK MODE 💀\033[0m"
+        return
+    fi
+    
     clear
     
     # Matrix-style random characters
@@ -448,6 +458,9 @@ bill_command_center() {
         echo "⚙️  SYSTEM TOOLS:"
         echo "  7) Backup Management      8) Architecture Config   9) Workflow Orchestration"
         echo ""
+        echo "🏥 DIAGNOSTICS:"
+        echo "  health) System Health Check     debug) Debug Mode"
+        echo ""
         echo "  0) Exit Command Center"
         echo ""
         
@@ -718,6 +731,36 @@ EOF
                     setup_bill_workflows
                 fi
                 ;;
+            "health")
+                log_activity "Ran system health check"
+                echo "🏥 Running Bill Sloth System Health Check..."
+                echo ""
+                if [ -f "$SCRIPT_DIR/lib/module_health_checker.sh" ]; then
+                    "$SCRIPT_DIR/lib/module_health_checker.sh"
+                else
+                    echo "❌ Health checker not found"
+                fi
+                ;;
+            "debug")
+                log_activity "Enabled debug mode"
+                echo "🐛 DEBUG MODE ACTIVATED"
+                echo "======================"
+                echo ""
+                echo "Environment Variables:"
+                echo "  BILL_SLOTH_QUICK_MODE: ${BILL_SLOTH_QUICK_MODE:-not set}"
+                echo "  PATH: $PATH"
+                echo "  HOME: $HOME"
+                echo ""
+                echo "System Info:"
+                echo "  Shell: $SHELL"
+                echo "  Working Dir: $(pwd)"
+                echo "  Script Dir: $SCRIPT_DIR"
+                echo ""
+                echo "Dependencies:"
+                echo "  Claude Code: $(command -v claude || echo 'not found')"
+                echo "  Node.js: $(command -v node || echo 'not found')"
+                echo "  jq: $(command -v jq || echo 'not found')"
+                ;;
             0)
                 log_activity "Exited Command Center"
                 echo "👋 Thanks for using Bill Sloth Command Center!"
@@ -795,5 +838,9 @@ main() {
 
 # Check if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    # Quick mode check
+    if [[ " $* " =~ " --quick " ]] || [[ " $* " =~ " -q " ]]; then
+        export BILL_SLOTH_QUICK_MODE=1
+    fi
     main "$@"
 fi

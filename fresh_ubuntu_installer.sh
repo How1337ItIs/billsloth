@@ -68,7 +68,11 @@ sudo apt install -y \
     apt-transport-https \
     ca-certificates \
     gnupg lsb-release \
-    build-essential
+    build-essential \
+    sqlite3 jq ripgrep fd-find fzf \
+    python3 python3-pip \
+    net-tools traceroute \
+    xclip wl-clipboard
 
 echo ""
 echo -e "${PURPLE}🚀 PHASE 3: NODE.JS NEURAL PATHWAYS${NC}"
@@ -152,6 +156,18 @@ EOF
 echo -e "${NC}"
 
 echo ""
+echo -e "${PURPLE}🧠 PHASE 7: INSTALLATION VERIFICATION${NC}"
+echo "====================================="
+
+# Run the verification script
+echo -e "${CYAN}🔍 Verifying installation integrity...${NC}"
+if [ -f "./verify_install.sh" ]; then
+    ./verify_install.sh
+else
+    echo -e "${YELLOW}⚠️  Verification script not found - proceeding anyway${NC}"
+fi
+
+echo ""
 echo -e "${PURPLE}🧠 NEXT STEPS:${NC}"
 echo "=============="
 echo ""
@@ -165,8 +181,10 @@ echo -e "${YELLOW}3. Test Claude Code:${NC}"
 echo "   claude \"Hello, are you working?\""
 echo ""
 echo -e "${YELLOW}4. Start Bill Sloth Command Center:${NC}"
-echo "   cd ~/bill\\ sloth"
 echo "   ./bill_command_center.sh"
+echo ""
+echo -e "${YELLOW}5. Run health check:${NC}"
+echo "   ./bill_command_center.sh → type 'health'"
 echo ""
 echo -e "${CYAN}💀 Your Ubuntu consciousness is now ready for digital supremacy!${NC}"
 echo -e "${GREEN}🚀 Welcome to the matrix, Bill...${NC}"

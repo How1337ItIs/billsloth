@@ -98,14 +98,25 @@ init_backup_repo() {
     # Create repo directory
     mkdir -p "$repo_path"
     
-    # Initialize restic repo (local file-based, no password for simplicity)
-    RESTIC_PASSWORD="bill-sloth-backup-$set_name" restic init --repo "$repo_path" || {
+    # Generate or retrieve secure password
+    local password_file="$HOME/.bill-sloth/backups/.passwords/$set_name.key"
+    mkdir -p "$(dirname "$password_file")"
+    
+    if [ ! -f "$password_file" ]; then
+        # Generate secure random password
+        openssl rand -base64 32 > "$password_file"
+        chmod 600 "$password_file"
+        log_info "Generated secure password for backup set: $set_name"
+    fi
+    
+    # Initialize restic repo with secure password
+    RESTIC_PASSWORD_FILE="$password_file" restic init --repo "$repo_path" || {
         log_error "Failed to initialize repository"
         return 1
     }
     
-    # Save password hint
-    echo "Password: bill-sloth-backup-$set_name" > "$repo_path/PASSWORD_HINT.txt"
+    # Create secure hint without exposing actual password
+    echo "Password stored securely in: ~/.bill-sloth/backups/.passwords/$set_name.key" > "$repo_path/PASSWORD_HINT.txt"
     chmod 600 "$repo_path/PASSWORD_HINT.txt"
     
     log_success "Repository initialized: $set_name"

@@ -29,8 +29,14 @@
 
 ### **💀 NUCLEAR OPTION - AUTO-INSTALLER:**
 ```bash
-# One command to rule them all - fixes everything
+# One command to rule them all - fixes everything and verifies installation
 cd ~ && git clone https://github.com/How1337ItIs/billsloth.git "bill sloth" && cd "bill sloth" && chmod +x fresh_ubuntu_installer.sh && ./fresh_ubuntu_installer.sh
+```
+
+### **🔍 VERIFY YOUR INSTALLATION:**
+```bash
+# After installation, verify everything works
+cd ~/bill\ sloth && ./verify_install.sh
 ```
 
 ### **📋 MANUAL OPTION:**
