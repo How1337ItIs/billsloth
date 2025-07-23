@@ -8,7 +8,7 @@ This package provides comprehensive Windows-based tools to prepare for Ubuntu du
 
 Copy and paste this prompt into Claude Code:
 ```
-Help me set up dual-boot Ubuntu on my Windows system using the Bill Sloth automation suite. I need you to handle the technical details and make this as automated as possible.
+Help me set up dual-boot Ubuntu on my Windows system using the Bill Sloth automation suite from https://github.com/How1337ItIs/billsloth/tree/main/windows-setup. I need you to handle the technical details and make this as automated as possible.
 
 What I want you to do:
 1. Download and run the Bill Sloth Windows preparation scripts from the repository
