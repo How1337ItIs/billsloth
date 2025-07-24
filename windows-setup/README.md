@@ -25,10 +25,13 @@ Please start by downloading the Bill Sloth auto-setup script and running the aut
 Run as Administrator in PowerShell:
 
 ```powershell
+# RECOMMENDED: Complete system creator (includes full Bill Sloth automation)
+.\bill-sloth-complete-system-creator.ps1
+
+# OR traditional approach:
 # One-click auto-setup (downloads and runs everything)
 iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/how1337itis/billsloth/main/windows-setup/bill-sloth-auto-setup.ps1'))
 
-# OR individual script execution:
 # Complete setup with Claude assistance
 .\bill-sloth-claude-assisted-setup.ps1 -Interactive
 
@@ -45,6 +48,16 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ## 📁 Package Contents
 
 ### Core Scripts
+
+#### `bill-sloth-complete-system-creator.ps1` **⭐ RECOMMENDED**
+**Complete Bill Sloth automation system deployment**
+- 🚀 Creates Ubuntu USB with full Bill Sloth system pre-loaded
+- 🎯 Auto-detects Ubuntu ISOs and USB drives
+- 📦 Includes complete automation, onboarding, and command center
+- 🤖 ASCII-only output for Windows PowerShell compatibility
+- 🔄 Auto-launch scripts for immediate system activation
+- 📚 Comprehensive documentation and desktop launcher
+- 🧠 ADHD/dyslexia optimized interface design
 
 #### `bill-sloth-claude-assisted-setup.ps1`
 **Main orchestration script with Claude Code integration**
@@ -271,6 +284,11 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 
 ## 🆘 Troubleshooting
 
+### PowerShell Script Issues
+
+**📋 See comprehensive troubleshooting guide: `TROUBLESHOOTING.md`**
+**📋 Encoding issues documentation: `ENCODING-ISSUES.md`**
+
 ### Common Issues
 
 **"Execution policy" errors:**
@@ -287,6 +305,18 @@ npm install -g @anthropic-ai/claude-code
 **Insufficient permissions:**
 ```powershell
 # Right-click PowerShell → "Run as Administrator"
+```
+
+**PowerShell encoding errors with Unicode characters:**
+```powershell
+# Use the complete system creator for ASCII-only output
+.\bill-sloth-complete-system-creator.ps1
+```
+
+**USB drive detection failures:**
+```powershell
+# Use simple USB creator for specific drives
+.\simple-usb-creator.ps1  # (available in repository root)
 ```
 
 **Partition shrink fails:**

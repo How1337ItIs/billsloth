@@ -60,7 +60,8 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(-print)",
       "Bash(python:*)",
-      "Bash(show_ascii_sloth)"
+      "Bash(show_ascii_sloth)",
+      "Bash(git merge:*)"
     ],
     "deny": []
   }
