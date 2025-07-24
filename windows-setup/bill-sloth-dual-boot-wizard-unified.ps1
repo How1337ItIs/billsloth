@@ -96,6 +96,77 @@ function Get-WSL2Status {
     }
 }
 
+# Robust path resolution for ISO builder
+function Get-ISOBuilderPath {
+    $possiblePaths = @(
+        # Try PSScriptRoot (most reliable for PowerShell 3.0+)
+        (Join-Path $PSScriptRoot "bill-sloth-custom-iso-builder.ps1"),
+        
+        # Try current working directory
+        (Join-Path $PWD "bill-sloth-custom-iso-builder.ps1"),
+        
+        # Try same directory as current script using PSCommandPath
+        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-custom-iso-builder.ps1"),
+        
+        # Try MyInvocation path (may be null in some contexts)
+        (if ($MyInvocation.MyCommand.Path) { Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1" } else { $null }),
+        
+        # Try common installation paths
+        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1",
+        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1"
+    )
+    
+    foreach ($path in $possiblePaths) {
+        if ($path -and (Test-Path $path)) {
+            Write-Host "Found ISO builder at: $path" -ForegroundColor Green
+            return $path
+        }
+    }
+    
+    # If nothing found, provide user options
+    Write-Host "Custom ISO builder not found in expected locations" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Searched locations:" -ForegroundColor Yellow
+    foreach ($path in $possiblePaths) {
+        if ($path) {
+            Write-Host "  - $path" -ForegroundColor Gray
+        }
+    }
+    Write-Host ""
+    
+    Write-Host "OPTIONS:" -ForegroundColor Yellow
+    Write-Host "1. Manually specify path to bill-sloth-custom-iso-builder.ps1" -ForegroundColor White
+    Write-Host "2. Use standard Ubuntu ISO (loses Bill Sloth integration)" -ForegroundColor White
+    Write-Host "3. Exit and fix installation" -ForegroundColor White
+    Write-Host ""
+    
+    do {
+        $choice = Read-Host "Choose option (1-3)"
+        switch ($choice) {
+            "1" { 
+                $manualPath = Read-Host "Enter full path to bill-sloth-custom-iso-builder.ps1"
+                if (Test-Path $manualPath) {
+                    Write-Host "Manual path verified: $manualPath" -ForegroundColor Green
+                    return $manualPath
+                } else {
+                    Write-Host "Path not found: $manualPath" -ForegroundColor Red
+                }
+            }
+            "2" { 
+                Write-Host "Using standard Ubuntu ISO fallback..." -ForegroundColor Yellow
+                return $null # This will trigger fallback
+            }
+            "3" { 
+                Write-Host "Exiting - please ensure bill-sloth-custom-iso-builder.ps1 is in the same directory" -ForegroundColor Red
+                exit 1
+            }
+            default {
+                Write-Host "Invalid choice. Please enter 1, 2, or 3." -ForegroundColor Red
+            }
+        }
+    } while ($choice -notin @("1", "2", "3"))
+}
+
 # Phase 2: Ubuntu ISO Preparation  
 function Get-CyberpunkBillSlothISO {
     Write-Host "=== PHASE 2: CYBERPUNK BILL SLOTH ISO CREATION ===" -ForegroundColor Cyan
@@ -130,23 +201,28 @@ function Get-CyberpunkBillSlothISO {
     }
     
     try {
-        # Execute the custom ISO builder
+        # Execute the custom ISO builder with robust path resolution
         Write-Host "Launching cyberpunk ISO constructor..." -ForegroundColor Magenta
-        $isoBuilderPath = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1"
+        $isoBuilderPath = Get-ISOBuilderPath
+        
+        # Check if user chose fallback (null path)
+        if (-not $isoBuilderPath) {
+            Write-Host "Using standard Ubuntu ISO as requested..." -ForegroundColor Yellow
+            return Get-StandardUbuntuISO
+        }
         
         if (Test-Path $isoBuilderPath) {
+            Write-Host "Found ISO builder: $isoBuilderPath" -ForegroundColor Green
             & $isoBuilderPath -OutputISO $customISOPath -MaxCyberpunk
             
             if (Test-Path $customISOPath) {
                 Write-Host "SUCCESS: Cyberpunk Bill Sloth ISO created!" -ForegroundColor Green
                 return $customISOPath
             } else {
-                throw "ISO creation failed"
+                throw "ISO creation completed but output file not found"
             }
         } else {
-            Write-Host "ERROR: Custom ISO builder not found" -ForegroundColor Red
-            Write-Host "Falling back to standard Ubuntu ISO..." -ForegroundColor Yellow
-            return Get-StandardUbuntuISO
+            throw "Custom ISO builder not found at: $isoBuilderPath"
         }
     }
     catch {
