@@ -20,6 +20,21 @@ What I want you to do:
 Please start by downloading the Bill Sloth auto-setup script and running the automated system analysis. I'll confirm any major changes but otherwise handle the technical details automatically.
 ```
 
+### **For Bill's WSL2 → Native Transition (RECOMMENDED):**
+
+Run as Administrator in PowerShell:
+
+```powershell
+# 🔄 WSL2 to Native Ubuntu Transition Wizard (OPTIMIZED FOR BILL)
+.\wsl2-to-native-transition-wizard.ps1
+
+# Fast transition (skip WSL2 backup)
+.\wsl2-to-native-transition-wizard.ps1 -FastMode
+
+# Specify target drive (default: E:)
+.\wsl2-to-native-transition-wizard.ps1 -TargetDrive E
+```
+
 ### **For Manual Setup:**
 
 Run as Administrator in PowerShell:
@@ -45,6 +60,22 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 ## 📁 Package Contents
 
 ### Core Scripts
+
+#### `wsl2-to-native-transition-wizard.ps1` **🔄 OPTIMIZED FOR BILL**
+**WSL2 to Native Ubuntu Dual-Boot Transition Wizard**
+- 🎯 **Designed for Bill's exact system**: ASUS, 32GB RAM, 27TB storage
+- 🔄 **WSL2 coexistence**: Leaves WSL2 intact for development/testing
+- 🚀 **Optimal partitioning**: Uses E: drive (9.25TB) for native Ubuntu installation
+- 📦 **Bill Sloth integration**: Includes complete automation system on USB
+- ⚡ **Fast transition mode**: Skip backup for quick setup
+- 🔧 **Hardware optimization**: Direct access to audio, GPU, and system resources
+
+**Key Features:**
+- Leaves WSL2 Ubuntu 22.04 intact as development environment
+- Uses existing Ubuntu 24.04.2 ISOs (Bill has multiple)
+- Creates native Ubuntu USB with Bill Sloth automation
+- Clean native installation alongside Windows
+- Optimized for ASUS UEFI dual-boot setup
 
 #### `bill-sloth-claude-assisted-setup.ps1`
 **Main orchestration script with Claude Code integration**
