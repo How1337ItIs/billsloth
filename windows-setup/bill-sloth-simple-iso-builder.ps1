@@ -24,12 +24,18 @@ Write-Host "Build time: 20-60 minutes (real custom ISO creation)" -ForegroundCol
 Write-Host ""
 
 # Check WSL2 Ubuntu availability
+$ubuntuDistro = $null
 try {
     $wslList = wsl --list --quiet 2>$null
-    if (-not ($wslList -match "Ubuntu")) {
+    # Handle WSL output with spaces (e.g., "U b u n t u - 2 2 . 0 4")
+    $ubuntuLine = $wslList | Where-Object { $_ -like "*Ubuntu*" } | Select-Object -First 1
+    if (-not $ubuntuLine) {
         throw "WSL2 Ubuntu not found. Please install: wsl --install -d Ubuntu"
     }
-    Write-Host "✅ WSL2 Ubuntu detected" -ForegroundColor Green
+    
+    # Clean up the distribution name by removing extra spaces
+    $ubuntuDistro = $ubuntuLine.Trim() -replace '\s+', '-'
+    Write-Host "✅ WSL2 Ubuntu detected: $ubuntuDistro" -ForegroundColor Green
 }
 catch {
     Write-Host "❌ WSL2 not available: $($_.Exception.Message)" -ForegroundColor Red
@@ -239,8 +245,8 @@ Write-Host "This process will take 20-60 minutes for a real custom ISO build" -F
 Write-Host ""
 
 try {
-    # Execute the verified working command
-    $result = wsl -d Ubuntu-22.04 bash -c $buildCommand
+    # Execute the verified working command using detected Ubuntu distro
+    $result = wsl -d $ubuntuDistro bash -c $buildCommand
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""
