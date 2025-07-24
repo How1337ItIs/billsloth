@@ -84,6 +84,7 @@ Write-Host ""
 
 $requiredFiles = @(
     "bill-sloth-dual-boot-wizard-unified.ps1",
+    "bill-sloth-wsl2-iso-builder.ps1",
     "bill-sloth-live-build-iso.ps1",
     "bill-sloth-custom-iso-builder.ps1"
 )
@@ -105,9 +106,9 @@ if (Test-Path $wizardPath) {
     # Extract functions without executing the whole script
     $wizardContent = Get-Content $wizardPath -Raw
     
-    # Test if Get-LiveBuildISOPath function exists
-    Test-Component "Get-LiveBuildISOPath Function Definition" {
-        $wizardContent -match "function Get-LiveBuildISOPath"
+    # Test if Get-WSL2ISOBuilderPath function exists
+    Test-Component "Get-WSL2ISOBuilderPath Function Definition" {
+        $wizardContent -match "function Get-WSL2ISOBuilderPath"
     } -Category "Functions"
     
     # Test if path resolution doesn't use inline if
@@ -195,6 +196,7 @@ Write-Host ""
 
 $scriptsToValidate = @(
     "bill-sloth-dual-boot-wizard-unified.ps1",
+    "bill-sloth-wsl2-iso-builder.ps1",
     "bill-sloth-live-build-iso.ps1"
 )
 
@@ -226,29 +228,56 @@ if (Test-Path $wizardPath) {
     } -Category "Automation"
 }
 
-# Test 9: Live-Build Integration
+# Test 9: WSL2 ISO Builder Integration
 Write-Host ""
-Write-Host "=== LIVE-BUILD INTEGRATION TESTS ===" -ForegroundColor Cyan
+Write-Host "=== WSL2 ISO BUILDER TESTS ===" -ForegroundColor Cyan
+Write-Host ""
+
+$wsl2BuilderPath = Join-Path $PSScriptRoot "bill-sloth-wsl2-iso-builder.ps1"
+if (Test-Path $wsl2BuilderPath) {
+    Test-Component "WSL2 ISO Builder Exists" {
+        $true
+    } -Category "WSL2Builder"
+    
+    $wsl2BuilderContent = Get-Content $wsl2BuilderPath -Raw
+    
+    Test-Component "Architectural Fix - No PowerShell Bash Parsing" {
+        # Check that bash commands are in here-strings, not direct PowerShell
+        ($wsl2BuilderContent -match '@''') -and ($wsl2BuilderContent -match 'wsl.*bash')
+    } -Category "WSL2Builder"
+    
+    Test-Component "No Silent Fallbacks to Ubuntu" {
+        -not ($wsl2BuilderContent -match "Get-StandardUbuntuISO")
+    } -Category "WSL2Builder"
+    
+    Test-Component "WSL2 Environment Validation" {
+        $wsl2BuilderContent -match "Test-WSL2Available"
+    } -Category "WSL2Builder"
+    
+    Test-Component "Cyberpunk Customization" {
+        $wsl2BuilderContent -match "CYBERPUNK.*SLOTH"
+    } -Category "WSL2Builder"
+}
+
+# Test 10: Legacy Live-Build Integration (for comparison)
+Write-Host ""
+Write-Host "=== LEGACY LIVE-BUILD TESTS ===" -ForegroundColor Cyan
 Write-Host ""
 
 $liveBuildPath = Join-Path $PSScriptRoot "bill-sloth-live-build-iso.ps1"
 if (Test-Path $liveBuildPath) {
-    Test-Component "Live-Build Script Exists" {
+    Test-Component "Legacy Live-Build Script Exists" {
         $true
-    } -Category "LiveBuild"
+    } -Category "Legacy"
     
     $liveBuildContent = Get-Content $liveBuildPath -Raw
     
-    Test-Component "WSL2 Integration Code" {
+    Test-Component "Has WSL2 Integration Code" {
         $liveBuildContent -match "wsl --list --verbose"
-    } -Category "LiveBuild"
-    
-    Test-Component "Cyberpunk Customization" {
-        $liveBuildContent -match "CYBERPUNK SLOTH"
-    } -Category "LiveBuild"
+    } -Category "Legacy"
 }
 
-# Test 10: Quick Functionality Test
+# Test 11: Quick Functionality Test
 if (-not $Quick) {
     Write-Host ""
     Write-Host "=== QUICK FUNCTIONALITY TESTS ===" -ForegroundColor Cyan
