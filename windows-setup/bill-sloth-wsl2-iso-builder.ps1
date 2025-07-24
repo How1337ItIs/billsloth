@@ -277,9 +277,9 @@ echo "████ CYBERPUNK BILL SLOTH ISO COMPLETE ████"
     Write-Host "Executing build in WSL2 $DistroName..." -ForegroundColor Green
     Write-Host "This will take 20-60 minutes..." -ForegroundColor Yellow
     
-    # Save script to temp file and execute
+    # Save script to temp file and execute (without BOM)
     $tempScript = "$env:TEMP\build-iso-wsl.sh"
-    $buildScript | Out-File -FilePath $tempScript -Encoding UTF8 -NoNewline
+    [System.IO.File]::WriteAllText($tempScript, $buildScript, [System.Text.UTF8Encoding]::new($false))
     
     # Convert script path to WSL format
     $wslScriptPath = $tempScript -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
