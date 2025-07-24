@@ -97,37 +97,37 @@ function Get-WSL2Status {
     }
 }
 
-# Robust path resolution for WSL2 ISO builder
-function Get-WSL2ISOBuilderPath {
+# Robust path resolution for simple ISO builder (verified working)
+function Get-SimpleISOBuilderPath {
     $possiblePaths = @(
         # Try PSScriptRoot (most reliable for PowerShell 3.0+)
-        (Join-Path $PSScriptRoot "bill-sloth-wsl2-iso-builder.ps1"),
+        (Join-Path $PSScriptRoot "bill-sloth-simple-iso-builder.ps1"),
         
-        # Try current working directory
-        (Join-Path $PWD "bill-sloth-wsl2-iso-builder.ps1"),
+        # Try current working directory  
+        (Join-Path $PWD "bill-sloth-simple-iso-builder.ps1"),
         
         # Try same directory as current script using PSCommandPath
-        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-wsl2-iso-builder.ps1"),
+        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-simple-iso-builder.ps1"),
         
         # Try common installation paths
-        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-wsl2-iso-builder.ps1",
-        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-wsl2-iso-builder.ps1"
+        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-simple-iso-builder.ps1",
+        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-simple-iso-builder.ps1"
     )
     
     # Add MyInvocation path conditionally (avoid inline if in array)
     if ($MyInvocation.MyCommand.Path) {
-        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-wsl2-iso-builder.ps1"
+        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-simple-iso-builder.ps1"
     }
     
     foreach ($path in $possiblePaths) {
         if ($path -and (Test-Path $path)) {
-            Write-Host "Found WSL2 ISO builder at: $path" -ForegroundColor Green
+            Write-Host "Found simple ISO builder at: $path" -ForegroundColor Green
             return $path
         }
     }
     
     # If nothing found, FAIL FAST - no silent fallbacks!
-    Write-Host "WSL2 ISO builder not found in expected locations" -ForegroundColor Red
+    Write-Host "Simple ISO builder not found in expected locations" -ForegroundColor Red
     Write-Host ""
     Write-Host "Searched locations:" -ForegroundColor Yellow
     foreach ($path in $possiblePaths) {
@@ -137,7 +137,7 @@ function Get-WSL2ISOBuilderPath {
     }
     Write-Host ""
     
-    throw "CRITICAL: WSL2 ISO builder not found. Cannot create custom ISO without it!"
+    throw "CRITICAL: Simple ISO builder not found. Cannot create custom ISO without it!"
     
 }
 
@@ -188,32 +188,32 @@ function Get-CyberpunkBillSlothISO {
     }
     
     try {
-        # Execute the mature live-build ISO constructor
-        Write-Host "Launching mature live-build cyberpunk ISO constructor..." -ForegroundColor Magenta
-        $liveBuildPath = Get-WSL2ISOBuilderPath
+        # Execute the simple ISO builder (verified working by Bill)
+        Write-Host "Launching verified working simple ISO builder..." -ForegroundColor Magenta
+        $simpleBuilderPath = Get-SimpleISOBuilderPath
         
         # No fallbacks - fail fast if builder not found
-        if (-not $liveBuildPath) {
-            throw "WSL2 ISO builder not found - cannot create custom ISO!"
+        if (-not $simpleBuilderPath) {
+            throw "Simple ISO builder not found - cannot create custom ISO!"
         }
         
-        Write-Host "Found WSL2 ISO builder: $liveBuildPath" -ForegroundColor Green
+        Write-Host "Found simple ISO builder: $simpleBuilderPath" -ForegroundColor Green
+        Write-Host "Using Bill's verified working WSL2 commands" -ForegroundColor Cyan
         
-        # Execute WSL2 ISO builder with cyberpunk mode
+        # Execute simple ISO builder
         $builderArgs = @(
-            "-OutputISO", $customISOPath,
-            "-MaxCyberpunk"
+            "-OutputISO", $customISOPath
         )
         
-        Write-Host "Executing: & '$liveBuildPath' $($builderArgs -join ' ')" -ForegroundColor Cyan
-        & $liveBuildPath @builderArgs
+        Write-Host "Executing: & '$simpleBuilderPath' $($builderArgs -join ' ')" -ForegroundColor Cyan
+        & $simpleBuilderPath @builderArgs
         
         if ($LASTEXITCODE -eq 0 -and (Test-Path $customISOPath)) {
-            Write-Host "SUCCESS: Cyberpunk Bill Sloth ISO created!" -ForegroundColor Green
-            Write-Host "This is a REAL custom ISO with Bill Sloth pre-integrated!" -ForegroundColor Cyan
+            Write-Host "SUCCESS: Bill Sloth Cyberpunk ISO created with verified method!" -ForegroundColor Green
+            Write-Host "This is a REAL custom ISO created with Bill's tested commands!" -ForegroundColor Cyan
             return $customISOPath
         } else {
-            throw "WSL2 ISO creation failed - NO FALLBACK!"
+            throw "Simple ISO creation failed - NO FALLBACK!"
         }
     }
     catch {
