@@ -751,15 +751,16 @@ echo "████ CYBERPUNK BILL SLOTH ISO COMPLETE ████"
     Write-Host "Executing build in WSL2 $DistroName..." -ForegroundColor Green
     Write-Host "This will take 20-60 minutes..." -ForegroundColor Yellow
     
-    # Save script to temp file and execute (without BOM)
+    # Save script with Unix line endings (fix for WSL2 execution)
     $tempScript = "$env:TEMP\build-iso-wsl.sh"
+    $buildScript = $buildScript -replace "`r`n", "`n"  # Convert CRLF to LF
     [System.IO.File]::WriteAllText($tempScript, $buildScript, [System.Text.UTF8Encoding]::new($false))
     
     # Convert script path to WSL format
     $wslScriptPath = $tempScript -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
     
-    # Execute with proper error handling (fix line endings)
-    $result = wsl -d $DistroName bash -c "sed 's/\r$//' '$wslScriptPath' | bash"
+    # Execute with proper error handling (line endings already fixed)
+    $result = wsl -d $DistroName bash -c "bash '$wslScriptPath'"
     
     if ($LASTEXITCODE -ne 0) {
         throw "WSL2 build failed with exit code $LASTEXITCODE"
