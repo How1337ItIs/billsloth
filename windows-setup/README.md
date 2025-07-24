@@ -25,14 +25,14 @@ Please start by downloading the Bill Sloth auto-setup script and running the aut
 Run as Administrator in PowerShell:
 
 ```powershell
-# 🔄 WSL2 to Native Ubuntu Transition Wizard (OPTIMIZED FOR BILL)
-.\wsl2-to-native-transition-wizard.ps1
+# SINGLE UNIFIED DUAL-BOOT WIZARD (FIXED VERSION)
+.\bill-sloth-dual-boot-wizard-unified.ps1
 
 # Fast transition (skip WSL2 backup)
-.\wsl2-to-native-transition-wizard.ps1 -FastMode
+.\bill-sloth-dual-boot-wizard-unified.ps1 -FastMode
 
 # Specify target drive (default: E:)
-.\wsl2-to-native-transition-wizard.ps1 -TargetDrive E
+.\bill-sloth-dual-boot-wizard-unified.ps1 -TargetDrive E
 ```
 
 ### **For Manual Setup:**
@@ -61,14 +61,15 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 
 ### Core Scripts
 
-#### `wsl2-to-native-transition-wizard.ps1` **🔄 OPTIMIZED FOR BILL**
-**WSL2 to Native Ubuntu Dual-Boot Transition Wizard**
+#### `bill-sloth-dual-boot-wizard-unified.ps1` **🔄 SINGLE UNIFIED SOLUTION**
+**WSL2 to Native Ubuntu Dual-Boot Transition Wizard (FIXED VERSION)**
 - 🎯 **Designed for Bill's exact system**: ASUS, 32GB RAM, 27TB storage
 - 🔄 **WSL2 coexistence**: Leaves WSL2 intact for development/testing
 - 🚀 **Optimal partitioning**: Uses E: drive (9.25TB) for native Ubuntu installation
 - 📦 **Bill Sloth integration**: Includes complete automation system on USB
 - ⚡ **Fast transition mode**: Skip backup for quick setup
 - 🔧 **Hardware optimization**: Direct access to audio, GPU, and system resources
+- ✅ **No Unicode Issues**: Fixed encoding problems, pure ASCII output
 
 **Key Features:**
 - Leaves WSL2 Ubuntu 22.04 intact as development environment
@@ -76,6 +77,7 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 - Creates native Ubuntu USB with Bill Sloth automation
 - Clean native installation alongside Windows
 - Optimized for ASUS UEFI dual-boot setup
+- Single script replaces multiple broken versions
 
 #### `bill-sloth-claude-assisted-setup.ps1`
 **Main orchestration script with Claude Code integration**
