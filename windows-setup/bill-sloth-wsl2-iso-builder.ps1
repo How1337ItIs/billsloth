@@ -88,8 +88,19 @@ fi
 
 # Install live-build if needed
 echo "▓▓▓ Installing live-build framework..."
-sudo apt-get update
+sudo apt-get update -y
 sudo apt-get install -y live-build git curl debootstrap
+
+# Verify installation
+if ! command -v lb &> /dev/null; then
+    echo "❌ ERROR: live-build installation failed!"
+    echo "Available packages:"
+    apt list --installed | grep -i live
+    exit 1
+fi
+
+echo "✅ live-build installed successfully"
+echo "Version: $(lb --version 2>/dev/null || echo 'version check failed')"
 
 # Create project directory
 echo "▓▓▓ Creating project structure..."
@@ -235,28 +246,71 @@ echo 'billsloth-firstboot' >> config/includes.chroot/etc/skel/.bashrc
 # Build the ISO
 echo ""
 echo "████ BUILDING CYBERPUNK ISO (This will take 20-60 minutes) ████"
+echo "Start time: $(date)"
+echo "Available disk space: $(df -h . | tail -1)"
+echo "Memory usage: $(free -h | grep Mem)"
 echo ""
 
-sudo lb build
+# Run build with progress reporting
+echo "Starting ISO build process..."
+sudo lb build 2>&1 | tee /tmp/lb-build.log || {
+    echo "❌ ERROR: live-build process failed!"
+    echo "Last 20 lines of build log:"
+    tail -20 /tmp/lb-build.log 2>/dev/null || echo "No build log available"
+    exit 1
+}
 
 # Check if ISO was created
+echo ""
+echo "▓▓▓ Checking for generated ISO file..."
 ISO_FILE=$(find . -name "*.iso" -type f | head -1)
 if [ -z "$ISO_FILE" ]; then
     echo "❌ ERROR: No ISO file generated!"
+    echo ""
+    echo "Diagnostic information:"
+    echo "Build directory contents:"
+    ls -la
+    echo ""
+    echo "Looking for any files with 'iso' in name:"
+    find . -name "*iso*" -type f 2>/dev/null || echo "None found"
+    echo ""
+    echo "Build log summary (last 50 lines):"
+    tail -50 /tmp/lb-build.log 2>/dev/null || echo "No build log available"
+    echo ""
     echo "Build failed - no fallback to standard Ubuntu!"
     exit 1
 fi
 
+echo "✅ ISO file found: $ISO_FILE"
+echo "File size: $(ls -lh "$ISO_FILE" | awk '{print $5}')"
+
 # Copy to Windows location
 echo "▓▓▓ Copying ISO to Windows filesystem..."
-cp "$ISO_FILE" "$OUTPUT_PATH"
+echo "Source: $ISO_FILE"
+echo "Destination: $OUTPUT_PATH"
+
+if cp "$ISO_FILE" "$OUTPUT_PATH"; then
+    echo "✅ Copy operation completed"
+else
+    echo "❌ ERROR: Copy operation failed"
+    echo "Checking source file:"
+    ls -la "$ISO_FILE"
+    echo "Checking destination directory:"
+    ls -la "$(dirname "$OUTPUT_PATH")" 2>/dev/null || echo "Destination directory not accessible"
+    exit 1
+fi
 
 # Verify copy
 if [ -f "$OUTPUT_PATH" ]; then
-    echo "✅ SUCCESS: Custom ISO created at $OUTPUT_PATH"
-    ls -lh "$OUTPUT_PATH"
+    echo ""
+    echo "✅ SUCCESS: Custom Bill Sloth ISO created!"
+    echo "Location: $OUTPUT_PATH"
+    echo "Size: $(ls -lh "$OUTPUT_PATH" | awk '{print $5}')"
+    echo ""
+    echo "Build completed at: $(date)"
 else
-    echo "❌ ERROR: Failed to copy ISO to Windows location"
+    echo "❌ ERROR: ISO file not found at expected location"
+    echo "Expected: $OUTPUT_PATH"
     exit 1
 fi
 
