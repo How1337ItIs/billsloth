@@ -74,7 +74,8 @@
       "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"Get-ComputerInfo | Select WindowsProductName, BiosFirmwareType\")",
       "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"git --version\")",
       "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"Test-Connection 8.8.8.8 -Count 1 -Quiet\")",
-      "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"Get-ChildItem C:\\Users\\*\\Downloads\\*ubuntu*.iso -ErrorAction SilentlyContinue\")"
+      "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"Get-ChildItem C:\\Users\\*\\Downloads\\*ubuntu*.iso -ErrorAction SilentlyContinue\")",
+      "Bash(git rm:*)"
     ],
     "deny": []
   }

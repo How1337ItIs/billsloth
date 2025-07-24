@@ -97,37 +97,37 @@ function Get-WSL2Status {
     }
 }
 
-# Robust path resolution for ISO builder
-function Get-ISOBuilderPath {
+# Robust path resolution for live-build ISO constructor
+function Get-LiveBuildISOPath {
     $possiblePaths = @(
         # Try PSScriptRoot (most reliable for PowerShell 3.0+)
-        (Join-Path $PSScriptRoot "bill-sloth-custom-iso-builder.ps1"),
+        (Join-Path $PSScriptRoot "bill-sloth-live-build-iso.ps1"),
         
         # Try current working directory
-        (Join-Path $PWD "bill-sloth-custom-iso-builder.ps1"),
+        (Join-Path $PWD "bill-sloth-live-build-iso.ps1"),
         
         # Try same directory as current script using PSCommandPath
-        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-custom-iso-builder.ps1"),
+        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-live-build-iso.ps1"),
         
         # Try common installation paths
-        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1",
-        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1"
+        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-live-build-iso.ps1",
+        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-live-build-iso.ps1"
     )
     
     # Add MyInvocation path conditionally (avoid inline if in array)
     if ($MyInvocation.MyCommand.Path) {
-        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1"
+        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-live-build-iso.ps1"
     }
     
     foreach ($path in $possiblePaths) {
         if ($path -and (Test-Path $path)) {
-            Write-Host "Found ISO builder at: $path" -ForegroundColor Green
+            Write-Host "Found live-build ISO constructor at: $path" -ForegroundColor Green
             return $path
         }
     }
     
     # If nothing found, provide user options
-    Write-Host "Custom ISO builder not found in expected locations" -ForegroundColor Red
+    Write-Host "Live-build ISO constructor not found in expected locations" -ForegroundColor Red
     Write-Host ""
     Write-Host "Searched locations:" -ForegroundColor Yellow
     foreach ($path in $possiblePaths) {
@@ -138,7 +138,7 @@ function Get-ISOBuilderPath {
     Write-Host ""
     
     Write-Host "OPTIONS:" -ForegroundColor Yellow
-    Write-Host "1. Manually specify path to bill-sloth-custom-iso-builder.ps1" -ForegroundColor White
+    Write-Host "1. Manually specify path to bill-sloth-live-build-iso.ps1" -ForegroundColor White
     Write-Host "2. Use standard Ubuntu ISO (loses Bill Sloth integration)" -ForegroundColor White
     Write-Host "3. Exit and fix installation" -ForegroundColor White
     Write-Host ""
@@ -153,7 +153,7 @@ function Get-ISOBuilderPath {
         $choice = Read-Host "Choose option (1-3)"
         switch ($choice) {
             "1" { 
-                $manualPath = Read-Host "Enter full path to bill-sloth-custom-iso-builder.ps1"
+                $manualPath = Read-Host "Enter full path to bill-sloth-live-build-iso.ps1"
                 if (Test-Path $manualPath) {
                     Write-Host "Manual path verified: $manualPath" -ForegroundColor Green
                     return $manualPath
@@ -166,7 +166,7 @@ function Get-ISOBuilderPath {
                 return $null # This will trigger fallback
             }
             "3" { 
-                Write-Host "Exiting - please ensure bill-sloth-custom-iso-builder.ps1 is in the same directory" -ForegroundColor Red
+                Write-Host "Exiting - please ensure bill-sloth-live-build-iso.ps1 is in the same directory" -ForegroundColor Red
                 exit 1
             }
             default {
@@ -223,28 +223,40 @@ function Get-CyberpunkBillSlothISO {
     }
     
     try {
-        # Execute the custom ISO builder with robust path resolution
-        Write-Host "Launching cyberpunk ISO constructor..." -ForegroundColor Magenta
-        $isoBuilderPath = Get-ISOBuilderPath
+        # Execute the mature live-build ISO constructor
+        Write-Host "Launching mature live-build cyberpunk ISO constructor..." -ForegroundColor Magenta
+        $liveBuildPath = Get-LiveBuildISOPath
         
         # Check if user chose fallback (null path)
-        if (-not $isoBuilderPath) {
+        if (-not $liveBuildPath) {
             Write-Host "Using standard Ubuntu ISO as requested..." -ForegroundColor Yellow
             return Get-StandardUbuntuISO
         }
         
-        if (Test-Path $isoBuilderPath) {
-            Write-Host "Found ISO builder: $isoBuilderPath" -ForegroundColor Green
-            & $isoBuilderPath -OutputISO $customISOPath -MaxCyberpunk
+        if (Test-Path $liveBuildPath) {
+            Write-Host "Found live-build ISO constructor: $liveBuildPath" -ForegroundColor Green
             
-            if (Test-Path $customISOPath) {
-                Write-Host "SUCCESS: Cyberpunk Bill Sloth ISO created!" -ForegroundColor Green
+            # Execute live-build ISO constructor with cyberpunk mode
+            $liveBuildArgs = @(
+                "-OutputISO", $customISOPath,
+                "-MaxCyberpunk"
+            )
+            
+            if ($FastMode) {
+                $liveBuildArgs += "-FastMode"
+            }
+            
+            Write-Host "Executing: & '$liveBuildPath' $($liveBuildArgs -join ' ')" -ForegroundColor Cyan
+            & $liveBuildPath @liveBuildArgs
+            
+            if ($LASTEXITCODE -eq 0 -and (Test-Path $customISOPath)) {
+                Write-Host "SUCCESS: Cyberpunk Bill Sloth ISO created with live-build!" -ForegroundColor Green
                 return $customISOPath
             } else {
-                throw "ISO creation completed but output file not found"
+                throw "Live-build ISO creation failed with exit code $LASTEXITCODE"
             }
         } else {
-            throw "Custom ISO builder not found at: $isoBuilderPath"
+            throw "Live-build ISO constructor not found at: $liveBuildPath"
         }
     }
     catch {
@@ -418,6 +430,107 @@ function New-TransitionUSB {
         Write-Host "Error downloading/running Rufus: $($_.Exception.Message)" -ForegroundColor Red
         Write-Host "Please manually create Ubuntu USB using any USB creation tool" -ForegroundColor Yellow
         return $null
+    }
+}
+
+# PowerShell native USB creation method
+function New-BootableUSBNative {
+    param([string]$ISOPath, [string]$USBDrive)
+    
+    Write-Host "Attempting PowerShell native USB creation..." -ForegroundColor Yellow
+    
+    try {
+        # Mount ISO
+        $mount = Mount-DiskImage -ImagePath $ISOPath -PassThru
+        $driveLetter = ($mount | Get-Volume).DriveLetter
+        
+        # Format USB drive
+        $usbDriveLetter = $USBDrive.TrimEnd(':')
+        Format-Volume -DriveLetter $usbDriveLetter -FileSystem FAT32 -Force -Confirm:$false
+        
+        # Copy ISO contents to USB
+        Write-Host "Copying ISO contents to USB drive..." -ForegroundColor Cyan
+        Copy-Item -Path "${driveLetter}:\*" -Destination "${USBDrive}\" -Recurse -Force
+        
+        # Dismount ISO
+        Dismount-DiskImage -ImagePath $ISOPath
+        
+        Write-Host "PowerShell native USB creation completed" -ForegroundColor Green
+        return $true
+    }
+    catch {
+        Write-Host "PowerShell native method failed: $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
+
+# Automated Rufus USB creation method
+function New-BootableUSBRufusAutomated {
+    param([string]$ISOPath, [string]$USBDrive)
+    
+    Write-Host "Attempting automated Rufus USB creation..." -ForegroundColor Yellow
+    
+    try {
+        # Download Rufus if not present
+        $rufusPath = "$env:TEMP\rufus.exe"
+        if (-not (Test-Path $rufusPath)) {
+            Write-Host "Downloading Rufus..." -ForegroundColor Cyan
+            Invoke-WebRequest -Uri "https://github.com/pbatard/rufus/releases/download/v4.4/rufus-4.4.exe" -OutFile $rufusPath
+        }
+        
+        # Run Rufus with automated parameters
+        $rufusArgs = @(
+            "-i", $ISOPath,
+            "-d", $USBDrive,
+            "--FileSystem", "FAT32",
+            "--Label", "BILLSLOTH-CYBER",
+            "--QuickFormat",
+            "--NoRufusCheck"
+        )
+        
+        Start-Process -FilePath $rufusPath -ArgumentList $rufusArgs -Wait -WindowStyle Hidden
+        
+        Write-Host "Automated Rufus USB creation completed" -ForegroundColor Green
+        return $true
+    }
+    catch {
+        Write-Host "Automated Rufus method failed: $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
+
+# Manual Rufus USB creation method
+function New-BootableUSBRufusManual {
+    param([string]$ISOPath, [string]$USBDrive)
+    
+    Write-Host "Launching manual Rufus USB creation..." -ForegroundColor Yellow
+    
+    try {
+        # Download Rufus if not present
+        $rufusPath = "$env:TEMP\rufus.exe"
+        if (-not (Test-Path $rufusPath)) {
+            Write-Host "Downloading Rufus..." -ForegroundColor Cyan
+            Invoke-WebRequest -Uri "https://github.com/pbatard/rufus/releases/download/v4.4/rufus-4.4.exe" -OutFile $rufusPath
+        }
+        
+        Write-Host "Launching Rufus GUI for manual USB creation..." -ForegroundColor Cyan
+        Write-Host "Please configure:" -ForegroundColor Yellow
+        Write-Host "  - Device: $USBDrive" -ForegroundColor White
+        Write-Host "  - Image: $ISOPath" -ForegroundColor White
+        Write-Host "  - Partition: GPT (UEFI)" -ForegroundColor White
+        Write-Host "  - File System: FAT32" -ForegroundColor White
+        Write-Host ""
+        
+        # Launch Rufus and wait for completion
+        Start-Process -FilePath $rufusPath -Wait
+        
+        # Assume success if user completes process
+        Write-Host "Manual Rufus process completed" -ForegroundColor Green
+        return $true
+    }
+    catch {
+        Write-Host "Manual Rufus method failed: $($_.Exception.Message)" -ForegroundColor Red
+        return $false
     }
 }
 
