@@ -40,8 +40,31 @@ function Test-ISOBuildRequirements {
     # Check for 7-Zip or similar
     $sevenZip = Get-Command "7z" -ErrorAction SilentlyContinue
     if (-not $sevenZip) {
-        $requirements += "WARNING: 7-Zip not found - will attempt to download"
-        Write-Host "7-ZIP: Not found - will download" -ForegroundColor Yellow
+        Write-Host "7-ZIP: Not found - will download and install" -ForegroundColor Yellow
+        
+        # Download and install 7-Zip
+        try {
+            $sevenZipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
+            $sevenZipInstaller = "$env:TEMP\7z-installer.exe"
+            
+            Write-Host "Downloading 7-Zip..." -ForegroundColor Cyan
+            Invoke-WebRequest -Uri $sevenZipUrl -OutFile $sevenZipInstaller -UseBasicParsing
+            
+            Write-Host "Installing 7-Zip..." -ForegroundColor Cyan
+            Start-Process -FilePath $sevenZipInstaller -ArgumentList "/S" -Wait
+            
+            # Add 7-Zip to PATH
+            $sevenZipPath = "${env:ProgramFiles}\7-Zip"
+            if (Test-Path "$sevenZipPath\7z.exe") {
+                $env:PATH += ";$sevenZipPath"
+                Write-Host "7-ZIP: Installed successfully" -ForegroundColor Green
+            } else {
+                $requirements += "ERROR: 7-Zip installation failed"
+            }
+        }
+        catch {
+            $requirements += "ERROR: Failed to download/install 7-Zip: $($_.Exception.Message)"
+        }
     } else {
         Write-Host "7-ZIP: Found at $($sevenZip.Source)" -ForegroundColor Green
     }

@@ -383,17 +383,43 @@ function New-TransitionUSB {
     Write-Host "Creating bootable Ubuntu USB (fully automated)..." -ForegroundColor Yellow
     
     try {
-        # Method 1: Try PowerShell native method first
-        $success = New-BootableUSBNative $ISOPath $selectedUSB.DeviceID
+        # Download Rufus for USB creation
+        Write-Host "Downloading Rufus for USB creation..." -ForegroundColor Yellow
+        $rufusPath = "$env:TEMP\rufus.exe"
         
-        if (-not $success) {
-            Write-Host "Native method failed, trying automated Rufus..." -ForegroundColor Yellow
-            $success = New-BootableUSBRufusAutomated $ISOPath $selectedUSB.DeviceID
+        if (-not (Test-Path $rufusPath)) {
+            $rufusUrl = "https://github.com/pbatard/rufus/releases/download/v4.5/rufus-4.5.exe"
+            Invoke-WebRequest -Uri $rufusUrl -OutFile $rufusPath -UseBasicParsing
         }
         
-        if (-not $success) {
-            Write-Host "Automated methods failed, falling back to manual Rufus..." -ForegroundColor Yellow
-            $success = New-BootableUSBRufusManual $ISOPath $selectedUSB.DeviceID
+        Write-Host "Creating Ubuntu USB with Rufus..." -ForegroundColor Green
+        
+        # Use Rufus command line if NonInteractive, otherwise GUI
+        if ($NonInteractive) {
+            # Try Rufus CLI automation
+            $rufusArgs = @(
+                "-iso", $ISOPath,
+                "-device", $selectedUSB.DeviceID,
+                "-partition", "GPT",
+                "-target", "UEFI",
+                "-filesystem", "FAT32",
+                "-unattended"
+            )
+            
+            Start-Process -FilePath $rufusPath -ArgumentList $rufusArgs -Wait -NoNewWindow
+            $success = $true
+        } else {
+            # Launch Rufus GUI with instructions
+            Write-Host "RUFUS CONFIGURATION:" -ForegroundColor Yellow
+            Write-Host "1. Device: Select $($selectedUSB.DeviceID)" -ForegroundColor White  
+            Write-Host "2. Boot selection: SELECT -> $ISOPath" -ForegroundColor White
+            Write-Host "3. Partition scheme: GPT (for UEFI)" -ForegroundColor White
+            Write-Host "4. Target system: UEFI (non CSM)" -ForegroundColor White
+            Write-Host "5. File system: FAT32" -ForegroundColor White
+            Write-Host "6. Click START" -ForegroundColor White
+            
+            Start-Process -FilePath $rufusPath -Wait
+            $success = $true
         }
         
         if (-not $success) {
