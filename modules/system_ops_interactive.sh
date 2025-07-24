@@ -6,6 +6,313 @@
 # Source the non-interactive system ops module
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SOURCE_DIR/system_ops.sh"
+source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
+
+# GitHub Authentication Setup Function (extracted from automation_mastery_interactive.sh)
+setup_github_authentication() {
+    echo "🔗 GITHUB AUTHENTICATION SETUP"
+    echo "==============================="
+    echo ""
+    echo "🐙 GitHub Integration for Bill Sloth System"
+    echo "• Secure authentication for repository access"
+    echo "• Personal Access Token (PAT) configuration"
+    echo "• SSH key setup for seamless git operations"
+    echo "• Integration with Claude Code workflows"
+    echo ""
+    
+    echo "📋 GitHub Authentication Options:"
+    echo "1) Setup Personal Access Token (recommended for HTTPS)"
+    echo "2) Setup SSH Key Authentication"
+    echo "3) Configure Git credentials"
+    echo "4) Test GitHub connectivity"
+    echo "5) Complete GitHub setup for Bill Sloth"
+    echo ""
+    
+    local auth_choice
+    read -p "Select authentication method (1-5): " auth_choice
+    
+    case "$auth_choice" in
+        1)
+            echo "🔐 Personal Access Token Setup"
+            echo "============================="
+            echo ""
+            echo "📝 Step-by-step PAT configuration:"
+            echo "1. Go to GitHub.com → Settings → Developer settings → Personal access tokens"
+            echo "2. Click 'Generate new token (classic)'"
+            echo "3. Set expiration to 'No expiration' (for convenience)"
+            echo "4. Select these scopes:"
+            echo "   ✅ repo (Full control of private repositories)"
+            echo "   ✅ workflow (Update GitHub Action workflows)"
+            echo "   ✅ write:packages (Upload packages to GitHub Package Registry)"
+            echo "   ✅ delete:packages (Delete packages from GitHub Package Registry)"
+            echo "   ✅ user:email (Access user email addresses)"
+            echo ""
+            
+            echo "⚠️  IMPORTANT SECURITY NOTES:"
+            echo "• Never share your PAT with anyone"
+            echo "• Store it securely in the system credential manager"
+            echo "• Use environment variables, not hard-coded in scripts"
+            echo ""
+            
+            read -p "📋 Have you created your PAT? (y/n): " pat_created
+            
+            if [[ $pat_created == "y" ]]; then
+                echo ""
+                echo "🔐 PAT Configuration:"
+                read -p "GitHub username: " github_username
+                read -s -p "Personal Access Token: " github_token
+                echo ""
+                
+                # Store credentials securely
+                mkdir -p ~/.bill-sloth/github
+                chmod 700 ~/.bill-sloth/github
+                
+                # Create secure credential file
+                cat > ~/.bill-sloth/github/credentials << EOF
+# GitHub Credentials for Bill Sloth System
+# Created: $(date)
+GITHUB_USERNAME="$github_username"
+GITHUB_TOKEN="$github_token"
+GITHUB_CONFIGURED=true
+EOF
+                chmod 600 ~/.bill-sloth/github/credentials
+                
+                # Configure git to use the token
+                git config --global user.name "$github_username"
+                read -p "GitHub email address: " github_email
+                git config --global user.email "$github_email"
+                
+                # Set up credential helper
+                git config --global credential.helper store
+                
+                echo "https://$github_username:$github_token@github.com" > ~/.git-credentials
+                chmod 600 ~/.git-credentials
+                
+                echo ""
+                echo "✅ GitHub PAT configured successfully!"
+                echo "🔧 Testing authentication..."
+                
+                # Test the authentication
+                if curl -s -H "Authorization: token $github_token" https://api.github.com/user >/dev/null; then
+                    echo "✅ GitHub authentication test successful!"
+                    echo "✅ Authentication configured for $github_username"
+                else
+                    echo "❌ Authentication test failed - please check your token"
+                fi
+            else
+                echo "📝 Please create your PAT first, then run this setup again"
+            fi
+            ;;
+        2)
+            echo "🔑 SSH Key Authentication Setup"
+            echo "==============================="
+            echo ""
+            
+            # Check if SSH key exists
+            if [ -f ~/.ssh/id_rsa.pub ] || [ -f ~/.ssh/id_ed25519.pub ]; then
+                echo "✅ Existing SSH key found"
+                echo ""
+                echo "📋 Your public SSH key:"
+                [ -f ~/.ssh/id_ed25519.pub ] && cat ~/.ssh/id_ed25519.pub || cat ~/.ssh/id_rsa.pub
+                echo ""
+                echo "📝 Add this key to your GitHub account:"
+                echo "1. Go to GitHub.com → Settings → SSH and GPG keys"
+                echo "2. Click 'New SSH key'"
+                echo "3. Paste the key above"
+                echo "4. Give it a title like 'Bill Sloth System'"
+            else
+                echo "🔧 Generating new SSH key..."
+                read -p "📧 Enter your GitHub email: " github_email
+                
+                # Generate Ed25519 key (more secure)
+                ssh-keygen -t ed25519 -C "$github_email" -f ~/.ssh/id_ed25519 -N ""
+                
+                echo ""
+                echo "✅ SSH key generated!"
+                echo ""
+                echo "📋 Your new public SSH key:"
+                cat ~/.ssh/id_ed25519.pub
+                echo ""
+                echo "📝 Add this key to GitHub (instructions above)"
+            fi
+            
+            # Start SSH agent and add key
+            eval "$(ssh-agent -s)"
+            [ -f ~/.ssh/id_ed25519 ] && ssh-add ~/.ssh/id_ed25519 || ssh-add ~/.ssh/id_rsa
+            
+            echo ""
+            echo "🔧 Testing SSH connection to GitHub..."
+            ssh -T git@github.com -o StrictHostKeyChecking=no || true
+            echo ""
+            echo "📝 If you see 'successfully authenticated', SSH is working!"
+            ;;
+        3)
+            echo "⚙️ Git Global Configuration"
+            echo "=========================="
+            echo ""
+            
+            read -p "📛 Your name (for git commits): " git_name
+            read -p "📧 Your email (GitHub email): " git_email
+            
+            git config --global user.name "$git_name"
+            git config --global user.email "$git_email"
+            git config --global init.defaultBranch main
+            git config --global pull.rebase false
+            
+            echo ""
+            echo "✅ Git configuration complete!"
+            echo "📋 Current settings:"
+            echo "• Name: $(git config --global user.name)"
+            echo "• Email: $(git config --global user.email)"
+            echo "• Default branch: $(git config --global init.defaultBranch)"
+            ;;
+        4)
+            echo "🔍 Testing GitHub Connectivity"
+            echo "=============================="
+            echo ""
+            
+            echo "🔧 Running GitHub connectivity tests..."
+            
+            # Test 1: Basic GitHub API access
+            echo "1. Testing GitHub API access..."
+            if curl -s https://api.github.com/zen >/dev/null; then
+                echo "   ✅ GitHub API accessible"
+            else
+                echo "   ❌ GitHub API not accessible"
+            fi
+            
+            # Test 2: Authentication test
+            echo "2. Testing authentication..."
+            if [ -f ~/.bill-sloth/github/credentials ]; then
+                source ~/.bill-sloth/github/credentials
+                if curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user >/dev/null; then
+                    echo "   ✅ Token authentication working"
+                else
+                    echo "   ❌ Token authentication failed"
+                fi
+            else
+                echo "   ⚠️  No stored credentials found"
+            fi
+            
+            # Test 3: SSH test
+            echo "3. Testing SSH connection..."
+            if ssh -T git@github.com -o ConnectTimeout=5 -o StrictHostKeyChecking=no 2>&1 | grep -q "successfully authenticated"; then
+                echo "   ✅ SSH authentication working"
+            else
+                echo "   ❌ SSH authentication not configured"
+            fi
+            
+            # Test 4: Git configuration
+            echo "4. Checking git configuration..."
+            if git config --global user.name >/dev/null && git config --global user.email >/dev/null; then
+                echo "   ✅ Git configured with user details"
+            else
+                echo "   ⚠️  Git user details not configured"
+            fi
+            ;;
+        5)
+            echo "🚀 Complete GitHub Setup for Bill Sloth"
+            echo "====================================="
+            echo ""
+            echo "🔧 Running comprehensive GitHub setup..."
+            
+            # Check if already configured
+            if [ -f ~/.bill-sloth/github/credentials ] && git config --global user.name >/dev/null; then
+                echo "✅ GitHub already configured!"
+                source ~/.bill-sloth/github/credentials
+                echo "• Username: $GITHUB_USERNAME"
+                echo "• Git name: $(git config --global user.name)"
+                echo "• Git email: $(git config --global user.email)"
+            else
+                echo "🔧 Setting up GitHub integration..."
+                
+                # Get user details
+                read -p "📛 GitHub username: " github_username
+                read -p "📧 GitHub email: " github_email
+                read -p "📛 Your full name (for commits): " full_name
+                
+                # Configure git
+                git config --global user.name "$full_name"
+                git config --global user.email "$github_email"
+                git config --global init.defaultBranch main
+                git config --global pull.rebase false
+                
+                echo ""
+                echo "✅ Git configuration complete!"
+                
+                # Prompt for authentication method
+                echo ""
+                echo "🔐 Authentication Setup:"
+                echo "1) Personal Access Token (recommended)"
+                echo "2) SSH Key"
+                echo ""
+                read -p "Select method (1-2): " auth_method
+                
+                if [ "$auth_method" = "1" ]; then
+                    echo ""
+                    echo "📝 Please create a Personal Access Token:"
+                    echo "1. Visit: https://github.com/settings/tokens"
+                    echo "2. Generate new token with 'repo' and 'workflow' scopes"
+                    echo "3. Copy the token"
+                    echo ""
+                    read -s -p "🔐 Paste your PAT here: " github_token
+                    echo ""
+                    
+                    # Store credentials
+                    mkdir -p ~/.bill-sloth/github
+                    chmod 700 ~/.bill-sloth/github
+                    
+                    cat > ~/.bill-sloth/github/credentials << EOF
+GITHUB_USERNAME="$github_username"
+GITHUB_TOKEN="$github_token"
+GITHUB_CONFIGURED=true
+EOF
+                    chmod 600 ~/.bill-sloth/github/credentials
+                    
+                    # Set up credential helper
+                    git config --global credential.helper store
+                    echo "https://$github_username:$github_token@github.com" > ~/.git-credentials
+                    chmod 600 ~/.git-credentials
+                    
+                    echo "✅ PAT authentication configured!"
+                elif [ "$auth_method" = "2" ]; then
+                    # SSH setup (simplified)
+                    if [ ! -f ~/.ssh/id_ed25519 ]; then
+                        ssh-keygen -t ed25519 -C "$github_email" -f ~/.ssh/id_ed25519 -N ""
+                        eval "$(ssh-agent -s)"
+                        ssh-add ~/.ssh/id_ed25519
+                    fi
+                    
+                    echo "✅ SSH key generated!"
+                    echo "📋 Add this key to GitHub:"
+                    cat ~/.ssh/id_ed25519.pub
+                fi
+            fi
+            
+            echo ""
+            echo "🎯 GitHub Setup Complete for Bill Sloth System!"
+            echo "📋 Next steps:"
+            echo "• Your GitHub authentication is configured"
+            echo "• Git is set up with your details"
+            echo "• You can now clone, push, and pull repositories"
+            echo "• Claude Code can access your GitHub repositories"
+            echo ""
+            echo "🔧 Test with: git clone https://github.com/[username]/[repo-name]"
+            ;;
+        *)
+            echo "Invalid choice - running complete setup"
+            setup_github_authentication
+            ;;
+    esac
+    
+    echo ""
+    echo "📚 GitHub Authentication Documentation:"
+    echo "• Credentials stored in: ~/.bill-sloth/github/"
+    echo "• Git config: git config --global --list"
+    echo "• Test connection: ssh -T git@github.com"
+    echo "• API test: curl -H 'Authorization: token <PAT>' https://api.github.com/user"
+}
 
 system_ops_interactive() {
     echo "🔧 SYSTEM OPERATIONS - YOUR DIGITAL MECHANIC"
@@ -83,6 +390,12 @@ system_ops_interactive() {
     echo "   ✅ Pros: Tool for every situation, comprehensive coverage"
     echo "   🧠 ADHD-Friendly: Options for every mood and need"
     echo "   📖 Learn: The ultimate 'digital mechanic' setup"
+    echo ""
+    echo "8) 🔗 GitHub Authentication Setup - Secure Git Integration"
+    echo "   💡 What it does: Configure GitHub authentication for seamless git operations"
+    echo "   ✅ Features: PAT setup, SSH keys, credential management"
+    echo "   🧠 ADHD-Friendly: Step-by-step authentication with automated testing"
+    echo "   📖 Learn: Professional git workflow configuration"
     echo ""
     echo "🧠 Frylock: 'What part of no did you not understand?'"
     echo "🥤 Shake: 'Click yes for yes!'"
@@ -578,6 +891,11 @@ EOF
                 echo "✅ You now have a complete system operations toolkit!"
                 echo "Reload your shell with: source ~/.bashrc"
             fi
+            ;;
+        8)
+            # GitHub Authentication Setup
+            echo "[LOG] Bill chose GitHub Authentication Setup" >> ~/system_ops/assistant.log
+            setup_github_authentication
             ;;
         other|Other|OTHER)
             echo "[LOG] Bill requested more options from Claude Code" >> ~/system_ops/assistant.log

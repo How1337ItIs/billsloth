@@ -57,7 +57,10 @@
       "WebFetch(domain:releases.ubuntu.com)",
       "WebFetch(domain:old-releases.ubuntu.com)",
       "Bash(powershell:*)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(-print)",
+      "Bash(python:*)",
+      "Bash(show_ascii_sloth)"
     ],
     "deny": []
   }

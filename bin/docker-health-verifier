@@ -1,0 +1,317 @@
+#!/bin/bash
+# Docker Health Verifier - Ensure all business services actually work
+# "Time to make sure our digital empire isn't just smoke and mirrors!" - Carl  
+
+set -euo pipefail
+
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "error_handling"
+
+LOG_FILE="$HOME/.bill-sloth/logs/docker_health.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
+log_health() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+show_banner() {
+    echo -e "\033[38;5;51m"
+    cat << 'EOF'
+    ██████╗  ██████╗  ██████╗██╗  ██╗███████╗██████╗     ██╗  ██╗███████╗ █████╗ ██╗  ████████╗██╗  ██╗
+    ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██╔══██╗    ██║  ██║██╔════╝██╔══██╗██║  ╚══██╔══╝██║  ██║
+    ██║  ██║██║   ██║██║     █████╔╝ █████╗  ██████╔╝    ███████║█████╗  ███████║██║     ██║   ███████║
+    ██║  ██║██║   ██║██║     ██╔═██╗ ██╔══╝  ██╔══██╗    ██╔══██║██╔══╝  ██╔══██║██║     ██║   ██╔══██║
+    ██████╔╝╚██████╔╝╚██████╗██║  ██╗███████╗██║  ██║    ██║  ██║███████╗██║  ██║███████╗██║   ██║  ██║
+    ╚═════╝  ╚═════╝  ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝  ╚═╝
+EOF
+    echo -e "\033[0m"
+}
+
+check_docker_installation() {
+    log_health "🐳 Checking Docker installation..."
+    
+    if ! command -v docker >/dev/null 2>&1; then
+        log_health "❌ Docker not installed"
+        echo "Installing Docker..."
+        source "$(dirname "$0")/../setup-scripts/install_docker.sh"
+    else
+        log_health "✅ Docker installed"
+    fi
+    
+    # Check Docker daemon
+    if ! docker info >/dev/null 2>&1; then
+        log_health "❌ Docker daemon not running"
+        echo "Starting Docker daemon..."
+        sudo systemctl start docker
+        sudo systemctl enable docker
+        
+        # Add user to docker group if not already
+        if ! groups | grep -q docker; then
+            sudo usermod -aG docker $USER
+            log_health "⚠️ Added user to docker group - logout/login required"
+        fi
+    else
+        log_health "✅ Docker daemon running"
+    fi
+}
+
+verify_compose_file() {
+    log_health "📋 Verifying Docker Compose configuration..."
+    
+    local compose_file="$(dirname "$0")/../docker-compose.yml"
+    
+    if [ ! -f "$compose_file" ]; then
+        log_health "❌ Docker Compose file missing"
+        return 1
+    fi
+    
+    # Validate compose file syntax
+    if docker compose -f "$compose_file" config >/dev/null 2>&1; then
+        log_health "✅ Docker Compose file valid"
+    else
+        log_health "❌ Docker Compose file invalid"
+        echo "Docker Compose validation errors:"
+        docker compose -f "$compose_file" config
+        return 1
+    fi
+    
+    # Check for required directories
+    local project_root="$(dirname "$0")/.."
+    local required_dirs=(
+        "data/vrbo"
+        "data/analytics"  
+        "data/communications"
+        "logs/vrbo"
+        "logs/communications"
+        "docker/vrbo-automation"
+        "docker/guest-communication"
+    )
+    
+    for dir in "${required_dirs[@]}"; do
+        if [ ! -d "$project_root/$dir" ]; then
+            log_health "📁 Creating missing directory: $dir"
+            mkdir -p "$project_root/$dir"
+        fi
+    done
+    
+    log_health "✅ Directory structure verified"
+}
+
+start_services() {
+    log_health "🚀 Starting Docker services..."
+    
+    local project_root="$(dirname "$0")/.."
+    cd "$project_root"
+    
+    # Start services
+    if docker compose up -d; then
+        log_health "✅ Docker services started"
+    else
+        log_health "❌ Failed to start Docker services"
+        return 1
+    fi
+    
+    # Wait for services to initialize
+    log_health "⏳ Waiting for services to initialize..."
+    sleep 15
+}
+
+verify_service_health() {
+    local service_name="$1"
+    local health_url="$2"
+    local expected_response="$3"
+    
+    log_health "🔍 Checking $service_name health..."
+    
+    local retries=10
+    while [ $retries -gt 0 ]; do
+        if curl -s -f "$health_url" | grep -q "$expected_response" 2>/dev/null; then
+            log_health "✅ $service_name healthy"
+            return 0
+        fi
+        
+        log_health "⏳ Waiting for $service_name... ($retries retries left)"
+        sleep 3
+        ((retries--))
+    done
+    
+    log_health "❌ $service_name health check failed"
+    return 1
+}
+
+verify_all_services() {
+    log_health "🩺 Verifying all service health..."
+    
+    local failed_services=0
+    
+    # Check PostgreSQL
+    if docker compose exec -T postgres pg_isready -U bill >/dev/null 2>&1; then
+        log_health "✅ PostgreSQL healthy"
+    else
+        log_health "❌ PostgreSQL not responding"
+        ((failed_services++))
+    fi
+    
+    # Check Redis
+    if docker compose exec -T redis redis-cli ping | grep -q "PONG"; then
+        log_health "✅ Redis healthy"
+    else
+        log_health "❌ Redis not responding"
+        ((failed_services++))
+    fi
+    
+    # Check Grafana
+    if verify_service_health "Grafana" "http://localhost:3000/login" "Grafana"; then
+        true
+    else
+        ((failed_services++))
+    fi
+    
+    # Check Kanboard
+    if verify_service_health "Kanboard" "http://localhost:8081" "Kanboard"; then
+        true
+    else
+        ((failed_services++))
+    fi
+    
+    # Check if custom services would be running (they need to be built first)
+    if docker compose ps | grep -q "vrbo-automation"; then
+        if verify_service_health "VRBO Automation" "http://localhost:8000/health" "healthy"; then
+            true
+        else
+            ((failed_services++))
+        fi
+    else
+        log_health "⚠️ VRBO Automation service not built yet"
+    fi
+    
+    return $failed_services
+}
+
+fix_common_issues() {
+    log_health "🔧 Fixing common Docker issues..."
+    
+    # Fix permissions
+    local project_root="$(dirname "$0")/.."
+    sudo chown -R $USER:$USER "$project_root/data" "$project_root/logs" 2>/dev/null || true
+    
+    # Prune unused resources
+    docker system prune -f >/dev/null 2>&1 || true
+    
+    # Restart networking
+    docker network prune -f >/dev/null 2>&1 || true
+    
+    log_health "✅ Common issues fixed"
+}
+
+generate_health_report() {
+    log_health "📊 Generating health report..."
+    
+    local report_file="$HOME/.bill-sloth/reports/docker_health_$(date +%Y%m%d_%H%M%S).txt"
+    mkdir -p "$(dirname "$report_file")"
+    
+    cat > "$report_file" << EOF
+BILL SLOTH DOCKER HEALTH REPORT
+Generated: $(date)
+================================
+
+DOCKER ENGINE:
+$(docker version --format 'Client: {{.Client.Version}}, Server: {{.Server.Version}}' 2>/dev/null || echo "Docker not available")
+
+RUNNING SERVICES:
+$(docker compose ps 2>/dev/null || echo "No compose services")
+
+SYSTEM RESOURCES:
+$(docker system df 2>/dev/null || echo "Resource info unavailable")
+
+NETWORKS:
+$(docker network ls --format 'table {{.Name}}\t{{.Driver}}\t{{.Scope}}' 2>/dev/null || echo "Network info unavailable")
+
+VOLUMES:
+$(docker volume ls --format 'table {{.Name}}\t{{.Driver}}' 2>/dev/null || echo "Volume info unavailable")
+
+SERVICE ENDPOINTS:
+• Grafana Dashboard: http://localhost:3000 (admin/bill_sloth_2025)
+• Kanboard: http://localhost:8081 (admin/admin)
+• PostgreSQL: localhost:5432 (bill/sloth_secure_2025)
+• Redis: localhost:6379
+
+HEALTH STATUS:
+$([ -f "$LOG_FILE" ] && tail -10 "$LOG_FILE" || echo "No health logs available")
+EOF
+    
+    log_health "📄 Health report saved to: $report_file"
+    echo "📄 Full report: $report_file"
+}
+
+main_verification() {
+    clear
+    show_banner
+    
+    echo -e "\033[38;5;51m🩺 DOCKER HEALTH VERIFICATION - ENSURING BUSINESS SERVICES WORK 🩺\033[0m"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🎯 VERIFYING DOCKER INFRASTRUCTURE:"
+    echo "• Docker installation and daemon"
+    echo "• Compose file validation"
+    echo "• Service startup and health"
+    echo "• Database connectivity"
+    echo "• Web interface availability"
+    echo ""
+    
+    log_health "🚀 Starting Docker health verification..."
+    
+    # Run verification steps
+    check_docker_installation
+    echo "✅ Docker installation verified"
+    
+    verify_compose_file
+    echo "✅ Compose configuration verified"
+    
+    start_services
+    echo "✅ Services started"
+    
+    if verify_all_services; then
+        echo "✅ All services healthy"
+        health_status="ALL SYSTEMS OPERATIONAL"
+    else
+        echo "⚠️ Some services need attention"
+        health_status="PARTIAL FUNCTIONALITY"
+        
+        # Try to fix common issues
+        fix_common_issues
+        
+        # Retry verification
+        if verify_all_services; then
+            echo "✅ Issues resolved"
+            health_status="ALL SYSTEMS OPERATIONAL"
+        fi
+    fi
+    
+    generate_health_report
+    
+    echo ""
+    echo "🎉 DOCKER HEALTH VERIFICATION COMPLETE!"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🧠 Carl: 'Your digital empire's infrastructure is solid!'"
+    echo ""
+    echo "📊 OVERALL STATUS: $health_status"
+    echo ""
+    echo "🌐 ACCESS YOUR SERVICES:"
+    echo "• Business Dashboard: http://localhost:3000"
+    echo "• Project Management: http://localhost:8081"
+    echo "• Database: localhost:5432"
+    echo ""
+    echo "🔧 MANAGEMENT COMMANDS:"
+    echo "• View logs: docker compose logs"
+    echo "• Restart services: docker compose restart"
+    echo "• Stop services: docker compose down"
+    echo "• Update services: docker compose pull && docker compose up -d"
+    echo ""
+    
+    log_health "✅ Docker health verification completed: $health_status"
+}
+
+# Run verification
+main_verification

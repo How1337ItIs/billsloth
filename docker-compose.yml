@@ -1,0 +1,166 @@
+version: '3.8'
+
+services:
+  # Business Intelligence Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: bill-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=bill_sloth_2025
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - bill-network
+
+  # PostgreSQL for business data
+  postgres:
+    image: postgres:15-alpine
+    container_name: bill-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=bill_business
+      - POSTGRES_USER=bill
+      - POSTGRES_PASSWORD=sloth_secure_2025
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./sql/init:/docker-entrypoint-initdb.d
+    networks:
+      - bill-network
+    ports:
+      - "5432:5432"
+
+  # Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: bill-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - bill-network
+    ports:
+      - "6379:6379"
+
+  # Professional project management
+  kanboard:
+    image: kanboard/kanboard:latest
+    container_name: bill-kanboard
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    volumes:
+      - kanboard-data:/var/www/app/data
+      - kanboard-plugins:/var/www/app/plugins
+    networks:
+      - bill-network
+
+  # VRBO automation service
+  vrbo-automation:
+    build: ./docker/vrbo-automation
+    container_name: bill-vrbo-automation
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://bill:sloth_secure_2025@postgres:5432/bill_business
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./data/vrbo:/app/data
+      - ./logs/vrbo:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - bill-network
+
+  # Guest communication service
+  guest-comms:
+    build: ./docker/guest-communication
+    container_name: bill-guest-comms
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://bill:sloth_secure_2025@postgres:5432/bill_business
+      - REDIS_URL=redis://redis:6379
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+    volumes:
+      - ./data/templates:/app/templates
+      - ./logs/communications:/app/logs
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - bill-network
+
+  # Business analytics service
+  analytics:
+    build: ./docker/analytics
+    container_name: bill-analytics
+    restart: unless-stopped
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql://bill:sloth_secure_2025@postgres:5432/bill_business
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - ./data/analytics:/app/data
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - bill-network
+
+  # Service health monitor
+  health-monitor:
+    build: ./docker/service-health-monitor
+    container_name: bill-health-monitor
+    restart: unless-stopped
+    ports:
+      - "8004:8004"
+    environment:
+      - DATABASE_URL=postgresql://bill:sloth_secure_2025@postgres:5432/bill_business
+    volumes:
+      - ./data/monitoring:/app/data
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - bill-network
+    privileged: true
+
+  # File sync and backup service
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: bill-syncthing
+    restart: unless-stopped
+    ports:
+      - "8384:8384"
+      - "22000:22000/tcp"
+      - "22000:22000/udp"
+      - "21027:21027/udp"
+    volumes:
+      - syncthing-data:/var/syncthing
+      - ./data:/var/syncthing/data
+    networks:
+      - bill-network
+
+networks:
+  bill-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  grafana-data:
+  postgres-data:
+  redis-data:
+  kanboard-data:
+  kanboard-plugins:
+  syncthing-data:

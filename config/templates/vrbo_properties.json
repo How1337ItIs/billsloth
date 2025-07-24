@@ -1,0 +1,243 @@
+{
+  "properties": {
+    "example_property_1": {
+      "vrbo_property_id": "VRBO123456",
+      "name": "Oceanfront Paradise Retreat",
+      "address": "123 Beach Road, Coastal City, ST 12345",
+      "property_type": "house",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "max_guests": 8,
+      "base_rate": 250.00,
+      "cleaning_fee": 150.00,
+      "amenities": [
+        "wifi",
+        "pool",
+        "hot_tub",
+        "beach_access",
+        "full_kitchen",
+        "washer_dryer",
+        "parking",
+        "air_conditioning"
+      ],
+      "house_rules": {
+        "check_in_time": "4:00 PM",
+        "check_out_time": "11:00 AM",
+        "smoking": false,
+        "pets": true,
+        "events": false,
+        "quiet_hours": "10:00 PM - 8:00 AM",
+        "max_vehicles": 2
+      },
+      "entry_instructions": {
+        "type": "keypad",
+        "location": "Front door",
+        "code_format": "Last 4 digits of phone number",
+        "backup_key": "Hidden in lockbox on left side of house"
+      },
+      "wifi_details": {
+        "network_name": "BeachHouse_Guest",
+        "password": "OceanView2025",
+        "instructions": "Select 5G network for best speed"
+      },
+      "parking_instructions": "Park in driveway (fits 2 cars). Additional street parking available.",
+      "local_recommendations": {
+        "restaurants": [
+          {
+            "name": "The Seafood Shack",
+            "distance": "0.5 miles",
+            "type": "Casual seafood",
+            "note": "Best fish tacos in town!"
+          },
+          {
+            "name": "Coastal Fine Dining",
+            "distance": "1 mile",
+            "type": "Upscale",
+            "note": "Reservations recommended"
+          }
+        ],
+        "grocery": [
+          {
+            "name": "Beach Market",
+            "distance": "0.3 miles",
+            "type": "Convenience store",
+            "hours": "7 AM - 10 PM"
+          },
+          {
+            "name": "Coastal Supermarket",
+            "distance": "2 miles",
+            "type": "Full grocery",
+            "hours": "6 AM - 11 PM"
+          }
+        ],
+        "activities": [
+          {
+            "name": "Beach Rentals",
+            "service": "Kayaks, paddleboards, umbrellas",
+            "distance": "On the beach",
+            "contact": "(555) 123-4567"
+          },
+          {
+            "name": "Coastal Tours",
+            "service": "Dolphin watching, sunset cruises",
+            "distance": "Marina - 1 mile",
+            "booking": "Book 24hrs in advance"
+          }
+        ]
+      },
+      "emergency_info": {
+        "nearest_hospital": {
+          "name": "Coastal Medical Center",
+          "address": "456 Hospital Way",
+          "distance": "3 miles",
+          "phone": "(555) 999-1111"
+        },
+        "urgent_care": {
+          "name": "Beach Urgent Care",
+          "address": "789 Care Lane",
+          "distance": "1.5 miles",
+          "phone": "(555) 999-2222",
+          "hours": "8 AM - 8 PM"
+        },
+        "property_manager": {
+          "name": "Bill",
+          "phone": "(555) 555-0123",
+          "availability": "9 AM - 9 PM for emergencies"
+        }
+      }
+    },
+    "example_property_2": {
+      "vrbo_property_id": "VRBO789012",
+      "name": "Mountain View Cabin",
+      "address": "456 Pine Trail, Mountain Town, ST 54321",
+      "property_type": "cabin",
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "max_guests": 4,
+      "base_rate": 175.00,
+      "cleaning_fee": 100.00,
+      "amenities": [
+        "wifi",
+        "fireplace",
+        "full_kitchen",
+        "deck",
+        "grill",
+        "hiking_access",
+        "parking",
+        "heating"
+      ],
+      "house_rules": {
+        "check_in_time": "3:00 PM",
+        "check_out_time": "10:00 AM",
+        "smoking": false,
+        "pets": false,
+        "events": false,
+        "quiet_hours": "9:00 PM - 8:00 AM",
+        "max_vehicles": 2,
+        "winter_rules": "4WD required Nov-Mar"
+      },
+      "entry_instructions": {
+        "type": "lockbox",
+        "location": "Under the deck stairs",
+        "code": "Will be sent 24hrs before arrival",
+        "special_instructions": "Use gravel driveway, not grass"
+      },
+      "wifi_details": {
+        "network_name": "MountainCabin",
+        "password": "PineTree456",
+        "instructions": "Router is in living room if reset needed"
+      },
+      "parking_instructions": "Park in gravel area only. Do not block turnaround.",
+      "seasonal_info": {
+        "winter": {
+          "heating": "Set thermostat between 65-72°F",
+          "water": "Leave faucets dripping if below 20°F",
+          "snow_removal": "Driveway plowed by 8 AM after storms"
+        },
+        "summer": {
+          "wildlife": "Keep doors closed - bears active",
+          "grill": "Propane tank under deck",
+          "hiking": "Trail maps in kitchen drawer"
+        }
+      }
+    }
+  },
+  "rate_strategies": {
+    "seasonal_pricing": {
+      "high_season": {
+        "months": ["June", "July", "August"],
+        "rate_multiplier": 1.25,
+        "minimum_stay": 3
+      },
+      "low_season": {
+        "months": ["November", "December", "January", "February"],
+        "rate_multiplier": 0.85,
+        "minimum_stay": 2
+      },
+      "holiday_premiums": {
+        "christmas_week": 1.5,
+        "new_years_week": 1.5,
+        "thanksgiving_week": 1.3,
+        "july_4th_week": 1.4,
+        "memorial_day_weekend": 1.3,
+        "labor_day_weekend": 1.3
+      }
+    },
+    "dynamic_pricing": {
+      "occupancy_based": {
+        "80_percent_booked": 1.1,
+        "90_percent_booked": 1.2,
+        "last_minute_discount": 0.9
+      },
+      "day_of_week": {
+        "weekend_premium": 1.15,
+        "sunday_discount": 0.95
+      }
+    },
+    "length_of_stay_discounts": {
+      "weekly": 0.9,
+      "monthly": 0.75
+    }
+  },
+  "guest_communication_preferences": {
+    "message_timing": {
+      "booking_confirmation": "immediate",
+      "welcome_message": "immediate",
+      "check_in_reminder": "-24 hours",
+      "check_in_instructions": "-4 hours",
+      "during_stay_check": "+24 hours after check-in",
+      "checkout_reminder": "morning of checkout",
+      "thank_you_message": "+4 hours after checkout",
+      "review_request": "+24 hours after checkout"
+    },
+    "communication_channels": {
+      "primary": "vrbo_messaging",
+      "backup": "email",
+      "emergency": "phone"
+    },
+    "auto_responses": {
+      "enabled": true,
+      "business_hours": "9 AM - 9 PM",
+      "response_time_commitment": "1 hour during business hours"
+    }
+  },
+  "integration_settings": {
+    "calendar_sync": {
+      "enabled": true,
+      "platforms": ["vrbo", "airbnb", "direct_bookings"],
+      "update_frequency": "every 15 minutes"
+    },
+    "payment_processing": {
+      "vrbo_payments": true,
+      "damage_protection": "VRBO damage protection plan",
+      "security_deposit": 500,
+      "refund_policy": "Full refund 30+ days, 50% refund 14-29 days"
+    },
+    "review_management": {
+      "auto_request": true,
+      "template_personalization": true,
+      "response_templates": true,
+      "minimum_rating_alert": 4.0
+    }
+  }
+}

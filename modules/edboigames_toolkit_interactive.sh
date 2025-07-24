@@ -1,77 +1,41 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
-# EdBoiGames Business Toolkit - Adaptive toolkit for gaming business operations
+# EdBoiGames Content Creation Toolkit - YouTube business and content creation
 # "Time to get rad and make some moolah!" - Carl Brutananadilewski
 
-source "../lib/interactive.sh" 2>/dev/null || {
-    echo "🎮 EDBOIGAMES BUSINESS TOOLKIT"
-    echo "============================="
-}
-
-source "../lib/adaptive_learning.sh" 2>/dev/null || {
-    echo "⚠️  Adaptive learning not available - using default content"
-}
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "adaptive_learning" "data_persistence" "error_handling"
 
 # Initialize adaptive learning for this module
-init_adaptive_learning "edboigames_toolkit" "$0" 2>/dev/null || true
+init_adaptive_learning "edboigames_content" "$0" 2>/dev/null || true
 
-# Adaptive content selection
-detect_user_focus() {
-    init_adaptive_learning 2>/dev/null || true
-    
-    # Check if user has indicated business development focus
-    if grep -q "focus_areas=business\|focus_areas=bd\|focus_areas=partnerships" "$HOME/.bill-sloth/learning/preferences_simple.txt" 2>/dev/null; then
-        echo "business_development"
-        return
-    fi
-    
-    # Check if user has given negative feedback to video production content
-    if grep -q "wrong_focus" "$HOME/.bill-sloth/learning/feedback_simple.log" 2>/dev/null; then
-        recent_video_feedback=$(grep "video_production\|youtube\|content_creation" "$HOME/.bill-sloth/learning/feedback_simple.log" 2>/dev/null | tail -3 | grep -c "|[12]|")
-        if [ "$recent_video_feedback" -ge 2 ]; then
-            echo "business_development"
-            return
-        fi
-    fi
-    
-    # Default to content creation
-    echo "content_creation"
+show_ascii_header() {
+    echo -e "\033[38;5;196m"
+    cat << 'EOF'
+    ███████╗██████╗ ██████╗  ██████╗ ██╗    ██████╗ ██████╗ ███╗   ██╗████████╗███████╗███╗   ██╗████████╗
+    ██╔════╝██╔══██╗██╔══██╗██╔═══██╗██║   ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝████╗  ██║╚══██╔══╝
+    █████╗  ██║  ██║██████╔╝██║   ██║██║   ██║     ██║   ██║██╔██╗ ██║   ██║   █████╗  ██╔██╗ ██║   ██║   
+    ██╔══╝  ██║  ██║██╔══██╗██║   ██║██║   ██║     ██║   ██║██║╚██╗██║   ██║   ██╔══╝  ██║╚██╗██║   ██║   
+    ███████╗██████╔╝██████╔╝╚██████╔╝██║   ╚██████╗╚██████╔╝██║ ╚████║   ██║   ███████╗██║ ╚████║   ██║   
+    ╚══════╝╚═════╝ ╚═════╝  ╚═════╝ ╚═╝    ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚══════╝╚═╝  ╚═══╝   ╚═╝   
+EOF
+    echo -e "\033[0m"
 }
 
-USER_FOCUS=$(detect_user_focus)
-
-if [ "$USER_FOCUS" = "business_development" ]; then
-    show_banner "EDBOIGAMES BUSINESS" "Partnership & Business Development Tools" "BUSINESS"
-    echo "🤝 EdBoiGames Business Development & Partnership Toolkit"
-    echo "======================================================="
-    echo ""
-    echo "🎯 Focused on business operations, partnerships, and growth strategies"
-    echo "   for EdBoiGames rather than content creation."
-    echo ""
-    echo "💼 Business Development Tools:"
-    echo "   • Partnership outreach and management"
-    echo "   • Revenue stream analysis and optimization" 
-    echo "   • Market research and competitive analysis"
-    echo "   • Business process automation"
-    echo ""
-else
-    show_banner "EDBOIGAMES CONTENT" "Build your content empire" "GAMING"
-    echo "🎮 EdBoiGames YouTube Business & Content Creation Toolkit"
-    echo "========================================================"
-    echo ""
-    echo "🎬 This module focuses on building successful YouTube channels,"
-    echo "   video editing, content strategy, and audience monetization."
-    echo ""
-    echo "💰 Content Creation Focus:"
-    echo "   • Video production and editing workflows"
-    echo "   • YouTube optimization and growth"
-    echo "   • Audience building and engagement"
-    echo "   • Content monetization strategies"
-    echo ""
-fi
-
-echo "🧠 ADAPTIVE NOTE: This module learns from your usage and feedback."
-echo "   If the focus doesn't match your needs, provide feedback to improve!"
+show_ascii_header
+echo -e "\033[38;5;46m🎮 EdBoiGames Content Creation & YouTube Business Toolkit\033[0m"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "🎬 Build your YouTube empire with professional content creation tools!"
+echo "   Video production workflows, audience growth, and monetization strategies."
+echo ""
+echo "💰 Content Creation Focus:"
+echo "   • Video production and editing workflows"
+echo "   • YouTube optimization and SEO"
+echo "   • Audience building and engagement"
+echo "   • Content monetization strategies"
+echo ""
+echo "💡 For business partnerships and sponsorship deals, use the Business Partnerships module."
 echo ""
 
 # Educational introduction to YouTube business
@@ -1763,159 +1727,189 @@ analyze_revenue_streams() {
 # Main adaptive menu
 main_menu() {
     while true; do
-        # Detect current focus and adapt menu
-        CURRENT_FOCUS=$(detect_user_focus)
-        
-        if [ "$CURRENT_FOCUS" = "business_development" ]; then
-            show_banner "EDBOIGAMES BUSINESS" "Partnership & Business Development Tools" "BUSINESS"
-            echo "🤝 EDBOIGAMES BUSINESS DEVELOPMENT TOOLKIT"
-            echo "=========================================="
-            echo ""
-            echo "🎯 BUSINESS OPERATIONS:"
-            echo "1) 🤝 Setup Business Development Tools"
-            echo "2) 💰 Revenue Stream Analysis & Optimization"
-            echo "3) 📊 Partnership Management System"
-            echo "4) 📈 Market Research & Competitive Analysis"
-            echo "5) 📧 Automated Outreach & CRM Setup"
-            echo ""
-            echo "🎬 CONTENT OPTIONS (if relevant):"
-            echo "6) 🎬 Video Production Tools (if needed)"
-            echo "7) 📱 Social Media Management"
-            echo ""
-            echo "⚙️  SYSTEM:"
-            echo "8) 🧠 Provide Feedback (help customize this module)"
-            echo "9) 🔄 Switch to Content Creation Focus"
-            echo "0) Exit"
-            echo ""
-            echo "💡 This module adapted based on your business development focus."
-            
-        else
-            show_banner "EDBOIGAMES CONTENT" "Build your content empire" "GAMING"
-            echo "🎮 EDBOIGAMES CONTENT CREATION TOOLKIT"
-            echo "====================================="
-            echo ""
-            echo "🎬 CONTENT CREATION:"
-            echo "1) 🎓 YouTube Business Basics (Start here!)"
-            echo "2) 🎯 Content Strategy & Planning"
-            echo "3) 🎵 Audio Production & Music Creation"
-            echo "4) 🎬 Video Production & Editing"
-            echo "5) ✂️  Video Editing Software Setup"
-            echo "6) 📹 Screen Recording Setup"
-            echo "7) 📈 YouTube Optimization & Analytics"
-            echo "8) 💰 Content Monetization Strategies"
-            echo ""
-            echo "💼 BUSINESS OPTIONS:"
-            echo "9) 🤝 Business Development Tools"
-            echo ""
-            echo "⚙️  SYSTEM:"
-            echo "10) 🧠 Provide Feedback (help customize this module)"
-            echo "11) 🔄 Switch to Business Development Focus"
-            echo "0) Exit"
-            echo ""
-            echo "💡 This module adapted based on your content creation focus."
-        fi
+        echo "🎬 CONTENT CREATION TOOLKIT - MAIN MENU"
+        echo "======================================="
+        echo ""
+        echo "1) 🎓 YouTube Business & Monetization Guide"
+        echo "2) 🎯 Content Strategy & Channel Planning" 
+        echo "3) 🎬 Video Production & Editing Tools"
+        echo "4) 📈 YouTube SEO & Analytics Optimization"
+        echo "5) 🎵 Audio Production & Music Creation"
+        echo "6) 📱 Multi-Platform Content Distribution"
+        echo ""
+        echo "0) Exit"
+        echo ""
+        echo "💡 For sponsorship deals & partnerships, use Business Partnerships module"
         
         echo ""
         read -p "Choose an option: " choice
         
         # Log menu access
-        log_usage "edboigames_toolkit" "menu_access" "success" "" "focus:$CURRENT_FOCUS"
+        log_usage "edboigames_content" "menu_access" "success" "" "content_creation"
         
         case $choice in
             1) 
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    setup_business_development_tools
-                else
-                    explain_youtube_business
-                fi
+                explain_youtube_business
                 ;;
             2) 
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    analyze_revenue_streams
-                else
-                    explain_content_strategy
-                fi
+                explain_content_strategy
                 ;;
             3)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    echo "📊 Partnership Management System (coming soon)"
-                    collect_feedback "edboigames_toolkit" "partnership_management"
-                else
-                    audio_production_guide
-                fi
+                video_production_guide
                 ;;
             4)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    echo "📈 Market Research & Competitive Analysis (coming soon)"
-                    collect_feedback "edboigames_toolkit" "market_research"
-                else
-                    video_production_guide
-                fi
+                youtube_seo_guide
                 ;;
             5)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    echo "📧 Automated Outreach & CRM Setup (coming soon)"
-                    collect_feedback "edboigames_toolkit" "automated_outreach"
-                else
-                    setup_video_editing
-                fi
+                audio_production_guide
                 ;;
             6)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    video_production_guide  # Still available if needed
-                else
-                    setup_screen_recording
-                fi
+                multi_platform_distribution
                 ;;
-            7)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    echo "📱 Social Media Management (coming soon)"
-                    collect_feedback "edboigames_toolkit" "social_media"
-                else
-                    youtube_optimization_guide
-                fi
+            0)
+                echo "🎬 Thanks for using EdBoiGames Content Creation Toolkit!"
+                echo "🧠 Carl: 'Now get out there and make some sick content!'"
+                break
                 ;;
-            8)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    collect_feedback "edboigames_toolkit" "general"
-                else
-                    monetization_strategies
-                fi
+            *)
+                echo "❌ Invalid option. Please choose 1-6 or 0 to exit."
                 ;;
-            9)
-                if [ "$CURRENT_FOCUS" = "business_development" ]; then
-                    # Switch to content creation focus
-                    update_preference "focus_areas" "content_creation"
-                    echo "🔄 Switching to Content Creation focus..."
-                    echo "   Module will adapt on next run."
-                    sleep 2
-                else
-                    setup_business_development_tools
-                fi
-                ;;
-            10)
-                if [ "$CURRENT_FOCUS" = "content_creation" ]; then
-                    collect_feedback "edboigames_toolkit" "general"
-                fi
-                ;;
-            11)
-                if [ "$CURRENT_FOCUS" = "content_creation" ]; then
-                    # Switch to business development focus
-                    update_preference "focus_areas" "business_development"
-                    echo "🔄 Switching to Business Development focus..."
-                    echo "   Module will adapt on next run."
-                    sleep 2
-                fi
-                ;;
-            0) 
-                echo "👋 EdBoiGames toolkit session complete!"
-                log_usage "edboigames_toolkit" "exit" "success"
-                quick_feedback "edboigames_toolkit"
-                exit 0 
-                ;;
-            *) echo "❌ Invalid choice. Please try again."; sleep 2 ;;
         esac
+        
+        echo ""
+        echo "Press Enter to continue..."
+        read
     done
+}
+
+# New focused content creation functions
+video_production_guide() {
+    echo "🎬 VIDEO PRODUCTION & EDITING GUIDE"
+    echo "===================================="
+    echo ""
+    echo "🎯 PROFESSIONAL VIDEO PRODUCTION WORKFLOW:"
+    echo ""
+    echo "1. 📱 EQUIPMENT SETUP:"
+    echo "   • Camera: DSLR, mirrorless, or high-quality webcam"
+    echo "   • Audio: External microphone is CRUCIAL for quality"
+    echo "   • Lighting: Ring light or softbox for consistent lighting"
+    echo "   • Tripod: Stable shots are professional shots"
+    echo ""
+    echo "2. 🎬 FILMING BEST PRACTICES:"
+    echo "   • Record in 1080p minimum (4K if storage allows)"
+    echo "   • Use manual focus to avoid hunting during recording"
+    echo "   • Record room tone for audio editing"
+    echo "   • Always record extra B-roll footage"
+    echo ""
+    echo "3. ✂️ EDITING WORKFLOW:"
+    echo "   • DaVinci Resolve (free, professional)"
+    echo "   • Adobe Premiere Pro (industry standard)"
+    echo "   • KDenlive (free, Linux-friendly)"
+    echo ""
+    
+    read -p "Would you like to set up video editing software? (y/n): " setup_editing
+    if [[ "$setup_editing" =~ ^[Yy] ]]; then
+        setup_video_editing
+    fi
+}
+
+youtube_seo_guide() {
+    echo "📈 YOUTUBE SEO & ANALYTICS OPTIMIZATION"
+    echo "======================================="
+    echo ""
+    echo "🎯 YOUTUBE ALGORITHM SUCCESS FACTORS:"
+    echo ""
+    echo "1. 🔍 KEYWORD RESEARCH:"
+    echo "   • Use TubeBuddy or VidIQ for keyword suggestions"
+    echo "   • Target long-tail keywords with lower competition"
+    echo "   • Research what's trending in your niche"
+    echo ""
+    echo "2. 📝 TITLE OPTIMIZATION:"
+    echo "   • Include main keyword in first 60 characters"
+    echo "   • Create curiosity gaps (What happens next?)"
+    echo "   • Use emotional triggers (Amazing, Unbelievable, Secret)"
+    echo ""
+    echo "3. 🖼️ THUMBNAIL STRATEGY:"
+    echo "   • Bright, contrasting colors"
+    echo "   • Faces with exaggerated expressions"
+    echo "   • Large, readable text (max 6 words)"
+    echo "   • A/B test different thumbnail styles"
+    echo ""
+    echo "4. 📊 ANALYTICS TO WATCH:"
+    echo "   • Click-through rate (aim for 4-10%)"
+    echo "   • Average view duration (aim for 50%+)"
+    echo "   • Audience retention graphs"
+    echo "   • Traffic sources breakdown"
+    echo ""
+}
+
+multi_platform_distribution() {
+    echo "📱 MULTI-PLATFORM CONTENT DISTRIBUTION"
+    echo "======================================"
+    echo ""
+    echo "🌐 PLATFORM-SPECIFIC STRATEGY:"
+    echo ""
+    echo "1. 📺 YOUTUBE (Long-form content):"
+    echo "   • 10+ minute videos for better monetization"
+    echo "   • Detailed descriptions with timestamps"
+    echo "   • Custom thumbnails and end screens"
+    echo ""
+    echo "2. 📱 TIKTOK/INSTAGRAM REELS (Short-form):"
+    echo "   • Extract highlights from long-form content"
+    echo "   • Vertical format (9:16 aspect ratio)"
+    echo "   • Hook viewers in first 3 seconds"
+    echo ""
+    echo "3. 🐦 TWITTER/X (Community building):"
+    echo "   • Share behind-the-scenes content"
+    echo "   • Engage with other creators"
+    echo "   • Tweet threads about your niche"
+    echo ""
+    echo "4. 💬 DISCORD (Fan community):"
+    echo "   • Create a server for your audience"
+    echo "   • Regular AMAs and community events"
+    echo "   • Exclusive content for server members"
+    echo ""
+    
+    echo "🔧 AUTOMATION TOOLS:"
+    echo "   • Later.com - Schedule posts across platforms"
+    echo "   • Buffer - Social media management"
+    echo "   • Hootsuite - Enterprise social scheduling"
+    echo ""
+}
+
+audio_production_guide() {
+    echo "🎵 AUDIO PRODUCTION & MUSIC CREATION"
+    echo "==================================="
+    echo ""
+    echo "🎯 PROFESSIONAL AUDIO FOR CONTENT CREATORS:"
+    echo ""
+    echo "1. 🎤 MICROPHONE SETUP:"
+    echo "   • USB: Audio-Technica ATR2100x-USB (versatile)"
+    echo "   • XLR: Shure SM7B (podcasting standard)"
+    echo "   • Lavalier: Rode Wireless GO II (mobility)"
+    echo "   • Audio interface: Focusrite Scarlett Solo"
+    echo ""
+    echo "2. 🎧 MONITORING & MIXING:"
+    echo "   • Closed-back headphones: Sony MDR-7506"
+    echo "   • Studio monitors: KRK Rokit 5 G4"
+    echo "   • Audio treatment: Acoustic foam panels"
+    echo ""
+    echo "3. 🎼 MUSIC & SOUND EFFECTS:"
+    echo "   • Royalty-free: Epidemic Sound, Artlist"
+    echo "   • Free options: YouTube Audio Library, Freesound"
+    echo "   • Creative Commons: ccMixter, Free Music Archive"
+    echo ""
+    echo "4. 🛠️ AUDIO SOFTWARE:"
+    echo "   • Free: Audacity, Reaper (60-day trial)"
+    echo "   • Professional: Pro Tools, Logic Pro X"
+    echo "   • Linux: Ardour, LMMS"
+    echo ""
+    echo "5. 📊 AUDIO STANDARDS FOR YOUTUBE:"
+    echo "   • Format: 48kHz, 16-bit minimum"
+    echo "   • Levels: -16 to -18 LUFS for YouTube"
+    echo "   • No clipping or distortion"
+    echo "   • Consistent volume throughout video"
+    echo ""
 }
 
 # Complete YouTube bootcamp - guided tour

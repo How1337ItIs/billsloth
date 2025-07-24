@@ -1,0 +1,314 @@
+#!/bin/bash
+# Bill Sloth System Validator - Comprehensive system health and functionality check
+# "Time to verify our digital supremacy is complete!" - Carl
+
+set -euo pipefail
+
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "error_handling"
+
+VALIDATION_LOG="$HOME/.bill-sloth/logs/system_validation.log"
+mkdir -p "$(dirname "$VALIDATION_LOG")"
+
+log_validation() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$VALIDATION_LOG"
+}
+
+show_banner() {
+    echo -e "\033[38;5;46m"
+    cat << 'EOF'
+    ██╗   ██╗ █████╗ ██╗     ██╗██████╗  █████╗ ████████╗ ██████╗ ██████╗ 
+    ██║   ██║██╔══██╗██║     ██║██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
+    ██║   ██║███████║██║     ██║██║  ██║███████║   ██║   ██║   ██║██████╔╝
+    ╚██╗ ██╔╝██╔══██║██║     ██║██║  ██║██╔══██║   ██║   ██║   ██║██╔══██╗
+     ╚████╔╝ ██║  ██║███████╗██║██████╔╝██║  ██║   ██║   ╚██████╔╝██║  ██║
+      ╚═══╝  ╚═╝  ╚═╝╚══════╝╚═╝╚═════╝ ╚═╝  ╚═╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝
+EOF
+    echo -e "\033[0m"
+}
+
+validate_core_system() {
+    echo "🔍 VALIDATING CORE SYSTEM..."
+    local issues=0
+    
+    # Check main command center
+    if [ -f "$(dirname "$0")/../bill_command_center.sh" ]; then
+        log_validation "✅ Main command center exists"
+    else
+        log_validation "❌ Main command center missing"
+        ((issues++))
+    fi
+    
+    # Check lib directory
+    if [ -d "$(dirname "$0")/../lib" ]; then
+        local lib_count=$(find "$(dirname "$0")/../lib" -name "*.sh" | wc -l)
+        log_validation "✅ Library system: $lib_count libraries found"
+    else
+        log_validation "❌ Library system missing"
+        ((issues++))
+    fi
+    
+    # Check modules directory
+    if [ -d "$(dirname "$0")/../modules" ]; then
+        local module_count=$(find "$(dirname "$0")/../modules" -name "*_interactive.sh" | wc -l)
+        log_validation "✅ Module system: $module_count interactive modules found"
+    else
+        log_validation "❌ Module system missing"
+        ((issues++))
+    fi
+    
+    return $issues
+}
+
+validate_professional_tools() {
+    echo "🛠️ VALIDATING PROFESSIONAL TOOLS..."
+    local issues=0
+    
+    # Check Docker
+    if command -v docker >/dev/null 2>&1; then
+        log_validation "✅ Docker installed"
+        if docker --version | grep -q "Docker version"; then
+            log_validation "✅ Docker working"
+        else
+            log_validation "⚠️ Docker installed but not responding"
+            ((issues++))
+        fi
+    else
+        log_validation "❌ Docker not installed"
+        ((issues++))
+    fi
+    
+    # Check PipeWire
+    if command -v pipewire >/dev/null 2>&1; then
+        log_validation "✅ PipeWire installed (professional audio)"
+    else
+        log_validation "⚠️ PipeWire not installed (still using amateur audio)"
+    fi
+    
+    # Check Borg Backup
+    if command -v borg >/dev/null 2>&1; then
+        log_validation "✅ Borg Backup installed (professional backup)"
+    else
+        log_validation "⚠️ Borg Backup not installed (amateur backup system)"
+    fi
+    
+    # Check modern tools
+    local modern_tools=("rg" "fd" "bat" "exa" "btop")
+    for tool in "${modern_tools[@]}"; do
+        if command -v "$tool" >/dev/null 2>&1; then
+            log_validation "✅ $tool installed"
+        else
+            log_validation "⚠️ $tool not installed (using amateur alternative)"
+        fi
+    done
+    
+    return $issues
+}
+
+validate_business_modules() {
+    echo "💼 VALIDATING BUSINESS MODULES..."
+    local issues=0
+    
+    # Check VRBO automation
+    if [ -f "$(dirname "$0")/../modules/vrbo_automation_pro.sh" ]; then
+        log_validation "✅ VRBO Automation Pro module exists"
+    else
+        log_validation "❌ VRBO Automation Pro module missing"
+        ((issues++))
+    fi
+    
+    # Check business partnerships
+    if [ -f "$(dirname "$0")/../modules/business_partnerships_interactive.sh" ]; then
+        log_validation "✅ Business Partnerships module exists"
+    else
+        log_validation "❌ Business Partnerships module missing"
+        ((issues++))
+    fi
+    
+    # Check Docker Compose for business services
+    if [ -f "$(dirname "$0")/../docker-compose.yml" ]; then
+        log_validation "✅ Docker Compose for business services exists"
+    else
+        log_validation "❌ Docker Compose configuration missing"
+        ((issues++))
+    fi
+    
+    return $issues
+}
+
+validate_network_system() {
+    echo "🌐 VALIDATING NETWORK SYSTEM..."
+    local issues=0
+    
+    # Check decomposed network modules
+    local network_modules=(
+        "vpn_security_interactive.sh"
+        "wireless_connectivity_interactive.sh" 
+        "network_monitoring_interactive.sh"
+        "network_optimization_interactive.sh"
+        "network_diagnostics_interactive.sh"
+    )
+    
+    for module in "${network_modules[@]}"; do
+        if [ -f "$(dirname "$0")/../modules/$module" ]; then
+            log_validation "✅ $module exists"
+        else
+            log_validation "❌ $module missing"
+            ((issues++))
+        fi
+    done
+    
+    return $issues
+}
+
+validate_streaming_system() {
+    echo "🎬 VALIDATING STREAMING SYSTEM..."
+    local issues=0
+    
+    # Check streaming module
+    if [ -f "$(dirname "$0")/../modules/streaming_setup_interactive.sh" ]; then
+        log_validation "✅ Streaming setup module exists"
+        
+        # Check for professional audio references
+        if grep -q "PipeWire\|Carla\|qpwgraph" "$(dirname "$0")/../modules/streaming_setup_interactive.sh"; then
+            log_validation "✅ Professional audio tools integrated"
+        else
+            log_validation "⚠️ Amateur audio tools detected"
+        fi
+    else
+        log_validation "❌ Streaming setup module missing"
+        ((issues++))
+    fi
+    
+    return $issues
+}
+
+validate_data_persistence() {
+    echo "💾 VALIDATING DATA PERSISTENCE..."
+    local issues=0
+    
+    # Check data directories
+    if [ -d "$HOME/.bill-sloth" ]; then
+        log_validation "✅ Main data directory exists"
+        
+        local size=$(du -sh "$HOME/.bill-sloth" | cut -f1)
+        log_validation "📊 Data directory size: $size"
+    else
+        log_validation "❌ Main data directory missing"
+        ((issues++))
+    fi
+    
+    # Check backup system
+    if [ -f "$HOME/bin/bill-backup-pro" ]; then
+        log_validation "✅ Professional backup system configured"
+    else
+        log_validation "⚠️ Professional backup system not configured"
+    fi
+    
+    return $issues
+}
+
+run_functionality_tests() {
+    echo "🧪 RUNNING FUNCTIONALITY TESTS..."
+    local issues=0
+    
+    # Test main command center syntax
+    if bash -n "$(dirname "$0")/../bill_command_center.sh"; then
+        log_validation "✅ Main command center syntax valid"
+    else
+        log_validation "❌ Main command center has syntax errors"
+        ((issues++))
+    fi
+    
+    # Test key modules syntax
+    local key_modules=(
+        "vrbo_automation_pro.sh"
+        "business_partnerships_interactive.sh"
+        "streaming_setup_interactive.sh"
+    )
+    
+    for module in "${key_modules[@]}"; do
+        if [ -f "$(dirname "$0")/../modules/$module" ]; then
+            if bash -n "$(dirname "$0")/../modules/$module"; then
+                log_validation "✅ $module syntax valid"
+            else
+                log_validation "❌ $module has syntax errors"
+                ((issues++))
+            fi
+        fi
+    done
+    
+    return $issues
+}
+
+main_validation() {
+    clear
+    show_banner
+    
+    echo -e "\033[38;5;46m🔍 BILL SLOTH SYSTEM VALIDATOR - COMPREHENSIVE HEALTH CHECK 🔍\033[0m"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    
+    log_validation "🚀 Starting comprehensive system validation..."
+    
+    local total_issues=0
+    
+    # Run all validations
+    validate_core_system; total_issues=$((total_issues + $?))
+    echo ""
+    
+    validate_professional_tools; total_issues=$((total_issues + $?))
+    echo ""
+    
+    validate_business_modules; total_issues=$((total_issues + $?))
+    echo ""
+    
+    validate_network_system; total_issues=$((total_issues + $?))
+    echo ""
+    
+    validate_streaming_system; total_issues=$((total_issues + $?))
+    echo ""
+    
+    validate_data_persistence; total_issues=$((total_issues + $?))
+    echo ""
+    
+    run_functionality_tests; total_issues=$((total_issues + $?))
+    echo ""
+    
+    # Final report
+    echo "📊 VALIDATION SUMMARY"
+    echo "════════════════════"
+    
+    if [ $total_issues -eq 0 ]; then
+        echo -e "\033[38;5;46m🎉 SYSTEM VALIDATION PASSED! 🎉\033[0m"
+        echo ""
+        echo "✅ All core systems operational"
+        echo "✅ Professional tools integrated"
+        echo "✅ Business modules functional"
+        echo "✅ Network system optimized"
+        echo "✅ Streaming system professional-grade"
+        echo "✅ Data persistence configured"
+        echo ""
+        echo "🧠 Carl: 'Your digital empire is ready for world domination!'"
+        
+        log_validation "✅ System validation completed successfully - 0 issues"
+        
+    else
+        echo -e "\033[38;5;196m⚠️ VALIDATION FOUND $total_issues ISSUE(S) ⚠️\033[0m"
+        echo ""
+        echo "📋 TO FIX ISSUES:"
+        echo "• Run: bash bin/professional-tools-upgrade"
+        echo "• Check: $VALIDATION_LOG for details"
+        echo "• Review missing modules and reinstall if needed"
+        echo ""
+        echo "🧠 Carl: 'Fix these issues and you'll achieve digital supremacy!'"
+        
+        log_validation "⚠️ System validation completed with $total_issues issues"
+    fi
+    
+    echo ""
+    echo "📄 Full validation log: $VALIDATION_LOG"
+}
+
+# Run validation
+main_validation

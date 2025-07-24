@@ -200,7 +200,15 @@ User → [CLI/Menu/Voice] → [Pattern Logger (bill-brain)] → [Capability Trac
 | adaptive_learning.sh        | Adaptive learning, feedback, adaptation      | `source lib/adaptive_learning.sh` |
 | call_llm.sh / call_llm_v2.sh| LLM abstraction (local/cloud AI)             | `llm`, `call_llm`                 |
 | error_handling.sh           | Centralized error handling                   | `source lib/error_handling.sh`    |
-| ...                         | ...                                          | ...                               |
+| voice_control.sh             | Voice command parsing, intent recognition, and routing | Integrates with voice2json, Rhasspy, and custom daemons |
+| backup_management.sh / restic_backup.sh | Backup management using restic with deduplication and encryption | `restic_backup.sh` provides `bill_backup()`, `bill_backup_list()`, and `bill_restore()` functions |
+| task_runner.sh              | Modern task runner replacing complex JSON workflow system | Uses Just/Make/shell for simple, readable task definitions |
+| data_persistence.sh         | SQLite-based data persistence replacing file-based JSON caching | Functions: `store_data()`, `get_data()`, `log_task_execution()`, `store_vrbo_booking()` |
+| service_management.sh       | Systemd user service management replacing custom daemon implementations | Functions: `create_bill_service()`, `start_service()`, `service_dashboard()` |
+| cross_module_integration.sh  | Seamless workflow orchestration between all Bill Sloth modules | Functions: `integrate_vrbo_to_tasks()`, `integrate_edboigames_to_media()`, `integrate_health_to_notifications()` |
+| filebot_integration.sh       | Professional media processing using FileBot with Bill Sloth personality | Functions: `process_edboigames_content()`, `smart_media_organize()` |
+| kanboard_integration.sh      | Task management via Kanboard API with local storage fallback | Functions: `create_vrbo_task()`, `create_content_task()`, `show_task_dashboard()` |
+| interactive.sh              | Provides shared UI logic: banners, color, input validation, and menu rendering |
 
 ### modules/
 | Module                                 | Description                                 | Example Usage                    |
@@ -208,7 +216,19 @@ User → [CLI/Menu/Voice] → [Pattern Logger (bill-brain)] → [Capability Trac
 | automation_mastery_interactive.sh      | Automation guide, tool selection, workflows | `bash modules/automation_mastery_interactive.sh` |
 | data_hoarding_interactive.sh           | Media management, FileBot integration       | `bash modules/data_hoarding_interactive.sh`      |
 | privacy_tools_interactive.sh           | VPN, Tor, privacy tools                     | `bash modules/privacy_tools_interactive.sh`      |
-| ...                                    | ...                                         | ...                              |
+| system_doctor_interactive.sh          | Diagnostics, repair, and health checks      | `bash modules/system_doctor_interactive.sh`      |
+| edboigames_toolkit_interactive.sh     | Gaming optimization, controller setup, and performance tweaks | `bash modules/edboigames_toolkit_interactive.sh` |
+| productivity_suite_interactive.sh     | Kanban, Taskwarrior, and ADHD-friendly productivity tools | `bash modules/productivity_suite_interactive.sh` |
+| personal_analytics_dashboard.sh        | Comprehensive life tracking and productivity insights for ADHD brains | `bash modules/personal_analytics_dashboard.sh` |
+| finance_management_interactive.sh      | Complete personal and business finance management system | `bash modules/finance_management_interactive.sh` |
+| All *_interactive.sh                   | Follow the same choose-your-own-adventure, ADHD-friendly pattern | Log user choices, present pros/cons, and allow open-ended input for AI |
+| Subdirectories                        | Contain advanced or specialized scripts for power users (e.g., `automation_mastery/`, `edboigames/`) |
+
+### Root Directory Files
+| Script                  | Description                                  | Example Usage                    |
+|-------------------------|----------------------------------------------|----------------------------------|
+| justfile                | Complete task automation system with 50+ ADHD-friendly commands | `just` (show menu), `just health` (system check), `just vrbo-guest "Name" "Property" "Date"` |
+| CLAUDE.md               | Project-specific Claude Code memory and context management | Contains team structure, architecture overview, development workflow, session management |
 
 ### bin/
 | Script                  | Description                                  | Example Usage                    |
@@ -217,7 +237,24 @@ User → [CLI/Menu/Voice] → [Pattern Logger (bill-brain)] → [Capability Trac
 | local-first-router      | Local-first intelligence router              | `bin/local-first-router`         |
 | audit_workflow          | AI-powered workflow audit                    | `bin/audit_workflow <module>`    |
 | voice-engine-installer  | Installs voice/intent tools                  | `bin/voice-engine-installer`     |
-| ...                     | ...                                          | ...                              |
+| system-health           | Launches glances or other mature system health tools | `bin/system-health`             |
+| capability-installer/tracker | Installs and tracks system capabilities (e.g., VPN, AI, media tools) | `bin/capability-installer <tool>` |
+| voice-assistant-daemon  | Background process for voice command handling; integrates with router and modules | `bin/voice-assistant-daemon` |
+| bill-brain              | Pattern learning and suggestion engine; logs user patterns and suggests improvements | `bin/bill-brain`             |
+| smart-reminders         | Reminder and notification system; logs reminders and user responses | `bin/smart-reminders`         |
+| vrbo-smart-manager      | Workflow for vacation rental management; integrates with calendar and reminders | `bin/vrbo-smart-manager`     |
+| hotkey-system           | Global hotkey management; allows quick access to workflows | `bin/hotkey-system`           |
+| autostart-billsloth     | Ensures Bill Sloth starts on login; manages autostart entries | `bin/autostart-billsloth`     |
+
+### scripts/
+| Script                        | Description                                  | Example Usage                    |
+|-------------------------------|----------------------------------------------|----------------------------------|
+| generate_module_docs.sh       | Parses modules and auto-generates documentation | `bash scripts/generate_module_docs.sh` |
+| health_check_v2.sh            | Advanced, multi-metric health check           | `bash scripts/health_check_v2.sh` |
+| test_phase1_improvements.sh   | Automated test suite for recent changes      | `bash scripts/test_phase1_improvements.sh` |
+| first_time_setup.sh           | Wizard for new users                         | `bash scripts/first_time_setup.sh` |
+| batch_enhance_modules.sh       | Injects adaptive learning logic into all modules | `bash scripts/batch_enhance_modules.sh` |
+| apply_adaptive_learning.sh     | Applies user feedback to modules             | `bash scripts/apply_adaptive_learning.sh` |
 
 ---
 
@@ -387,7 +424,7 @@ User → [CLI/Menu/Voice] → [Pattern Logger (bill-brain)] → [Capability Trac
 ## 7. Adaptive Learning & AI Integration (Deeper Dive)
 - **Adaptive Learning System**
   - Tracks usage (feature access, completion), collects feedback (quick and detailed), and adapts modules based on satisfaction scores.
-  - Example: If a user rates a tool as "wrong for my workflow," the system prompts for alternatives and adapts future menus.
+  - Example: If a user consistently rates a tool poorly, the system prompts for alternatives and adapts future menus.
 - **AI-Powered Auditing**
   - `audit_workflow` script uses local/cloud LLMs to review modules, suggest mature FOSS replacements, and log findings.
   - Example: Bill can run `audit_workflow streaming_setup` to get AI-curated upgrade ideas.
@@ -635,42 +672,24 @@ graph TD;
 
 ---
 
-## 21. Change History Highlights
+## 21. Change History Highlights (Updated July 2025)
 
-### MAJOR INFRASTRUCTURE COMPLETION (January 2025)
-
-**✅ CRITICAL INFRASTRUCTURE IMPLEMENTED:**
-- **Ultimate Dashboard Fixed:** Connected to actual Bill Sloth modules with real data persistence and cross-module integration status
-- **Complete Justfile:** 50+ ADHD-friendly commands covering all workflows (health, backup, VRBO, EdBoiGames, analytics, integration)
-- **SQLite Data Persistence:** Comprehensive schema with tables for tasks, bookings, content, health metrics, personal analytics, and finance
-- **Cross-Module Integration:** Seamless workflows between VRBO → Tasks, EdBoiGames → Media Processing, System Health → Notifications
-
-**✅ MATURE TOOL INTEGRATION COMPLETED:**
-- **FileBot Integration:** Professional media processing for EdBoiGames content with Bill Sloth personality preserved
-- **Kanboard Integration:** Professional task management with API integration and local storage fallback
-- **restic Backup System:** Deduplication and encryption with friendly notifications and Bill-specific backup sets
-- **Netdata Monitoring:** System metrics dashboard with custom module health checks
-
-**✅ MISSING MODULES IMPLEMENTED:**
-- **Personal Analytics Dashboard:** Life tracking, mood/energy patterns, productivity insights, business metrics correlation
-- **Finance Management Suite:** Income/expense tracking, budgeting, financial goals, tax preparation for VRBO and EdBoiGames businesses
-- **Cross-Module Workflow Orchestration:** Automatic task creation, data sharing, and intelligent workflow triggering
-
-**✅ CLAUDE CODE ROBUSTNESS:**
-- **Session Corruption Prevention:** claunch installation, global recovery procedures, session health monitoring
-- **Project-Specific Recovery:** Bill Sloth-integrated backup and recovery using existing data persistence systems
-- **Emergency Procedures:** Complete diagnostic and repair workflows with integration testing
-
-**RESULT:** System is now production-ready with all documented promises fulfilled. Gap between documentation and implementation eliminated.
-
-## 22. Previous Change History
-
-- **v2.0-Adaptive:** Full migration to interactive assistant pattern, mature-tool-first philosophy, and adaptive learning.
-- **Overlay Model Planned:** Architectural groundwork for overlays and safe adaptation.
-- **Local AI Integration:** Ollama and voice2json/Rhasspy support.
-- **Comprehensive Documentation:** GIGA DOC, developer guide, and self-executing guide.
-- **AI-Powered Auditing:** `audit_workflow` script for continuous improvement.
-- **Accessibility First:** All modules redesigned for ADHD/dyslexia.
+### MAJOR UPDATES (July 2025)
+- **Streaming Setup Module:**
+  - Now provides a full interactive streaming automation plan, including personalized assessment (casual to pro), hardware detection, and advanced scene/audio automation (OBS, PipeWire, Carla, MIDI, RTMP multiplexing, etc.).
+  - Includes professional hardware/software shopping recommendations and ADHD-friendly quick start scripts/aliases for audio/streaming modes.
+- **System Ops Module:**
+  - Expanded to include a complete system operations toolkit: VisiData, TLDR, Zeal, Glances, Stacer, Cockpit, and more.
+  - New GitHub authentication setup wizard (PAT, SSH, credential management) for seamless git integration and Claude Code workflows.
+- **Command Center:**
+  - Enhanced dashboard with real-time health, backup, and workflow orchestration.
+  - New quick actions for VRBO, EdBoiGames, automation, backup, and diagnostics.
+  - Modular integration for all new modules and improved onboarding for fresh Ubuntu installs.
+- **New Interactive Modules:**
+  - Added: ai_mastery_interactive.sh, ai_workflow_interactive.sh, automation_core_interactive.sh, data_automation_interactive.sh, network_diagnostics_interactive.sh, network_monitoring_interactive.sh, network_optimization_interactive.sh, vpn_security_interactive.sh, vrbo_automation_pro.sh, wireless_connectivity_interactive.sh.
+  - All follow the interactive assistant pattern with ADHD/dyslexia-friendly UX.
+- **Deleted/Deprecated:**
+  - self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, setup-scripts/PLUGIN_SYSTEM_IMPLEMENTATION_PLAN.md, and other legacy planning/onboarding docs removed for clarity and to reflect the current, production-ready state.
 
 ---
 
@@ -2390,3 +2409,1626 @@ Bill Sloth now includes a real-time performance monitoring and optimization syst
 ---
 
 **Note:** All documentation above reflects features and integrations that are actually implemented in the codebase as of this update. Planned or discussed features are not included until merged and tested.
+
+---
+
+# ---
+# RECENT CHANGES SUMMARY (July 2025)
+
+| Change Type | File/Module | Description |
+|-------------|-------------|-------------|
+| Modified    | streaming_setup_interactive.sh | Major upgrade: now features a SweatyPedals-level automation plan, personalized streaming assessment, and advanced audio/scene automation with professional hardware/software recommendations. |
+| Modified    | system_ops_interactive.sh      | Expanded: now includes GitHub authentication setup, step-by-step PAT/SSH/credential management, and a complete system operations toolkit with ADHD-friendly tools (VisiData, TLDR, Zeal, Glances, Stacer, Cockpit). |
+| Modified    | bill_command_center.sh         | Enhanced: improved dashboard, new quick actions, robust health checks, backup management, and modular integration for all major workflows. |
+| New         | ai_mastery_interactive.sh, ai_workflow_interactive.sh, automation_core_interactive.sh, data_automation_interactive.sh, network_diagnostics_interactive.sh, network_monitoring_interactive.sh, network_optimization_interactive.sh, vpn_security_interactive.sh, vrbo_automation_pro.sh, wireless_connectivity_interactive.sh | New interactive modules for AI, automation, network, VPN, VRBO, and wireless management. |
+| Deleted     | self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, setup-scripts/PLUGIN_SYSTEM_IMPLEMENTATION_PLAN.md | Deprecated/removed legacy onboarding and planning docs. |
+
+---
+
+## 21. Change History Highlights (Updated July 2025)
+
+### MAJOR UPDATES (July 2025)
+- **Streaming Setup Module:**
+  - Now provides a full interactive streaming automation plan, including personalized assessment (casual to pro), hardware detection, and advanced scene/audio automation (OBS, PipeWire, Carla, MIDI, RTMP multiplexing, etc.).
+  - Includes professional hardware/software shopping recommendations and ADHD-friendly quick start scripts/aliases for audio/streaming modes.
+- **System Ops Module:**
+  - Expanded to include a complete system operations toolkit: VisiData, TLDR, Zeal, Glances, Stacer, Cockpit, and more.
+  - New GitHub authentication setup wizard (PAT, SSH, credential management) for seamless git integration and Claude Code workflows.
+- **Command Center:**
+  - Enhanced dashboard with real-time health, backup, and workflow orchestration.
+  - New quick actions for VRBO, EdBoiGames, automation, backup, and diagnostics.
+  - Modular integration for all new modules and improved onboarding for fresh Ubuntu installs.
+- **New Interactive Modules:**
+  - Added: ai_mastery_interactive.sh, ai_workflow_interactive.sh, automation_core_interactive.sh, data_automation_interactive.sh, network_diagnostics_interactive.sh, network_monitoring_interactive.sh, network_optimization_interactive.sh, vpn_security_interactive.sh, vrbo_automation_pro.sh, wireless_connectivity_interactive.sh.
+  - All follow the interactive assistant pattern with ADHD/dyslexia-friendly UX.
+- **Deleted/Deprecated:**
+  - self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, setup-scripts/PLUGIN_SYSTEM_IMPLEMENTATION_PLAN.md, and other legacy docs removed for clarity and to reflect the current, production-ready state.
+
+---
+
+## 3. Directory & File Inventory (Addendum)
+
+### Recent Additions/Removals
+- **New Modules:** See summary table above and MODULE_INDEX.md for full list.
+- **Deleted Files:** self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, setup-scripts/PLUGIN_SYSTEM_IMPLEMENTATION_PLAN.md, and other legacy docs.
+- **bin/ Additions:** New professional tools and fix scripts (fix-ollama-integration, fix-placeholder-implementations, professional-tools-upgrade, test-voice-control, voice-control-optimizer, voice-mode-switcher).
+- **docker/ and windows-setup/:** New scripts and Docker Compose for advanced automation and Windows integration.
+
+---
+
+## 25. Module Documentation (Addendum)
+
+### streaming_setup_interactive.sh (Updated)
+- **Purpose:**
+  - Now a full-featured interactive streaming automation suite, guiding users from casual to professional setups.
+  - Personalized assessment (streaming level, hardware, automation goals) generates a custom plan.
+  - Menu-driven options for advanced scene switching, professional audio routing (PipeWire, Carla), multi-platform broadcasting (nginx RTMP), MIDI control, voice integration, and remote streaming.
+  - Includes professional hardware/software shopping guide and ADHD-friendly quick start scripts/aliases for audio/streaming modes.
+- **Key Features:**
+  - SweatyPedals-level automation, scene/audio presets, and hardware detection.
+  - One-command setup for advanced streaming workflows.
+  - All actions logged for transparency and repeatability.
+
+### system_ops_interactive.sh (Updated)
+- **Purpose:**
+  - Expanded to a complete system operations toolkit for Linux power users.
+  - Menu-driven access to VisiData, TLDR, Zeal, Glances, Stacer, Cockpit, and more.
+  - New GitHub authentication setup wizard (PAT, SSH, credential management) for seamless git integration and Claude Code workflows.
+- **Key Features:**
+  - ADHD/dyslexia-friendly explanations, quick reference, and productivity tips.
+  - All actions logged for transparency and repeatability.
+
+### bill_command_center.sh (Updated)
+- **Purpose:**
+  - Enhanced dashboard with real-time health, backup, and workflow orchestration.
+  - Modular integration for all new modules and improved onboarding for fresh Ubuntu installs.
+  - New quick actions for VRBO, EdBoiGames, automation, backup, and diagnostics.
+- **Key Features:**
+  - Robust error handling, production safety, and session timeout logic.
+  - Automatic setup for missing components and desktop launcher creation.
+
+---
+
+## 27. See Also
+- For a full list of modules and their status, see MODULE_INDEX.md.
+- For a chronological log of all changes, see CHANGELOG.md.
+- For detailed per-module documentation, see section 25 above and MODULE_INDEX.md.
+
+---
+
+# ---
+# BILL SLOTH GIGA DOC - GRANULAR, UP-TO-DATE SYSTEM AUDIT
+# Last Updated: 2025-07-23
+
+## 🚦 MODULE & FEATURE SUMMARY TABLE
+
+| Module/Script                        | Status      | Description |
+|--------------------------------------|-------------|-------------|
+| automation_mastery_interactive       | Modular ✅  | Neural automation interface, workflow mapping, Excel/data automation, platform guides, ADHD/ND support |
+| edboigames_toolkit_interactive       | Modular ✅  | YouTube/gaming business toolkit, content creation, video/audio production, revenue analysis, business dev |
+| business_partnerships_interactive    | Large 📏    | Partnership/commission tracking, CRM, sponsorship pipeline, revenue analytics, templates |
+| clipboard_mastery_interactive        | Medium 📄   | Advanced clipboard manager, AI integration, OCR, hotkeys, VoiceMeeter equivalent |
+| creative_coding_interactive          | Medium 📄   | Creative coding suite, Jupyter, p5.js, Processing, Godot, Python art, ADHD-friendly |
+| data_hoarding_interactive            | Medium 📄   | Data/media hoarding, *arr stack, Jellyfin, Beets, TagSpaces, ExifTool, VPN, ADHD-friendly |
+| defensive_cyber_interactive          | Medium 📄   | Ethical hacking, Kali tools, workspace setup, custom scripts, CTF labs, security monitoring |
+| discord_mod_toolkit_interactive      | Medium 📄   | Discord moderation, bot automation, ADHD mod strategies, analytics, server templates |
+| file_mastery_interactive             | Large 📏    | File search, AI organization, advanced copying, bulk rename, multi-drive, Windows power-user |
+| finance_management_interactive       | Medium 📄   | Personal/business finance, SQLite DB, budgets, goals, tax prep, VRBO/EdBoiGames split |
+| personal_analytics_dashboard      | Mature     | Productivity/Analytics | Life tracking, ADHD-friendly personal metrics, pattern analysis |
+| productivity_suite_interactive    | Mature     | Productivity           | ADHD-friendly productivity toolkit, task/project/knowledge tools |
+| privacy_tools_interactive         | Mature     | Privacy/Security       | Complete privacy suite: Nextcloud, VPN, Tor, voice, torrenting |
+| system_doctor_interactive         | Mature     | System/Ops             | AI-powered diagnostics, hardware/network/audio/display repair |
+| window_mastery_interactive         | Mature     | Productivity         | AI-powered window management, tiling, focus modes, multi-monitor |
+| text_expansion_interactive         | Mature     | Productivity         | AI-powered text expansion, Espanso, ADHD-friendly snippets |
+| voice_assistant_interactive        | Mature     | Accessibility        | Full voice control, custom commands, accessibility, training |
+| repetitive_tasks_interactive       | Deprecated | Deprecated           | Redirects to automation_mastery_interactive.sh |
+| ... (see MODULE_INDEX.md for full list) | ...         | ...         |
+
+---
+
+## 🧠 GRANULAR MODULE & FEATURE AUDIT
+
+### automation_mastery_interactive.sh
+- **Purpose:** Neural interface for reality manipulation, workflow mapping, and automation deployment.
+- **Features:**
+  - Personalized workflow assessment and recommendations (ADHD/ND optimized)
+  - Excel/data automation suite (CSV, revenue, guest analysis, dashboards)
+  - Platform guides (Zapier, IFTTT, Make, Node-RED, Home Assistant)
+  - Bill-specific automation menu (VRBO, Google Tasks, ChatGPT, GitHub Auth)
+  - Modular, with cross-links to productivity, system ops, and AI modules
+  - Neurodivergent accommodations: voice-first, visual, minimal, and text-based flows
+  - Generates scripts, dashboards, and assessment files in ~/.bill-sloth/
+
+### edboigames_toolkit_interactive.sh
+- **Purpose:** YouTube/gaming business toolkit for content creation, monetization, and business dev.
+- **Features:**
+  - Interactive guides for video/audio production, editing, and publishing
+  - Revenue stream analysis, business templates, partnership outreach
+  - Adaptive learning initialization, audience growth, SEO, analytics
+  - Bootcamp for new creators, ADHD-friendly creative workflows
+  - Creates business templates, revenue trackers, and logs in ~/edboigames_business/
+
+### business_partnerships_interactive.sh
+- **Purpose:** Manages partnerships, sponsorships, commissions, and business intelligence.
+- **Features:**
+  - CRM/outreach, deal pipeline, commission tracker, revenue analysis
+  - Templates for outreach, proposals, contracts, NDAs
+  - Analytics: ROI, growth, market/competitive trends, forecasting
+  - Exports financial/tax reports, manages contacts, follow-ups, and BI dashboards
+  - All data stored in ~/.config/business-partnerships and ~/edboigames_business/
+
+### clipboard_mastery_interactive.sh
+- **Purpose:** Advanced clipboard management with AI, OCR, and power-user hotkeys.
+- **Features:**
+  - Unlimited clipboard history, AI-powered translation/summarization/code formatting
+  - OCR from images, cross-app sharing, backup, and search
+  - Hotkey system (CopyQ, xclip, custom AI scripts)
+  - VoiceMeeter equivalent for audio routing (PipeWire/Carla)
+  - ADHD/ND: visual, persistent, and scriptable clipboard
+
+### creative_coding_interactive.sh
+- **Purpose:** Creative coding playground for visual, audio, and interactive art.
+- **Features:**
+  - Jupyter, p5.js, Processing, Godot, Python art libraries
+  - ADHD-friendly: immediate feedback, visual iteration, modular tool selection
+  - Templates, starter notebooks, and project directories auto-created
+  - Aliases for quick launch, all-in-one creative suite option
+
+### data_hoarding_interactive.sh
+- **Purpose:** Data/media hoarding, automation, and local-first streaming.
+- **Features:**
+  - yt-dlp, *arr stack (Sonarr/Radarr/Prowlarr), Jellyfin, Beets, TagSpaces, ExifTool, Gluetun VPN
+  - ADHD/ND: automation, visual dashboards, set-and-forget workflows
+  - Docker-based deployment, persistent storage, and privacy-first design
+  - Enhancement/upgrade path for existing setups
+
+### defensive_cyber_interactive.sh
+- **Purpose:** Defensive cybersecurity, ethical hacking, and security automation.
+- **Features:**
+  - Kali tools, workspace setup, custom recon/web/CTF scripts
+  - Security monitoring, firewall, IDS, rootkit detection
+  - Lab environments (DVWA, CTF helpers), ethical use enforcement
+  - ADHD/ND: menu-driven, color-coded, and modular
+
+### discord_mod_toolkit_interactive.sh
+- **Purpose:** Discord moderation, automation, and community management.
+- **Features:**
+  - Bot ecosystem (MEE6, Carl-bot, Dyno, custom bots)
+  - ADHD-friendly moderation strategies, templates, dashboards
+  - Server optimization, analytics, event management, integrations
+  - Quick server setup wizard, advanced mod techniques, bot dev workshop
+
+### file_mastery_interactive.sh
+- **Purpose:** File search, management, and organization for power users.
+- **Features:**
+  - fd, ripgrep, fzf, locate, ranger, nnn, mc, tree, ncdu
+  - AI-powered organization, advanced copying (TeraCopy), bulk rename, multi-drive management
+  - Windows-style shortcuts, aliases, and visual file managers
+  - Multi-monitor, Steam library, and system drive management
+  - ADHD/ND: instant search, visual navigation, automation
+
+### finance_management_interactive.sh
+- **Purpose:** Personal and business finance management (VRBO, EdBoiGames, personal).
+- **Features:**
+  - SQLite DB for income, expenses, budgets, goals, tax items
+  - Dashboard: income/expense summary, budget status, recent transactions, goals
+  - Quick actions: add income/expense, manage budgets/goals, generate reports
+  - Tax prep, business split, and ADHD-friendly menu
+  - Data stored in ~/.bill-sloth/finance/
+
+### personal_analytics_dashboard.sh
+- **Features:** Life tracking and productivity insights, daily/weekly/monthly metrics (mood, energy, sleep, productivity, business activity), SQLite DB, pattern/correlation analysis, AI-generated insights, ADHD-friendly dashboard.
+- **Workflows:** Log daily metrics, track business (VRBO, EdBoiGames), generate weekly reports, analyze patterns, set goals, export data.
+- **Integrations:** Finance, business, and task modules; pulls data from VRBO, EdBoiGames, and task completion.
+- **Accommodations:** Visual dashboards, quick-capture menus, reminders, ADHD-friendly summaries, actionable insights.
+- **Notable:** `personal_metrics.db` schema, pattern_insights, daily/weekly/monthly folders, export/report scripts.
+- **Status:** Mature
+
+### productivity_suite_interactive.sh
+- **Features:** Interactive productivity toolkit for ADHD/neurodivergent users. Integrates Taskwarrior, Super Productivity, Logseq, Kanboard, custom "Memory Palace", Google Tasks automation, and a complete ecosystem option. Explains pros/cons, logs choices, allows open-ended input.
+- **Workflows:** Choose and deploy productivity tools, set up Google Tasks automation, integrate with external brain systems, ADHD-friendly aliases/scripts, complete ecosystem setup.
+- **Integrations:** Google Tasks, Kanboard, Logseq, Taskwarrior, custom scripts, batch logging.
+- **Accommodations:** Visual/ASCII menus, dopamine feedback, external brain capture, urgency scoring, visual project management, ADHD-specific memory tools.
+- **Notable:** `tasks-manager.sh`, ADHD Memory Palace scripts, productivity-hub, aliases for quick capture.
+- **Status:** Mature
+
+### privacy_tools_interactive.sh
+- **Features:** Complete privacy suite: Nextcloud (personal cloud), private/local voice assistants, VPN tools, Tor Browser, safe torrenting, and a full privacy dashboard. Explains each tool, guides setup, logs choices, allows open-ended input.
+- **Workflows:** Deploy Nextcloud (Docker/native/hosted), set up voice assistants (Whisper, Mycroft, Voice2JSON), install VPN tools and kill switch, install Tor, configure safe torrenting, deploy all-in-one privacy suite.
+- **Integrations:** Nextcloud, voice, VPN, Tor, torrenting, privacy dashboard, aliases for quick access.
+- **Accommodations:** ADHD-friendly setup guides, visual dashboards, one-click privacy, reminders, dopamine feedback, external brain for privacy.
+- **Notable:** `privacy-suite` dashboard, `vpn-status`, `vpn-killswitch`, `torrent-safe`, voice transcription scripts, Nextcloud Docker configs, bashrc aliases.
+- **Status:** Mature
+
+### system_doctor_interactive.sh
+- **Features:** AI-powered system diagnostics and repair: hardware inventory, storage, network, audio, display, USB/PCI, device/disk/network/AI-doctor scripts. Step-by-step guided troubleshooting, automatic detection, visual dashboards, and learning from past issues.
+- **Workflows:** Run diagnostics, repair hardware/storage/network/audio/display, use AI-doctor for natural language troubleshooting, generate system health reports, demo/test tools, complete setup for all diagnostics.
+- **Integrations:** All system modules, AI (Claude), device-manager, disk-manager, network-doctor, ai-doctor, batch logging.
+- **Accommodations:** Visual/ASCII dashboards, step-by-step guides, ADHD-friendly menus, reminders, dopamine feedback, learning from user patterns.
+- **Notable:** `device-manager`, `disk-manager`, `network-doctor`, `ai-doctor`, demo scripts, bashrc aliases.
+- **Status:** Mature
+
+### window_mastery_interactive.sh
+- **Features:** Advanced window management (tiling, snapping, workspaces, focus modes), AI-powered layouts, multi-monitor support, session save/restore, GNOME/KDE/i3wm/Sway integration, ADHD-friendly focus and automation.
+- **Workflows:** Detect desktop environment, recommend/setup optimal window manager, install GNOME/KDE extensions, i3wm config, create AI window scripts, manage multi-monitor, save/restore sessions, demo/test tools.
+- **Integrations:** Productivity tools, launcher, clipboard, focus mode, AI (Claude), batch logging.
+- **Accommodations:** Visual/ASCII dashboards, focus mode to hide distractions, muscle memory shortcuts, ADHD-friendly layouts, session save/restore.
+- **Notable:** `organize-windows-ai`, `focus-mode`, `save-window-session`, `monitor-setup`, i3wm configs, GNOME extension installer.
+- **Status:** Mature
+
+### text_expansion_interactive.sh
+- **Features:** AI-powered text expansion (Espanso), dynamic snippets, context-aware expansions, ADHD-friendly templates, technical/business/voice/audio snippets, AI integration for emails, code, docs, and more.
+- **Workflows:** Install/configure Espanso, set up power-user snippets, create AI-powered dynamic snippets, manage service, demo/test expansions, complete setup.
+- **Integrations:** Espanso, Claude AI, productivity tools, clipboard, batch logging.
+- **Accommodations:** ADHD-friendly templates (todo, focus, energy, audio), visual/ASCII menus, dopamine feedback, quick capture, AI content generation.
+- **Notable:** `base.yml` and `ai-powered.yml` snippet configs, `ai-snippet.sh`, `espanso-status`, service/desktop manager.
+- **Status:** Mature
+
+### voice_assistant_interactive.sh
+- **Features:** Full voice control for Bill Sloth, custom commands, accessibility options, voice training, TTS/STT engine selection, integration with all modules, hands-free operation, ADHD-friendly design.
+- **Workflows:** Quick setup, install dependencies, configure/test voice, start/stop voice control, manage commands, training mode, accessibility settings, troubleshooting, integration examples.
+- **Integrations:** All modules (automation, system, productivity, etc.), voice_control.sh, Claude AI, batch logging.
+- **Accommodations:** Hands-free operation, accessibility settings, training mode, ADHD-friendly menus, reminders, dopamine feedback.
+- **Notable:** `voice_assistant_menu`, `voice_control_loop`, `voice_training_mode`, `configure_voice_commands`, TTS/STT engine selection, logs.
+- **Status:** Mature
+
+### repetitive_tasks_interactive.sh
+- **Features:** Deprecated module, now redirects to `automation_mastery_interactive.sh`.
+- **Workflows:** On launch, prints deprecation notice and execs the new module.
+- **Integrations:** N/A (redirect only).
+- **Accommodations:** N/A (redirect only).
+- **Notable:** Deprecation notice, exec redirect.
+- **Status:** Deprecated (use automation_mastery_interactive.sh)
+
+---
+
+## 🛠️ UTILITY LIBRARIES & SCRIPTS (lib/, scripts/)
+- **adaptive_learning.sh:** Core adaptive learning logic for module personalization.
+- **data_persistence.sh:** Modern SQLite-based data storage, cross-module integration.
+- **notification_system.sh:** Standardized notifications (CLI, desktop, logs).
+- **interactive.sh:** Menu helpers, input validation, and user prompts.
+- **error_handling.sh:** Consistent error reporting and logging.
+- **task_runner.sh, workflow_orchestration.sh:** Modern task automation and orchestration.
+- **system_utils.sh, performance_monitoring.sh:** System health, performance, and monitoring.
+- **restic_backup.sh:** Automated, reliable backup management.
+- **voice_control.sh:** Voice command integration for accessibility.
+- **scripts/**: Batch enhancement, error handling, onboarding, dependency checks, etc.
+
+---
+
+## 💼 BUSINESS/FINANCE/PARTNERSHIP LOGIC
+- **Commission Tracking:** Automated via business_partnerships_interactive, with CSV and analytics.
+- **Revenue Analysis:** Dashboards, monthly/quarterly/yearly breakdowns, growth metrics, and forecasting.
+- **CRM/Outreach:** Contact management, automated email sequences, follow-up tracking, and relationship scoring.
+- **Tax Prep:** Exportable reports, 1099-MISC tracking, and documentation management.
+- **Finance Management:** Unified dashboard, budgets, goals, and business splits (VRBO, EdBoiGames, personal).
+
+---
+
+## 📝 RECENT CHANGES & DEPRECATED FILES
+- **New/Updated Modules:**
+  - streaming_setup_interactive.sh, system_ops_interactive.sh, ai_mastery_interactive.sh, ai_workflow_interactive.sh, automation_core_interactive.sh, data_automation_interactive.sh, network_diagnostics_interactive.sh, network_monitoring_interactive.sh, network_optimization_interactive.sh, vpn_security_interactive.sh, vrbo_automation_pro.sh, wireless_connectivity_interactive.sh, etc.
+- **Major Enhancements:**
+  - Modularization, adaptive learning, cross-module data sharing, business/finance logic, ADHD/ND accommodations.
+- **Deleted/Legacy Files:**
+  - self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, and other deprecated plans/old guides (see git status for full list).
+
+---
+
+## 📚 FOR FULL MODULE LIST & DETAILS
+- See [MODULE_INDEX.md] for a complete, auto-generated inventory of all modules, scripts, and libraries, including line counts, status, and descriptions.
+
+---
+
+**This GIGA DOC now reflects the *actual, implemented* state of the Bill Sloth system, with granular, actionable detail for onboarding, troubleshooting, and mastery.**
+
+# ---
+# (Add to summary table)
+| vrbo_automation_pro               | Mature     | Business/Automation   | Pro-grade VRBO rental automation: Docker, API, analytics, guest comms |
+| vacation_rental_manager_interactive | Mature   | Business/Property     | Interactive vacation rental management, ADHD-friendly, open-source |
+| automation_mastery_interactive_v2  | Beta      | Automation            | Modular automation, controller-based, next-gen architecture |
+| edboigames_toolkit_interactive_v2  | Beta      | Gaming/Business       | Modular EdBoiGames business toolkit, adaptive learning |
+
+# ---
+
+## vrbo_automation_pro.sh (Business/Automation, Mature)
+- **Features:**
+  - Professional vacation rental management with Docker microservices (PostgreSQL, Redis, APIs, guest comms, analytics, Kanboard, Grafana)
+  - VRBO API integration (Expedia Partner API)
+  - Automated guest communications (welcome/check-in/checkout emails, upsells, reminders)
+  - Revenue analytics, business dashboard, dynamic pricing, occupancy optimization
+  - Mobile integration (planned)
+- **Workflows:**
+  - Main menu for all automation tasks
+  - Docker-based service orchestration and health checks
+  - Secure credential and email config, template generation
+- **Integrations:**
+  - Relies on Docker, PostgreSQL, Redis, Grafana, Kanboard
+  - Integrates with notification, data persistence, error handling libs
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, automated reminders, externalized executive function
+- **Notable Data Structures:**
+  - SQL schema for properties, bookings, guest comms, revenue analytics
+  - Email templates (HTML)
+- **Status:** Mature, production-ready
+
+## vacation_rental_manager_interactive.sh (Business/Property, Mature)
+- **Features:**
+  - Interactive assistant for vacation rental management (property, guest, cleaning, analytics, platform integration)
+  - Presents mature open-source tools, explains pros/cons, logs choices
+  - ADHD-friendly: visual dashboards, reminders, checklists, templates
+  - Logging of all actions for auditability
+- **Workflows:**
+  - Menu-driven selection of management tools (property hub, guest comms, cleaning, analytics, platform integration)
+  - Installs/sets up workspaces, templates, dashboards, reminders
+  - Open-ended input for custom options (Claude Code integration)
+- **Integrations:**
+  - Integrates with notification and error handling libs
+  - Can launch/coordinate with other modules (e.g., guest comms, analytics)
+- **Neurodivergent Accommodations:**
+  - Visual, checklist-based, externalized reminders, dopamine feedback
+- **Notable Scripts:**
+  - Setup scripts for workspace, dashboards, templates, reminders
+- **Status:** Mature, stable
+
+## automation_mastery_interactive_v2.sh (Automation, Beta)
+- **Features:**
+  - Modular, controller-based automation architecture (delegates to automation_mastery/controller.sh)
+  - Designed for next-gen extensibility and maintainability
+  - Error handling for missing components, clear user guidance
+- **Workflows:**
+  - Loads all automation components via controller
+  - Main entry point delegates to automation_main_menu
+- **Integrations:**
+  - Relies on automation_mastery/ directory and controller.sh
+- **Neurodivergent Accommodations:**
+  - Modular, externalized logic for easier focus and troubleshooting
+- **Status:** Beta (experimental, next-gen)
+
+## edboigames_toolkit_interactive_v2.sh (Gaming/Business, Beta)
+- **Features:**
+  - Modular EdBoiGames business toolkit (controller-based)
+  - Adaptive learning integration (if available)
+  - Error handling for missing components
+- **Workflows:**
+  - Loads all components via edboigames/controller.sh
+  - Main entry point delegates to main_menu
+- **Integrations:**
+  - Relies on edboigames/ directory and controller.sh
+  - Integrates with adaptive_learning.sh and interactive.sh if present
+- **Neurodivergent Accommodations:**
+  - Modular, adaptive learning, clear error messages
+- **Status:** Beta (modular, in development)
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| automation_core_interactive        | Mature     | Automation            | Cross-platform workflow orchestration, smart task automation |
+| ai_mastery_interactive             | Mature     | AI/Automation         | Complete AI toolkit: local/cloud, dev, workflow, ADHD-friendly |
+| ai_workflow_interactive            | Mature     | AI/Automation         | AI workflow automation, tool orchestration, content/data/coding |
+| data_automation_interactive        | Mature     | Data/Automation       | Excel-killer, data pipelines, BI dashboards, ADHD-friendly |
+
+# ---
+
+## automation_core_interactive.sh (Automation, Mature)
+- **Features:**
+  - General automation patterns, cross-platform workflow orchestration
+  - Smart task automation, file/data processing, communication, system admin, integration
+  - Personalized automation plans and pattern guides
+  - Menu-driven, logs all actions
+- **Workflows:**
+  - Interactive assessment, personalized plan, choose automation type, deploy scripts
+  - Smart task manager (Python), convenience scripts (task-add, task-list, task-done)
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Can coordinate with notification, data persistence, system health modules
+- **Neurodivergent Accommodations:**
+  - Externalizes executive function, provides reminders, visual feedback, gentle prompts
+- **Notable Scripts/Data:**
+  - Python smart_task_manager.py, bash wrappers, automation pattern guides
+- **Status:** Mature, stable
+
+## ai_mastery_interactive.sh (AI/Automation, Mature)
+- **Features:**
+  - Complete AI toolkit: local models (Ollama, GPT4All), cloud APIs, dev environment (Jupyter, LangChain), workflow automation
+  - Personalized AI mastery plans, privacy-first options, ADHD-friendly
+  - Menu-driven, logs all actions
+- **Workflows:**
+  - Interactive assessment, choose AI path (local, dev, workflow, creative, full stack)
+  - Installs/launches AI tools, creates scripts (ai-chat, ai-models, ai-lab, ai-email, ai-content, ai-analyze)
+  - Project templates, Jupyter notebooks, custom assistants
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_workflow_interactive, data_automation_interactive
+- **Neurodivergent Accommodations:**
+  - Immediate feedback, visual/interactive tools, externalized logic, privacy options
+- **Notable Scripts/Data:**
+  - ai-chat, ai-models, ai-lab, custom_ai_assistant.py, Jupyter notebooks
+- **Status:** Mature, production-ready
+
+## ai_workflow_interactive.sh (AI/Automation, Mature)
+- **Features:**
+  - AI workflow automation, tool orchestration, content/coding/data workflows
+  - Local (Ollama) and cloud (OpenAI) model integration
+  - Menu-driven, logs all actions, prompt templates, convenience scripts
+- **Workflows:**
+  - Interactive assessment, choose workflow (content, data, comms, creative, full stack)
+  - Installs/launches AI workflow tools, creates scripts (ask-ai, ai-writer, ai-coder, local-ai, code-ai)
+  - Prompt templates for content, code, data
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_mastery_interactive, data_automation_interactive
+- **Neurodivergent Accommodations:**
+  - Reduces writing friction, provides instant help, visual/interactive tools
+- **Notable Scripts/Data:**
+  - chatgpt_integration.py, ollama_manager.sh, prompt templates, bash wrappers
+- **Status:** Mature, production-ready
+
+## data_automation_interactive.sh (Data/Automation, Mature)
+- **Features:**
+  - Data processing, analysis automation, Excel replacement, BI dashboards, ETL pipelines
+  - Menu-driven, logs all actions, personalized data plans
+  - Installs/launches LibreOffice, Python data stack, Jupyter, BI tools
+- **Workflows:**
+  - Interactive assessment, choose data path (spreadsheet, analysis, BI, ETL, full stack)
+  - Installs/launches tools, creates scripts (data-analyze, data-convert, data-chart, start-jupyter, data-science)
+  - Project templates, sample data, Jupyter notebooks
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_mastery_interactive, ai_workflow_interactive
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, externalized logic, immediate feedback, ADHD-friendly templates
+- **Notable Scripts/Data:**
+  - excel_replacement.py, data-analyze, data-convert, data-chart, Jupyter notebooks, sample data
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| network_diagnostics_interactive    | Mature     | Networking/Diagnostics | Interactive troubleshooting, repair, security audit, ADHD-friendly |
+| network_optimization_interactive   | Mature     | Networking/Optimization| Performance tuning, gaming/streaming modes, DNS, ADHD-friendly |
+| network_monitoring_interactive     | Mature     | Networking/Monitoring  | Real-time bandwidth, device scan, speed test, ADHD-friendly |
+| network_management_interactive     | Mature     | Networking/Management  | VPN, firewall, Wi-Fi, DNS, ad-block, profiles, ADHD-friendly |
+
+# ---
+
+## network_diagnostics_interactive.sh (Networking/Diagnostics, Mature)
+- **Features:**
+  - Comprehensive network troubleshooting and repair (connectivity, DNS, gateway, VPN, firewall)
+  - Automated and manual repair tools, step-by-step guided troubleshooting
+  - Security auditing and vulnerability scanning
+  - Menu-driven, logs all actions, saves diagnostic reports
+- **Workflows:**
+  - Interactive menu: analysis, repair, troubleshooting, security audit
+  - Generates summary reports, recommendations, and logs
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can trigger monitoring, optimization, and management modules
+- **Neurodivergent Accommodations:**
+  - Visual feedback, clear step-by-step prompts, externalized logic, ADHD-friendly summaries
+- **Notable Scripts/Data:**
+  - Diagnostic logs, repair scripts, security audit routines
+- **Status:** Mature, production-ready
+
+## network_optimization_interactive.sh (Networking/Optimization, Mature)
+- **Features:**
+  - Performance tuning: DNS optimization, TCP/IP tuning, gaming/streaming modes, bandwidth management
+  - Quick and advanced optimization profiles (low latency, high bandwidth, balanced)
+  - Hardware offloading, ring buffer, QoS, traffic shaping
+  - Menu-driven, logs all actions, backup/restore settings
+- **Workflows:**
+  - Interactive menu: DNS, performance, gaming, bandwidth, restore
+  - Applies system/network interface optimizations, creates/edits sysctl and tc configs
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can coordinate with diagnostics, monitoring, management modules
+- **Neurodivergent Accommodations:**
+  - Visual feedback, one-click optimizations, ADHD-friendly explanations
+- **Notable Scripts/Data:**
+  - sysctl tuning files, tc/qos scripts, DNS configs, backup/restore routines
+- **Status:** Mature, production-ready
+
+## network_monitoring_interactive.sh (Networking/Monitoring, Mature)
+- **Features:**
+  - Real-time bandwidth monitoring, device discovery, speed testing, status dashboard
+  - Multiple monitoring tools: iftop, vnstat, nethogs, nload, nmap
+  - Menu-driven, logs all actions, saves monitoring logs
+- **Workflows:**
+  - Interactive menu: bandwidth, device scan, speed test, dashboard
+  - Launches/installs monitoring tools, displays stats, saves results
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can trigger diagnostics, optimization, management modules
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, real-time feedback, ADHD-friendly summaries
+- **Notable Scripts/Data:**
+  - Monitoring logs, device scan routines, speed test scripts
+- **Status:** Mature, production-ready
+
+## network_management_interactive.sh (Networking/Management, Mature)
+- **Features:**
+  - Complete network security and connectivity management: VPN (WireGuard/OpenVPN), firewall, Wi-Fi, DNS, ad-block, profiles
+  - Real-time monitoring, troubleshooting, backup/restore, adaptive learning
+  - Menu-driven, logs all actions, profile management, Android-friendly
+- **Workflows:**
+  - Interactive menu: VPN, firewall, Wi-Fi, monitoring, optimization, troubleshooting, profiles
+  - Setup/launches VPNs, configures firewall, manages Wi-Fi, scans devices, optimizes network
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with diagnostics, optimization, monitoring modules
+- **Neurodivergent Accommodations:**
+  - One-click secure connections, visual status, externalized logic, ADHD-friendly navigation
+- **Notable Scripts/Data:**
+  - VPN configs, firewall rules, Wi-Fi/hotspot scripts, network profiles, monitoring logs
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| wireless_connectivity_interactive  | Mature     | Connectivity          | Wi-Fi, Bluetooth, hotspot, profiles, ADHD-friendly |
+| vpn_security_interactive           | Mature     | Security/Privacy      | WireGuard/OpenVPN, firewall, neurodivergent UI |
+| mobile_integration_interactive     | Mature     | Integration           | Linux ↔ mobile: sync, notifications, clipboard, remote |
+| privacy_tools_interactive          | Mature     | Privacy/Security      | Nextcloud, VPN, Tor, voice, torrent, ADHD-friendly |
+
+# ---
+
+## wireless_connectivity_interactive.sh (Connectivity, Mature)
+- **Features:**
+  - Unified management for Wi-Fi, Bluetooth, mobile hotspot, and network profiles
+  - Scan/connect/troubleshoot Wi-Fi, pair/manage Bluetooth, create/share hotspots
+  - Save/load/export/import/delete network profiles for different environments
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: Wi-Fi, Bluetooth, hotspot, profiles
+  - Step-by-step connection, troubleshooting, and profile management
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Can coordinate with network management, diagnostics, and mobile integration modules
+- **Neurodivergent Accommodations:**
+  - Simple, focused UI, visual feedback, externalized logic, ADHD-friendly navigation
+- **Notable Scripts/Data:**
+  - Wi-Fi/Bluetooth/hotspot scripts, profile management routines
+- **Status:** Mature, production-ready
+
+## vpn_security_interactive.sh (Security/Privacy, Mature)
+- **Features:**
+  - WireGuard and OpenVPN setup/management, Android-friendly QR config
+  - Firewall configuration (UFW, iptables, firewalld), quick connect/disconnect
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: WireGuard, OpenVPN, quick connect, firewall
+  - Step-by-step VPN setup, import/export, firewall rules, status checks
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with network management, diagnostics, privacy tools
+- **Neurodivergent Accommodations:**
+  - Simple, clear UI, one-click secure connections, ADHD-friendly explanations
+- **Notable Scripts/Data:**
+  - VPN configs, QR code generation, firewall rules, status scripts
+- **Status:** Mature, production-ready
+
+## mobile_integration_interactive.sh (Integration, Mature)
+- **Features:**
+  - Linux ↔ mobile bridge: file sync (Syncthing), notification mirroring, SMS/calls, remote desktop, clipboard, media, automation
+  - KDE Connect, ADB, VNC, SSH, Wake-on-LAN, backup, device discovery
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: setup, file transfer, sync, remote control, notifications, automation, troubleshooting
+  - Step-by-step device pairing, sync rule config, remote access, backup
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with wireless connectivity, network management, privacy tools
+- **Neurodivergent Accommodations:**
+  - Seamless workflow continuity, reduced context switching, ADHD-friendly prompts
+- **Notable Scripts/Data:**
+  - Device/sync configs, ADB/VNC/KDE Connect scripts, backup routines
+- **Status:** Mature, production-ready
+
+## privacy_tools_interactive.sh (Privacy/Security, Mature)
+- **Features:**
+  - Presents mature open-source privacy tools: Nextcloud, VPN, Tor, private voice, safe torrenting
+  - Explains pros/cons, logs choices, allows open-ended input, ADHD-friendly
+  - Menu-driven, logs all actions, setup scripts for Docker, voice, VPN, Tor, torrent
+- **Workflows:**
+  - Interactive menu: Nextcloud, voice, VPN, Tor, torrent, full suite, advanced tools
+  - Step-by-step setup, Docker/native/hosted options, privacy dashboard, aliases
+- **Integrations:**
+  - Uses privacy_tools.sh, integrates with vpn_security, network management, mobile integration
+- **Neurodivergent Accommodations:**
+  - One-stop privacy dashboard, externalized logic, ADHD-friendly explanations, automation
+- **Notable Scripts/Data:**
+  - Docker Compose, voice transcription, VPN status/killswitch, Tor launcher, torrent-safe, privacy dashboard, bash aliases
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| automation_mastery_interactive     | Mature     | Automation/Personalization | Neural workflow mapping, Excel replacement, VRBO, Google Tasks, ADHD/ND support |
+| edboigames_toolkit_interactive     | Mature     | Gaming/Content Creation    | YouTube business, video/audio production, adaptive learning, business templates |
+| business_partnerships_interactive  | Mature     | Business/Finance           | Commission tracking, CRM, sponsorship pipeline, analytics, tax prep, ADHD-friendly |
+| clipboard_mastery_interactive      | Mature     | Productivity/Clipboard     | CopyQ, AI clipboard, OCR, unlimited history, VoiceMeeter audio, ADHD/ND support |
+
+# ---
+
+## automation_mastery_interactive.sh
+- **Features:**
+  - Neural workflow mapping: Personalized automation recommendations based on user assessment (devices, apps, pain points, neurodivergent needs, etc.)
+  - Excel replacement: Automated CSV/spreadsheet processing, revenue tracking, guest data analysis, property performance dashboards, backup, and reporting (no Excel required)
+  - VRBO/Google Tasks/ChatGPT integrations: Delegates to other modules for focused setup (avoids duplication)
+  - Unified command center: Generates a single script for all major automation actions (revenue, tasks, content, backup, health check)
+  - Educational guides: Deep dives into modern automation platforms (Zapier, IFTTT, Make, Node-RED, Home Assistant, etc.)
+  - AI-powered automation: Explains and recommends AI tools for neurodivergent brains
+  - Business process automation: CRM, invoicing, expense tracking, social media, and more
+- **Cross-module integrations:**
+  - Delegates Google Tasks to productivity_suite_interactive.sh
+  - Delegates ChatGPT/AI to ai_mastery_interactive.sh
+  - Delegates GitHub Auth to system_ops_interactive.sh
+  - VRBO automation now handled by vacation_rental_manager_interactive.sh
+- **ADHD/dyslexia/neurodivergent accommodations:**
+  - Personalized recommendations for ADHD, autism, dyslexia, anxiety, time blindness, etc.
+  - Visual/voice-first/step-by-step options
+  - Dopamine reward systems, transition helpers, memory backup, time blindness protection
+- **Notable scripts/templates:**
+  - ~/.bill-sloth/data-automation/scripts/data-processor.sh (data automation)
+  - ~/.bill-sloth/bill-command-center.sh (unified launcher)
+  - Assessment and recommendation files for user personalization
+- **Status:** Mature, production-ready
+
+## edboigames_toolkit_interactive.sh
+- **Features:**
+  - YouTube business and content creation toolkit: Monetization, SEO, audience growth, sponsorships, analytics
+  - Adaptive learning: Personalized content creation and business development plans
+  - Video/audio production: Guides and setup for Shotcut, Kdenlive, DaVinci Resolve, Audacity, LMMS, OBS, etc.
+  - Multi-platform content distribution: YouTube, TikTok, Twitter, Discord, etc.
+  - Revenue analysis: Tracks VRBO, partnerships, gaming, digital products
+  - Business development: CRM, partnership outreach, revenue tracker, proposal templates
+  - Complete YouTube bootcamp: Step-by-step guided tour for new creators
+- **Cross-module integrations:**
+  - Delegates business partnerships to business_partnerships_interactive.sh
+  - Uses adaptive_learning, data_persistence, error_handling from lib/
+- **ADHD/dyslexia/neurodivergent accommodations:**
+  - Step-by-step, menu-driven guides
+  - Templates for outreach, revenue, and content planning
+  - Visual and audio learning resources
+- **Notable scripts/templates:**
+  - ~/edboigames_business/templates/ (email, revenue, partnership)
+  - ~/edboigames_business/revenue-analysis/
+  - Adaptive learning initialization for content mastery
+- **Status:** Mature, production-ready
+
+## business_partnerships_interactive.sh
+- **Features:**
+  - Commission tracking: Full pipeline for deals, commissions, and payment status
+  - Sponsorship pipeline: Add/view/update deals, track stages, calculate potential revenue
+  - CRM & outreach: Contact management, automated email sequences, follow-up tracking, relationship scoring
+  - Revenue analysis: Dashboards, commission analytics, ROI, forecasting, export for tax prep
+  - Business intelligence: Performance, market, competitive, and trend analysis; strategic recommendations
+  - Contract management: Templates for outreach, proposals, NDAs, commission agreements
+- **Cross-module integrations:**
+  - Integrates with edboigames_toolkit_interactive.sh for business development
+  - Uses adaptive_learning, data_persistence, error_handling, system_info from lib/
+- **ADHD/dyslexia/neurodivergent accommodations:**
+  - Menu-driven, step-by-step workflows
+  - Visual dashboards, progress bars, and summaries
+  - Templates for all business communications
+- **Notable scripts/templates:**
+  - ~/.config/business-partnerships/ (DB, templates, logs)
+  - ~/edboigames_business/ (contacts, partnerships, revenue-analysis)
+  - CSV/SQL-based data structures for all business logic
+- **Status:** Mature, production-ready
+
+## clipboard_mastery_interactive.sh
+- **Features:**
+  - Advanced clipboard management: Unlimited history, AI-powered organization, OCR, cross-app sharing, backup
+  - CopyQ integration: Power-user clipboard manager with custom config, hotkeys, and automation
+  - AI clipboard tools: Translate, summarize, format code using Claude
+  - VoiceMeeter-equivalent audio routing: PipeWire, Carla, QjackCtl, Helvum for pro audio workflows
+  - Hotkey setup: Windows-style and custom AI hotkeys for clipboard actions
+- **Cross-module integrations:**
+  - Uses interactive.sh and notification system from lib/
+  - Integrates with system audio tools for advanced routing
+- **ADHD/dyslexia/neurodivergent accommodations:**
+  - Unlimited clipboard history (no more lost info)
+  - AI summarization and translation for reading/writing support
+  - Visual, step-by-step setup and demo
+  - Power-user hotkeys for fast access
+- **Notable scripts/templates:**
+  - ~/.config/copyq/copyq.conf (custom config)
+  - ~/.local/bin/copyq-ai-helper (AI integration)
+  - ~/.local/bin/clipboard-hotkey-handler (hotkey automation)
+  - ~/.local/share/applications/audio-control-center.desktop (audio launcher)
+- **Status:** Mature, production-ready
+
+# ---
+
+## 27. See Also
+- For a full list of modules and their status, see MODULE_INDEX.md.
+- For a chronological log of all changes, see CHANGELOG.md.
+- For detailed per-module documentation, see section 25 above and MODULE_INDEX.md.
+
+---
+
+# ---
+# BILL SLOTH GIGA DOC - GRANULAR, UP-TO-DATE SYSTEM AUDIT
+# Last Updated: 2025-07-23
+
+## 🚦 MODULE & FEATURE SUMMARY TABLE
+
+| Module/Script                        | Status      | Description |
+|--------------------------------------|-------------|-------------|
+| automation_mastery_interactive       | Modular ✅  | Neural automation interface, workflow mapping, Excel/data automation, platform guides, ADHD/ND support |
+| edboigames_toolkit_interactive       | Modular ✅  | YouTube/gaming business toolkit, content creation, video/audio production, revenue analysis, business dev |
+| business_partnerships_interactive    | Large 📏    | Partnership/commission tracking, CRM, sponsorship pipeline, revenue analytics, templates |
+| clipboard_mastery_interactive        | Medium 📄   | Advanced clipboard manager, AI integration, OCR, hotkeys, VoiceMeeter equivalent |
+| creative_coding_interactive          | Medium 📄   | Creative coding suite, Jupyter, p5.js, Processing, Godot, Python art, ADHD-friendly |
+| data_hoarding_interactive            | Medium 📄   | Data/media hoarding, *arr stack, Jellyfin, Beets, TagSpaces, ExifTool, VPN, ADHD-friendly |
+| defensive_cyber_interactive          | Medium 📄   | Ethical hacking, Kali tools, workspace setup, custom scripts, CTF labs, security monitoring |
+| discord_mod_toolkit_interactive      | Medium 📄   | Discord moderation, bot automation, ADHD mod strategies, analytics, server templates |
+| file_mastery_interactive             | Large 📏    | File search, AI organization, advanced copying, bulk rename, multi-drive, Windows power-user |
+| finance_management_interactive       | Medium 📄   | Personal/business finance, SQLite DB, budgets, goals, tax prep, VRBO/EdBoiGames split |
+| personal_analytics_dashboard      | Mature     | Productivity/Analytics | Life tracking, ADHD-friendly personal metrics, pattern analysis |
+| productivity_suite_interactive    | Mature     | Productivity           | ADHD-friendly productivity toolkit, task/project/knowledge tools |
+| privacy_tools_interactive         | Mature     | Privacy/Security       | Complete privacy suite: Nextcloud, VPN, Tor, voice, torrenting |
+| system_doctor_interactive         | Mature     | System/Ops             | AI-powered diagnostics, hardware/network/audio/display repair |
+| window_mastery_interactive         | Mature     | Productivity         | AI-powered window management, tiling, focus modes, multi-monitor |
+| text_expansion_interactive         | Mature     | Productivity         | AI-powered text expansion, Espanso, ADHD-friendly snippets |
+| voice_assistant_interactive        | Mature     | Accessibility        | Full voice control, custom commands, accessibility, training |
+| repetitive_tasks_interactive       | Deprecated | Deprecated           | Redirects to automation_mastery_interactive.sh |
+| ... (see MODULE_INDEX.md for full list) | ...         | ...         |
+
+---
+
+## 🧠 GRANULAR MODULE & FEATURE AUDIT
+
+### automation_mastery_interactive.sh
+- **Purpose:** Neural interface for reality manipulation, workflow mapping, and automation deployment.
+- **Features:**
+  - Personalized workflow assessment and recommendations (ADHD/ND optimized)
+  - Excel/data automation suite (CSV, revenue, guest analysis, dashboards)
+  - Platform guides (Zapier, IFTTT, Make, Node-RED, Home Assistant)
+  - Bill-specific automation menu (VRBO, Google Tasks, ChatGPT, GitHub Auth)
+  - Modular, with cross-links to productivity, system ops, and AI modules
+  - Neurodivergent accommodations: voice-first, visual, minimal, and text-based flows
+  - Generates scripts, dashboards, and assessment files in ~/.bill-sloth/
+
+### edboigames_toolkit_interactive.sh
+- **Purpose:** YouTube/gaming business toolkit for content creation, monetization, and business dev.
+- **Features:**
+  - Interactive guides for video/audio production, editing, and publishing
+  - Revenue stream analysis, business templates, partnership outreach
+  - Adaptive learning initialization, audience growth, SEO, analytics
+  - Bootcamp for new creators, ADHD-friendly creative workflows
+  - Creates business templates, revenue trackers, and logs in ~/edboigames_business/
+
+### business_partnerships_interactive.sh
+- **Purpose:** Manages partnerships, sponsorships, commissions, and business intelligence.
+- **Features:**
+  - CRM/outreach, deal pipeline, commission tracker, revenue analysis
+  - Templates for outreach, proposals, contracts, NDAs
+  - Analytics: ROI, growth, market/competitive trends, forecasting
+  - Exports financial/tax reports, manages contacts, follow-ups, and BI dashboards
+  - All data stored in ~/.config/business-partnerships and ~/edboigames_business/
+
+### clipboard_mastery_interactive.sh
+- **Purpose:** Advanced clipboard management with AI, OCR, and power-user hotkeys.
+- **Features:**
+  - Unlimited clipboard history, AI-powered translation/summarization/code formatting
+  - OCR from images, cross-app sharing, backup, and search
+  - Hotkey system (CopyQ, xclip, custom AI scripts)
+  - VoiceMeeter equivalent for audio routing (PipeWire/Carla)
+  - ADHD/ND: visual, persistent, and scriptable clipboard
+
+### creative_coding_interactive.sh
+- **Purpose:** Creative coding playground for visual, audio, and interactive art.
+- **Features:**
+  - Jupyter, p5.js, Processing, Godot, Python art libraries
+  - ADHD-friendly: immediate feedback, visual iteration, modular tool selection
+  - Templates, starter notebooks, and project directories auto-created
+  - Aliases for quick launch, all-in-one creative suite option
+
+### data_hoarding_interactive.sh
+- **Purpose:** Data/media hoarding, automation, and local-first streaming.
+- **Features:**
+  - yt-dlp, *arr stack (Sonarr/Radarr/Prowlarr), Jellyfin, Beets, TagSpaces, ExifTool, Gluetun VPN
+  - ADHD/ND: automation, visual dashboards, set-and-forget workflows
+  - Docker-based deployment, persistent storage, and privacy-first design
+  - Enhancement/upgrade path for existing setups
+
+### defensive_cyber_interactive.sh
+- **Purpose:** Defensive cybersecurity, ethical hacking, and security automation.
+- **Features:**
+  - Kali tools, workspace setup, custom recon/web/CTF scripts
+  - Security monitoring, firewall, IDS, rootkit detection
+  - Lab environments (DVWA, CTF helpers), ethical use enforcement
+  - ADHD/ND: menu-driven, color-coded, and modular
+
+### discord_mod_toolkit_interactive.sh
+- **Purpose:** Discord moderation, automation, and community management.
+- **Features:**
+  - Bot ecosystem (MEE6, Carl-bot, Dyno, custom bots)
+  - ADHD-friendly moderation strategies, templates, dashboards
+  - Server optimization, analytics, event management, integrations
+  - Quick server setup wizard, advanced mod techniques, bot dev workshop
+
+### file_mastery_interactive.sh
+- **Purpose:** File search, management, and organization for power users.
+- **Features:**
+  - fd, ripgrep, fzf, locate, ranger, nnn, mc, tree, ncdu
+  - AI-powered organization, advanced copying (TeraCopy), bulk rename, multi-drive management
+  - Windows-style shortcuts, aliases, and visual file managers
+  - Multi-monitor, Steam library, and system drive management
+  - ADHD/ND: instant search, visual navigation, automation
+
+### finance_management_interactive.sh
+- **Purpose:** Personal and business finance management (VRBO, EdBoiGames, personal).
+- **Features:**
+  - SQLite DB for income, expenses, budgets, goals, tax items
+  - Dashboard: income/expense summary, budget status, recent transactions, goals
+  - Quick actions: add income/expense, manage budgets/goals, generate reports
+  - Tax prep, business split, and ADHD-friendly menu
+  - Data stored in ~/.bill-sloth/finance/
+
+### personal_analytics_dashboard.sh
+- **Features:** Life tracking and productivity insights, daily/weekly/monthly metrics (mood, energy, sleep, productivity, business activity), SQLite DB, pattern/correlation analysis, AI-generated insights, ADHD-friendly dashboard.
+- **Workflows:** Log daily metrics, track business (VRBO, EdBoiGames), generate weekly reports, analyze patterns, set goals, export data.
+- **Integrations:** Finance, business, and task modules; pulls data from VRBO, EdBoiGames, and task completion.
+- **Accommodations:** Visual dashboards, quick-capture menus, reminders, ADHD-friendly summaries, actionable insights.
+- **Notable:** `personal_metrics.db` schema, pattern_insights, daily/weekly/monthly folders, export/report scripts.
+- **Status:** Mature
+
+### productivity_suite_interactive.sh
+- **Features:** Interactive productivity toolkit for ADHD/neurodivergent users. Integrates Taskwarrior, Super Productivity, Logseq, Kanboard, custom "Memory Palace", Google Tasks automation, and a complete ecosystem option. Explains pros/cons, logs choices, allows open-ended input.
+- **Workflows:** Choose and deploy productivity tools, set up Google Tasks automation, integrate with external brain systems, ADHD-friendly aliases/scripts, complete ecosystem setup.
+- **Integrations:** Google Tasks, Kanboard, Logseq, Taskwarrior, custom scripts, batch logging.
+- **Accommodations:** Visual/ASCII menus, dopamine feedback, external brain capture, urgency scoring, visual project management, ADHD-specific memory tools.
+- **Notable:** `tasks-manager.sh`, ADHD Memory Palace scripts, productivity-hub, aliases for quick capture.
+- **Status:** Mature
+
+### privacy_tools_interactive.sh
+- **Features:** Complete privacy suite: Nextcloud (personal cloud), private/local voice assistants, VPN tools, Tor Browser, safe torrenting, and a full privacy dashboard. Explains each tool, guides setup, logs choices, allows open-ended input.
+- **Workflows:** Deploy Nextcloud (Docker/native/hosted), set up voice assistants (Whisper, Mycroft, Voice2JSON), install VPN tools and kill switch, install Tor, configure safe torrenting, deploy all-in-one privacy suite.
+- **Integrations:** Nextcloud, voice, VPN, Tor, torrenting, privacy dashboard, aliases for quick access.
+- **Accommodations:** ADHD-friendly setup guides, visual dashboards, one-click privacy, reminders, dopamine feedback, external brain for privacy.
+- **Notable:** `privacy-suite` dashboard, `vpn-status`, `vpn-killswitch`, `torrent-safe`, voice transcription scripts, Nextcloud Docker configs, bashrc aliases.
+- **Status:** Mature
+
+### system_doctor_interactive.sh
+- **Features:** AI-powered system diagnostics and repair: hardware inventory, storage, network, audio, display, USB/PCI, device/disk/network/AI-doctor scripts. Step-by-step guided troubleshooting, automatic detection, visual dashboards, and learning from past issues.
+- **Workflows:** Run diagnostics, repair hardware/storage/network/audio/display, use AI-doctor for natural language troubleshooting, generate system health reports, demo/test tools, complete setup for all diagnostics.
+- **Integrations:** All system modules, AI (Claude), device-manager, disk-manager, network-doctor, ai-doctor, batch logging.
+- **Accommodations:** Visual/ASCII dashboards, step-by-step guides, ADHD-friendly menus, reminders, dopamine feedback, learning from user patterns.
+- **Notable:** `device-manager`, `disk-manager`, `network-doctor`, `ai-doctor`, demo scripts, bashrc aliases.
+- **Status:** Mature
+
+### window_mastery_interactive.sh
+- **Features:** Advanced window management (tiling, snapping, workspaces, focus modes), AI-powered layouts, multi-monitor support, session save/restore, GNOME/KDE/i3wm/Sway integration, ADHD-friendly focus and automation.
+- **Workflows:** Detect desktop environment, recommend/setup optimal window manager, install GNOME/KDE extensions, i3wm config, create AI window scripts, manage multi-monitor, save/restore sessions, demo/test tools.
+- **Integrations:** Productivity tools, launcher, clipboard, focus mode, AI (Claude), batch logging.
+- **Accommodations:** Visual/ASCII dashboards, focus mode to hide distractions, muscle memory shortcuts, ADHD-friendly layouts, session save/restore.
+- **Notable:** `organize-windows-ai`, `focus-mode`, `save-window-session`, `monitor-setup`, i3wm configs, GNOME extension installer.
+- **Status:** Mature
+
+### text_expansion_interactive.sh
+- **Features:** AI-powered text expansion (Espanso), dynamic snippets, context-aware expansions, ADHD-friendly templates, technical/business/voice/audio snippets, AI integration for emails, code, docs, and more.
+- **Workflows:** Install/configure Espanso, set up power-user snippets, create AI-powered dynamic snippets, manage service, demo/test expansions, complete setup.
+- **Integrations:** Espanso, Claude AI, productivity tools, clipboard, batch logging.
+- **Accommodations:** ADHD-friendly templates (todo, focus, energy, audio), visual/ASCII menus, dopamine feedback, quick capture, AI content generation.
+- **Notable:** `base.yml` and `ai-powered.yml` snippet configs, `ai-snippet.sh`, `espanso-status`, service/desktop manager.
+- **Status:** Mature
+
+### voice_assistant_interactive.sh
+- **Features:** Full voice control for Bill Sloth, custom commands, accessibility options, voice training, TTS/STT engine selection, integration with all modules, hands-free operation, ADHD-friendly design.
+- **Workflows:** Quick setup, install dependencies, configure/test voice, start/stop voice control, manage commands, training mode, accessibility settings, troubleshooting, integration examples.
+- **Integrations:** All modules (automation, system, productivity, etc.), voice_control.sh, Claude AI, batch logging.
+- **Accommodations:** Hands-free operation, accessibility settings, training mode, ADHD-friendly menus, reminders, dopamine feedback.
+- **Notable:** `voice_assistant_menu`, `voice_control_loop`, `voice_training_mode`, `configure_voice_commands`, TTS/STT engine selection, logs.
+- **Status:** Mature
+
+### repetitive_tasks_interactive.sh
+- **Features:** Deprecated module, now redirects to `automation_mastery_interactive.sh`.
+- **Workflows:** On launch, prints deprecation notice and execs the new module.
+- **Integrations:** N/A (redirect only).
+- **Accommodations:** N/A (redirect only).
+- **Notable:** Deprecation notice, exec redirect.
+- **Status:** Deprecated (use automation_mastery_interactive.sh)
+
+---
+
+## 🛠️ UTILITY LIBRARIES & SCRIPTS (lib/, scripts/)
+- **adaptive_learning.sh:** Core adaptive learning logic for module personalization.
+- **data_persistence.sh:** Modern SQLite-based data storage, cross-module integration.
+- **notification_system.sh:** Standardized notifications (CLI, desktop, logs).
+- **interactive.sh:** Menu helpers, input validation, and user prompts.
+- **error_handling.sh:** Consistent error reporting and logging.
+- **task_runner.sh, workflow_orchestration.sh:** Modern task automation and orchestration.
+- **system_utils.sh, performance_monitoring.sh:** System health, performance, and monitoring.
+- **restic_backup.sh:** Automated, reliable backup management.
+- **voice_control.sh:** Voice command integration for accessibility.
+- **scripts/**: Batch enhancement, error handling, onboarding, dependency checks, etc.
+
+---
+
+## 💼 BUSINESS/FINANCE/PARTNERSHIP LOGIC
+- **Commission Tracking:** Automated via business_partnerships_interactive, with CSV and analytics.
+- **Revenue Analysis:** Dashboards, monthly/quarterly/yearly breakdowns, growth metrics, and forecasting.
+- **CRM/Outreach:** Contact management, automated email sequences, follow-up tracking, and relationship scoring.
+- **Tax Prep:** Exportable reports, 1099-MISC tracking, and documentation management.
+- **Finance Management:** Unified dashboard, budgets, goals, and business splits (VRBO, EdBoiGames, personal).
+
+---
+
+## 📝 RECENT CHANGES & DEPRECATED FILES
+- **New/Updated Modules:**
+  - streaming_setup_interactive.sh, system_ops_interactive.sh, ai_mastery_interactive.sh, ai_workflow_interactive.sh, automation_core_interactive.sh, data_automation_interactive.sh, network_diagnostics_interactive.sh, network_monitoring_interactive.sh, network_optimization_interactive.sh, vpn_security_interactive.sh, vrbo_automation_pro.sh, wireless_connectivity_interactive.sh, etc.
+- **Major Enhancements:**
+  - Modularization, adaptive learning, cross-module data sharing, business/finance logic, ADHD/ND accommodations.
+- **Deleted/Legacy Files:**
+  - self-executing-guide.md, setup-scripts/CLAUDE_CODE_BOOTSTRAP_PLAN.md, and other deprecated plans/old guides (see git status for full list).
+
+---
+
+## 📚 FOR FULL MODULE LIST & DETAILS
+- See [MODULE_INDEX.md] for a complete, auto-generated inventory of all modules, scripts, and libraries, including line counts, status, and descriptions.
+
+---
+
+**This GIGA DOC now reflects the *actual, implemented* state of the Bill Sloth system, with granular, actionable detail for onboarding, troubleshooting, and mastery.**
+
+# ---
+# (Add to summary table)
+| vrbo_automation_pro               | Mature     | Business/Automation   | Pro-grade VRBO rental automation: Docker, API, analytics, guest comms |
+| vacation_rental_manager_interactive | Mature   | Business/Property     | Interactive vacation rental management, ADHD-friendly, open-source |
+| automation_mastery_interactive_v2  | Beta      | Automation            | Modular automation, controller-based, next-gen architecture |
+| edboigames_toolkit_interactive_v2  | Beta      | Gaming/Business       | Modular EdBoiGames business toolkit, adaptive learning |
+
+# ---
+
+## vrbo_automation_pro.sh (Business/Automation, Mature)
+- **Features:**
+  - Professional vacation rental management with Docker microservices (PostgreSQL, Redis, APIs, guest comms, analytics, Kanboard, Grafana)
+  - VRBO API integration (Expedia Partner API)
+  - Automated guest communications (welcome/check-in/checkout emails, upsells, reminders)
+  - Revenue analytics, business dashboard, dynamic pricing, occupancy optimization
+  - Mobile integration (planned)
+- **Workflows:**
+  - Main menu for all automation tasks
+  - Docker-based service orchestration and health checks
+  - Secure credential and email config, template generation
+- **Integrations:**
+  - Relies on Docker, PostgreSQL, Redis, Grafana, Kanboard
+  - Integrates with notification, data persistence, error handling libs
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, automated reminders, externalized executive function
+- **Notable Data Structures:**
+  - SQL schema for properties, bookings, guest comms, revenue analytics
+  - Email templates (HTML)
+- **Status:** Mature, production-ready
+
+## vacation_rental_manager_interactive.sh (Business/Property, Mature)
+- **Features:**
+  - Interactive assistant for vacation rental management (property, guest, cleaning, analytics, platform integration)
+  - Presents mature open-source tools, explains pros/cons, logs choices
+  - ADHD-friendly: visual dashboards, reminders, checklists, templates
+  - Logging of all actions for auditability
+- **Workflows:**
+  - Menu-driven selection of management tools (property hub, guest comms, cleaning, analytics, platform integration)
+  - Installs/sets up workspaces, templates, dashboards, reminders
+  - Open-ended input for custom options (Claude Code integration)
+- **Integrations:**
+  - Integrates with notification and error handling libs
+  - Can launch/coordinate with other modules (e.g., guest comms, analytics)
+- **Neurodivergent Accommodations:**
+  - Visual, checklist-based, externalized reminders, dopamine feedback
+- **Notable Scripts:**
+  - Setup scripts for workspace, dashboards, templates, reminders
+- **Status:** Mature, stable
+
+## automation_mastery_interactive_v2.sh (Automation, Beta)
+- **Features:**
+  - Modular, controller-based automation architecture (delegates to automation_mastery/controller.sh)
+  - Designed for next-gen extensibility and maintainability
+  - Error handling for missing components, clear user guidance
+- **Workflows:**
+  - Loads all automation components via controller
+  - Main entry point delegates to automation_main_menu
+- **Integrations:**
+  - Relies on automation_mastery/ directory and controller.sh
+- **Neurodivergent Accommodations:**
+  - Modular, externalized logic for easier focus and troubleshooting
+- **Status:** Beta (experimental, next-gen)
+
+## edboigames_toolkit_interactive_v2.sh (Gaming/Business, Beta)
+- **Features:**
+  - Modular EdBoiGames business toolkit (controller-based)
+  - Adaptive learning integration (if available)
+  - Error handling for missing components
+- **Workflows:**
+  - Loads all components via edboigames/controller.sh
+  - Main entry point delegates to main_menu
+- **Integrations:**
+  - Relies on edboigames/ directory and controller.sh
+  - Integrates with adaptive_learning.sh and interactive.sh if present
+- **Neurodivergent Accommodations:**
+  - Modular, adaptive learning, clear error messages
+- **Status:** Beta (modular, in development)
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| automation_core_interactive        | Mature     | Automation            | Cross-platform workflow orchestration, smart task automation |
+| ai_mastery_interactive             | Mature     | AI/Automation         | Complete AI toolkit: local/cloud, dev, workflow, ADHD-friendly |
+| ai_workflow_interactive            | Mature     | AI/Automation         | AI workflow automation, tool orchestration, content/data/coding |
+| data_automation_interactive        | Mature     | Data/Automation       | Excel-killer, data pipelines, BI dashboards, ADHD-friendly |
+
+# ---
+
+## automation_core_interactive.sh (Automation, Mature)
+- **Features:**
+  - General automation patterns, cross-platform workflow orchestration
+  - Smart task automation, file/data processing, communication, system admin, integration
+  - Personalized automation plans and pattern guides
+  - Menu-driven, logs all actions
+- **Workflows:**
+  - Interactive assessment, personalized plan, choose automation type, deploy scripts
+  - Smart task manager (Python), convenience scripts (task-add, task-list, task-done)
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Can coordinate with notification, data persistence, system health modules
+- **Neurodivergent Accommodations:**
+  - Externalizes executive function, provides reminders, visual feedback, gentle prompts
+- **Notable Scripts/Data:**
+  - Python smart_task_manager.py, bash wrappers, automation pattern guides
+- **Status:** Mature, stable
+
+## ai_mastery_interactive.sh (AI/Automation, Mature)
+- **Features:**
+  - Complete AI toolkit: local models (Ollama, GPT4All), cloud APIs, dev environment (Jupyter, LangChain), workflow automation
+  - Personalized AI mastery plans, privacy-first options, ADHD-friendly
+  - Menu-driven, logs all actions
+- **Workflows:**
+  - Interactive assessment, choose AI path (local, dev, workflow, creative, full stack)
+  - Installs/launches AI tools, creates scripts (ai-chat, ai-models, ai-lab, ai-email, ai-content, ai-analyze)
+  - Project templates, Jupyter notebooks, custom assistants
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_workflow_interactive, data_automation_interactive
+- **Neurodivergent Accommodations:**
+  - Immediate feedback, visual/interactive tools, externalized logic, privacy options
+- **Notable Scripts/Data:**
+  - ai-chat, ai-models, ai-lab, custom_ai_assistant.py, Jupyter notebooks
+- **Status:** Mature, production-ready
+
+## ai_workflow_interactive.sh (AI/Automation, Mature)
+- **Features:**
+  - AI workflow automation, tool orchestration, content/coding/data workflows
+  - Local (Ollama) and cloud (OpenAI) model integration
+  - Menu-driven, logs all actions, prompt templates, convenience scripts
+- **Workflows:**
+  - Interactive assessment, choose workflow (content, data, comms, creative, full stack)
+  - Installs/launches AI workflow tools, creates scripts (ask-ai, ai-writer, ai-coder, local-ai, code-ai)
+  - Prompt templates for content, code, data
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_mastery_interactive, data_automation_interactive
+- **Neurodivergent Accommodations:**
+  - Reduces writing friction, provides instant help, visual/interactive tools
+- **Notable Scripts/Data:**
+  - chatgpt_integration.py, ollama_manager.sh, prompt templates, bash wrappers
+- **Status:** Mature, production-ready
+
+## data_automation_interactive.sh (Data/Automation, Mature)
+- **Features:**
+  - Data processing, analysis automation, Excel replacement, BI dashboards, ETL pipelines
+  - Menu-driven, logs all actions, personalized data plans
+  - Installs/launches LibreOffice, Python data stack, Jupyter, BI tools
+- **Workflows:**
+  - Interactive assessment, choose data path (spreadsheet, analysis, BI, ETL, full stack)
+  - Installs/launches tools, creates scripts (data-analyze, data-convert, data-chart, start-jupyter, data-science)
+  - Project templates, sample data, Jupyter notebooks
+- **Integrations:**
+  - Uses error_handling and interactive libs
+  - Integrates with ai_mastery_interactive, ai_workflow_interactive
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, externalized logic, immediate feedback, ADHD-friendly templates
+- **Notable Scripts/Data:**
+  - excel_replacement.py, data-analyze, data-convert, data-chart, Jupyter notebooks, sample data
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| network_diagnostics_interactive    | Mature     | Networking/Diagnostics | Interactive troubleshooting, repair, security audit, ADHD-friendly |
+| network_optimization_interactive   | Mature     | Networking/Optimization| Performance tuning, gaming/streaming modes, DNS, ADHD-friendly |
+| network_monitoring_interactive     | Mature     | Networking/Monitoring  | Real-time bandwidth, device scan, speed test, ADHD-friendly |
+| network_management_interactive     | Mature     | Networking/Management  | VPN, firewall, Wi-Fi, DNS, ad-block, profiles, ADHD-friendly |
+
+# ---
+
+## network_diagnostics_interactive.sh (Networking/Diagnostics, Mature)
+- **Features:**
+  - Comprehensive network troubleshooting and repair (connectivity, DNS, gateway, VPN, firewall)
+  - Automated and manual repair tools, step-by-step guided troubleshooting
+  - Security auditing and vulnerability scanning
+  - Menu-driven, logs all actions, saves diagnostic reports
+- **Workflows:**
+  - Interactive menu: analysis, repair, troubleshooting, security audit
+  - Generates summary reports, recommendations, and logs
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can trigger monitoring, optimization, and management modules
+- **Neurodivergent Accommodations:**
+  - Visual feedback, clear step-by-step prompts, externalized logic, ADHD-friendly summaries
+- **Notable Scripts/Data:**
+  - Diagnostic logs, repair scripts, security audit routines
+- **Status:** Mature, production-ready
+
+## network_optimization_interactive.sh (Networking/Optimization, Mature)
+- **Features:**
+  - Performance tuning: DNS optimization, TCP/IP tuning, gaming/streaming modes, bandwidth management
+  - Quick and advanced optimization profiles (low latency, high bandwidth, balanced)
+  - Hardware offloading, ring buffer, QoS, traffic shaping
+  - Menu-driven, logs all actions, backup/restore settings
+- **Workflows:**
+  - Interactive menu: DNS, performance, gaming, bandwidth, restore
+  - Applies system/network interface optimizations, creates/edits sysctl and tc configs
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can coordinate with diagnostics, monitoring, management modules
+- **Neurodivergent Accommodations:**
+  - Visual feedback, one-click optimizations, ADHD-friendly explanations
+- **Notable Scripts/Data:**
+  - sysctl tuning files, tc/qos scripts, DNS configs, backup/restore routines
+- **Status:** Mature, production-ready
+
+## network_monitoring_interactive.sh (Networking/Monitoring, Mature)
+- **Features:**
+  - Real-time bandwidth monitoring, device discovery, speed testing, status dashboard
+  - Multiple monitoring tools: iftop, vnstat, nethogs, nload, nmap
+  - Menu-driven, logs all actions, saves monitoring logs
+- **Workflows:**
+  - Interactive menu: bandwidth, device scan, speed test, dashboard
+  - Launches/installs monitoring tools, displays stats, saves results
+- **Integrations:**
+  - Uses core, notification, adaptive_learning, data_persistence, error_handling, system_info libs
+  - Can trigger diagnostics, optimization, management modules
+- **Neurodivergent Accommodations:**
+  - Visual dashboards, real-time feedback, ADHD-friendly summaries
+- **Notable Scripts/Data:**
+  - Monitoring logs, device scan routines, speed test scripts
+- **Status:** Mature, production-ready
+
+## network_management_interactive.sh (Networking/Management, Mature)
+- **Features:**
+  - Complete network security and connectivity management: VPN (WireGuard/OpenVPN), firewall, Wi-Fi, DNS, ad-block, profiles
+  - Real-time monitoring, troubleshooting, backup/restore, adaptive learning
+  - Menu-driven, logs all actions, profile management, Android-friendly
+- **Workflows:**
+  - Interactive menu: VPN, firewall, Wi-Fi, monitoring, optimization, troubleshooting, profiles
+  - Setup/launches VPNs, configures firewall, manages Wi-Fi, scans devices, optimizes network
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with diagnostics, optimization, monitoring modules
+- **Neurodivergent Accommodations:**
+  - One-click secure connections, visual status, externalized logic, ADHD-friendly navigation
+- **Notable Scripts/Data:**
+  - VPN configs, firewall rules, Wi-Fi/hotspot scripts, network profiles, monitoring logs
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| wireless_connectivity_interactive  | Mature     | Connectivity          | Wi-Fi, Bluetooth, hotspot, profiles, ADHD-friendly |
+| vpn_security_interactive           | Mature     | Security/Privacy      | WireGuard/OpenVPN, firewall, neurodivergent UI |
+| mobile_integration_interactive     | Mature     | Integration           | Linux ↔ mobile: sync, notifications, clipboard, remote |
+| privacy_tools_interactive          | Mature     | Privacy/Security      | Nextcloud, VPN, Tor, voice, torrent, ADHD-friendly |
+
+# ---
+
+## wireless_connectivity_interactive.sh (Connectivity, Mature)
+- **Features:**
+  - Unified management for Wi-Fi, Bluetooth, mobile hotspot, and network profiles
+  - Scan/connect/troubleshoot Wi-Fi, pair/manage Bluetooth, create/share hotspots
+  - Save/load/export/import/delete network profiles for different environments
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: Wi-Fi, Bluetooth, hotspot, profiles
+  - Step-by-step connection, troubleshooting, and profile management
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Can coordinate with network management, diagnostics, and mobile integration modules
+- **Neurodivergent Accommodations:**
+  - Simple, focused UI, visual feedback, externalized logic, ADHD-friendly navigation
+- **Notable Scripts/Data:**
+  - Wi-Fi/Bluetooth/hotspot scripts, profile management routines
+- **Status:** Mature, production-ready
+
+## vpn_security_interactive.sh (Security/Privacy, Mature)
+- **Features:**
+  - WireGuard and OpenVPN setup/management, Android-friendly QR config
+  - Firewall configuration (UFW, iptables, firewalld), quick connect/disconnect
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: WireGuard, OpenVPN, quick connect, firewall
+  - Step-by-step VPN setup, import/export, firewall rules, status checks
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with network management, diagnostics, privacy tools
+- **Neurodivergent Accommodations:**
+  - Simple, clear UI, one-click secure connections, ADHD-friendly explanations
+- **Notable Scripts/Data:**
+  - VPN configs, QR code generation, firewall rules, status scripts
+- **Status:** Mature, production-ready
+
+## mobile_integration_interactive.sh (Integration, Mature)
+- **Features:**
+  - Linux ↔ mobile bridge: file sync (Syncthing), notification mirroring, SMS/calls, remote desktop, clipboard, media, automation
+  - KDE Connect, ADB, VNC, SSH, Wake-on-LAN, backup, device discovery
+  - Menu-driven, logs all actions, adaptive learning
+- **Workflows:**
+  - Interactive menu: setup, file transfer, sync, remote control, notifications, automation, troubleshooting
+  - Step-by-step device pairing, sync rule config, remote access, backup
+- **Integrations:**
+  - Uses interactive, error_handling, notification_system, adaptive_learning libs
+  - Integrates with wireless connectivity, network management, privacy tools
+- **Neurodivergent Accommodations:**
+  - Seamless workflow continuity, reduced context switching, ADHD-friendly prompts
+- **Notable Scripts/Data:**
+  - Device/sync configs, ADB/VNC/KDE Connect scripts, backup routines
+- **Status:** Mature, production-ready
+
+## privacy_tools_interactive.sh (Privacy/Security, Mature)
+- **Features:**
+  - Presents mature open-source privacy tools: Nextcloud, VPN, Tor, private voice, safe torrenting
+  - Explains pros/cons, logs choices, allows open-ended input, ADHD-friendly
+  - Menu-driven, logs all actions, setup scripts for Docker, voice, VPN, Tor, torrent
+- **Workflows:**
+  - Interactive menu: Nextcloud, voice, VPN, Tor, torrent, full suite, advanced tools
+  - Step-by-step setup, Docker/native/hosted options, privacy dashboard, aliases
+- **Integrations:**
+  - Uses privacy_tools.sh, integrates with vpn_security, network management, mobile integration
+- **Neurodivergent Accommodations:**
+  - One-stop privacy dashboard, externalized logic, ADHD-friendly explanations, automation
+- **Notable Scripts/Data:**
+  - Docker Compose, voice transcription, VPN status/killswitch, Tor launcher, torrent-safe, privacy dashboard, bash aliases
+- **Status:** Mature, production-ready
+
+# ---
+# (Ensure these sections are in the correct category and summary table is up to date)
+
+# ---
+# (Add to summary table)
+| creative_coding_interactive         | Mature     | Creativity             | Interactive creative coding: Jupyter, p5.js, Processing, Godot, ADHD-friendly |
+| data_hoarding_interactive           | Mature     | Data/Media             | Automated media hoarding: yt-dlp, *arr, Jellyfin, Beets, TagSpaces, ADHD-friendly |
+| defensive_cyber_interactive         | Mature     | Security/Cyber         | Ethical hacking, Kali tools, CTF labs, security monitoring, ADHD-friendly |
+| discord_mod_toolkit_interactive     | Mature     | Community/Moderation   | Discord mod toolkit: bots, automation, analytics, ADHD-friendly workflows |
+
+# ---
+
+## creative_coding_interactive.sh
+- **Features:**
+  - Interactive creative coding suite: Jupyter Notebooks, p5.js (web), Processing (desktop), Godot (game/interactive art), Python creative libraries (matplotlib, PIL, turtle, etc.)
+  - ADHD-friendly: Immediate visual feedback, menu-driven tool selection, creative session patterns, project templates, and aliases for quick launch
+  - Complete creative suite option: Installs and configures all tools, sets up workspace, and provides quick-start aliases
+  - Open-ended input: Option to request advanced tools (Blender, OpenFrameworks, TouchDesigner, etc.) via Claude Code
+- **Cross-module integrations:**
+  - Uses creative_coding.sh for non-interactive logic
+  - Integrates with adaptive_learning for personalized creative plans
+- **Accommodations:**
+  - Visual, step-by-step setup, immediate feedback, modular tool selection, ADHD-friendly session patterns
+- **Notable scripts/templates:**
+  - creative_starter.ipynb, data_art_examples.ipynb (Jupyter)
+  - p5.js starter (index.html, sketch.js)
+  - generative_art.py (Python)
+  - Aliases: jupyter-art, p5, python-art, art
+- **Status:** Mature, production-ready
+
+## data_hoarding_interactive.sh
+- **Features:**
+  - Automated media hoarding: yt-dlp (video/audio downloader), *arr stack (Sonarr/Radarr/Prowlarr), Beets (music librarian), Jellyfin (media server), TagSpaces (file organizer), ExifTool (metadata), Gluetun (VPN)
+  - ADHD-friendly: Set-and-forget automation, visual dashboards, color-coded tags, batch operations, minimal manual intervention
+  - Complete media pipeline: Docker-based orchestration of all tools, full automation, and privacy-first design
+  - Enhancement/upgrade path: Analyzes current setup, suggests improvements, and provides upgrade scripts
+- **Cross-module integrations:**
+  - Uses data_hoarding.sh for non-interactive logic
+  - Integrates with notification, error handling, and system modules
+- **Accommodations:**
+  - Visual/color-coded organization, batch automation, ADHD-friendly aliases, minimal decision fatigue
+- **Notable scripts/templates:**
+  - docker-compose.yml for *arr, Jellyfin, Gluetun, qBittorrent
+  - beets config.yaml, TagSpaces installer, ExifTool batch scripts
+  - Aliases: ytmp3, musicimport, stripdata
+- **Status:** Mature, production-ready
+
+## defensive_cyber_interactive.sh
+- **Features:**
+  - Complete defensive cybersecurity suite: Kali tools, penetration testing, network/web/app/CTF labs, security monitoring, incident response, forensics
+  - Menu-driven: Install tools, set up workspace, create custom scripts, deploy lab environments, run security monitoring, demo skills
+  - Custom automation scripts: recon-target (network recon), web-test (web app testing), crack-hash (password cracking), ctf-helper (CTF challenges), security-monitor (dashboard)
+  - Security lab environments: Docker-based DVWA, vulnerable apps, wordlists, CTF helpers, ethical guidelines
+  - ADHD-friendly: Visual dashboards, step-by-step setup, color-coded outputs, reminders, learning resources
+- **Cross-module integrations:**
+  - Uses interactive.sh, notification system, and adaptive_learning
+  - Integrates with system health, error handling, and logging modules
+- **Accommodations:**
+  - Menu-driven, visual feedback, externalized logic, ADHD-friendly summaries, ethical use reminders
+- **Notable scripts/templates:**
+  - ~/.local/bin/recon-target, web-test, crack-hash, ctf-helper, security-monitor
+  - ~/security-workspace/ (tools, targets, reports, labs, wordlists)
+  - docker-labs/setup-dvwa.sh, README-Labs.md
+- **Status:** Mature, production-ready
+
+## discord_mod_toolkit_interactive.sh
+- **Features:**
+  - Complete Discord moderation toolkit: bot ecosystem (MEE6, Carl-bot, Dyno, custom bots), automation, analytics, server optimization, community management, event planning, advanced moderation techniques
+  - ADHD-friendly: Template responses, automation rules, visual dashboards, time management tools, color-coded roles/channels, sensory accommodations
+  - Quick server setup: Generates optimized server templates for gaming, general, creative, or support communities
+  - Custom bot development: Python/JavaScript bot workshop, example code, hosting tips
+  - Analytics dashboard: Statbot, Google Sheets, Grafana integration, ADHD-friendly dashboard tips
+- **Cross-module integrations:**
+  - Uses interactive.sh, notification system, and adaptive_learning
+  - Integrates with productivity, analytics, and system modules
+- **Accommodations:**
+  - Visual, color-coded, template-driven, automation-first, ADHD-friendly moderation strategies
+- **Notable scripts/templates:**
+  - Server/channel/role templates, moderation analytics dashboard, bot code examples
+  - Quick server setup wizard, advanced moderation guide
+- **Status:** Mature, production-ready
+
+# ---
+
+# ---
+# (Add to summary table)
+| file_mastery_interactive            | Mature     | Productivity/Files      | Lightning-fast search, AI organization, advanced copying, multi-drive, ADHD-friendly |
+| finance_management_interactive      | Mature     | Finance/Business        | Personal/business finance, SQLite DB, budgets, goals, tax prep, ADHD-friendly |
+| personal_analytics_dashboard        | Mature     | Analytics/Productivity  | Life tracking, ADHD-friendly personal metrics, pattern analysis, business integration |
+| productivity_suite_interactive      | Mature     | Productivity            | ADHD-friendly productivity toolkit, task/project/knowledge tools, Google Tasks |
+
+# ---
+
+## file_mastery_interactive.sh
+- **Features:**
+  - Lightning-fast file search: fd, ripgrep, fzf, locate, Everything-style instant search
+  - AI-powered file organization: Smart categorization, duplicate detection, project-based organization, intelligent naming
+  - Advanced file operations: rsync-based copying (TeraCopy-style), bulk renaming (PowerRename), AI rename suggestions, verified transfers
+  - Visual file management: ranger, nnn, mc, tree, ncdu, disk usage analytics, multi-drive management, Steam library management, multi-monitor setup
+  - Windows-style shortcuts and aliases for power users
+  - Multi-drive storage management: bind mounts, Steam library, autorandr, Ubuntu cleanup, analytics
+- **Cross-module integrations:**
+  - Uses interactive.sh, notification system, error handling, and system health modules
+  - Integrates with AI (Claude) for organization/rename suggestions
+- **Accommodations:**
+  - Visual, menu-driven, color-coded, ADHD-friendly shortcuts, externalized logic, power-user commands
+- **Notable scripts/templates:**
+  - ~/.local/bin/everything, search-content, find-interactive, organize-files-ai, teracopy, bulk-rename, bulk-rename-ai, drive-manager
+  - ~/.local/share/applications/file-mastery-tools.desktop
+  - Aliases: ff, search, copy, organize, fm, space, etc.
+- **Status:** Mature, production-ready
+
+## finance_management_interactive.sh
+- **Features:**
+  - Personal and business finance management: income, expenses, budgets, goals, tax prep
+  - SQLite DB for robust, queryable data storage (income, expenses, budgets, goals, tax items)
+  - ADHD-friendly dashboard: quick overview, budget status, recent transactions, goals progress
+  - Business split: VRBO, EdBoiGames, personal finances tracked separately
+  - Quick actions: add income/expense, manage budgets/goals, generate reports, tax prep tools
+  - Financial report generator: Markdown reports, business performance, recommendations
+- **Cross-module integrations:**
+  - Uses error_handling, notification_system, data_persistence, interactive.sh
+  - Cross-links with VRBO and EdBoiGames modules for business revenue/expense tracking
+- **Accommodations:**
+  - Visual dashboard, color-coded budget status, reminders, ADHD-friendly quick capture, actionable insights
+- **Notable scripts/templates:**
+  - ~/.bill-sloth/finance/ (receipts, reports, budgets, taxes)
+  - finance.db (SQLite schema for all finance data)
+  - Markdown report generator
+- **Status:** Mature, production-ready
+
+## personal_analytics_dashboard.sh
+- **Features:**
+  - Life tracking and productivity insights: daily mood, energy, productivity, sleep, business activity, task completion
+  - SQLite DB for personal metrics, task analytics, business analytics, pattern insights
+  - ADHD-friendly dashboard: daily snapshot, weekly trends, business metrics, AI-generated insights
+  - Quick actions: log daily metrics, update tasks, log business activity, generate reports, analyze patterns, set goals
+  - Weekly report generator: Markdown reports with trends, business performance, insights, recommendations
+- **Cross-module integrations:**
+  - Uses error_handling, notification_system, data_persistence, interactive.sh
+  - Pulls data from VRBO, EdBoiGames, and task modules for integrated analytics
+- **Accommodations:**
+  - Visual, quick-capture menus, reminders, ADHD-friendly summaries, actionable insights
+- **Notable scripts/templates:**
+  - ~/.bill-sloth/analytics/ (daily, weekly, monthly, insights)
+  - personal_metrics.db (SQLite schema for all analytics)
+  - Markdown report generator
+- **Status:** Mature, production-ready
+
+## productivity_suite_interactive.sh
+- **Features:**
+  - ADHD-friendly productivity toolkit: Taskwarrior (CLI), Super Productivity (GUI), Logseq (second brain), Kanboard (visual project management), ADHD Memory Palace (external brain), Google Tasks integration
+  - Menu-driven: Presents mature open-source tools, explains pros/cons, logs choices, allows open-ended input
+  - Google Tasks automation: CLI wrapper, smart task management, local backup, integration with Bill Sloth workflows
+  - Complete productivity ecosystem: Option to install/configure all tools for seamless workflow
+  - Custom scripts and aliases for quick capture, task management, and memory aids
+- **Cross-module integrations:**
+  - Uses productivity_suite.sh, error_handling, interactive.sh
+  - Integrates with automation_mastery_interactive.sh for Google Tasks
+  - Can coordinate with analytics, finance, and business modules
+- **Accommodations:**
+  - Visual/ASCII menus, dopamine feedback, external brain capture, urgency scoring, ADHD-specific memory tools
+- **Notable scripts/templates:**
+  - ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh
+  - ~/MemoryPalace/Scripts/brain-dump, productivity-hub, ADHD-friendly aliases
+  - Docker Compose for Kanboard, AppImage/Flatpak for Super Productivity/Logseq
+- **Status:** Mature, production-ready
+
+# ---
+
+# ---
+# (Add to summary table)
+| streaming_setup_interactive        | Mature     | Streaming/Media        | SweatyPedals-level streaming automation, pro audio, multiplatform, ADHD-friendly |
+| system_ops_interactive             | Mature     | System/Ops             | Interactive system toolkit: VisiData, TLDR, Zeal, Glances, Cockpit, ADHD-friendly |
+# ---
+
+## streaming_setup_interactive.sh (Streaming/Media)
+**Status:** Mature
+
+- **Features & Workflows:**
+  - Interactive assistant for building a "SweatyPedals-level" streaming automation empire.
+  - Personalized streaming plan generator (hardware, goals, automation needs).
+  - Menu-driven selection of automation paths: OBS Studio + Advanced Scene Switcher, pro audio (PipeWire, Carla), multiplatform RTMP, MIDI control, voice control, remote streaming, and more.
+  - Each option includes detailed explanations, ADHD-friendly breakdowns, and step-by-step install/usage guides.
+  - Hardware shopping guide for all budget levels.
+  - All actions and choices are logged for repeatability and tracking.
+- **Cross-Module Integrations:**
+  - Sources non-interactive streaming_setup.sh for core logic.
+  - Integrates with system audio, OBS, MQTT, and external tools (nginx, ffmpeg, Carla, etc.).
+- **ADHD/ND Accommodations:**
+  - Visual, step-by-step guidance for every automation path.
+  - Menu-driven, low-cognitive-load interface.
+  - Preset scripts and aliases for instant setup (audio-stream, audio-game, etc.).
+  - Hardware recommendations and "start simple, upgrade as you grow" philosophy.
+- **Notable Scripts/Templates:**
+  - Carla project templates for pro/gaming audio chains.
+  - Bash scripts for activating streaming, gaming, recording, and monitoring audio modes.
+  - Audio effect presets for voice and gaming comms.
+  - Desktop launcher for Audio Control Center.
+  - Bash aliases for all major audio/streaming actions.
+- **Unique Logic:**
+  - Personalized plan generation based on user input.
+  - Pro/ADHD-friendly explanations for every tool and workflow.
+  - All-in-one automation, from basic to "hardcore" setups.
+
+---
+
+## system_ops_interactive.sh (System/Ops)
+**Status:** Mature
+
+- **Features & Workflows:**
+  - Interactive system operations toolkit for Linux (and cross-platform where possible).
+  - Menu-driven selection of mature open-source tools for system monitoring, cleaning, troubleshooting, and documentation.
+  - Tools include: VisiData (data exploration), TLDR (command cheat sheets), Zeal (offline docs), Glances (system monitor), Stacer (system cleaner), Cockpit (web-based management), and a "complete suite" installer.
+  - GitHub authentication setup (PAT, SSH, credential management) with step-by-step, ADHD-friendly guidance.
+  - All actions and choices are logged for repeatability and tracking.
+- **Cross-Module Integrations:**
+  - Sources system_ops.sh for core logic.
+  - Integrates with lib/error_handling.sh and lib/interactive.sh for robust error handling and user interaction.
+  - GitHub integration for Claude Code workflows and repo management.
+- **ADHD/ND Accommodations:**
+  - Visual, menu-driven interface for all system tools.
+  - Step-by-step, low-cognitive-load setup for each tool.
+  - Aliases for all major tools (data, docs, monitor, howto, examples, logs, processes).
+  - Explanations for why each tool is ADHD-friendly.
+- **Notable Scripts/Templates:**
+  - Bash aliases for all system tools and quick reference patterns.
+  - Secure credential storage for GitHub integration.
+  - Automated installation and configuration for all tools.
+- **Unique Logic:**
+  - "Digital mechanic" metaphor and ADHD-friendly explanations throughout.
+  - Complete suite installer for one-command setup of all system ops tools.
+  - Claude Code integration for advanced/edge-case system tools.
+
+---
+
+## streaming_setup.sh (Referenced by streaming_setup_interactive.sh)
+**Role:** Core logic and utility functions for streaming automation
+
+- **Key Functions:**
+  - `install_obs`: Installs OBS Studio and virtual camera support.
+  - `setup_audio_routing`: Sets up virtual audio devices and routing for streaming.
+  - `obs_scene_templates`: Provides ready-to-use scene layout ideas for different streaming scenarios (gaming, coding, chatting, creative).
+  - `create_stream_command`: Installs a quick-launch `stream` command for instant streaming mode (launches OBS, audio mixer, and tips).
+- **Integration:**
+  - All functions are sourced and used by the interactive module for seamless, step-by-step automation.
+  - Ensures that the interactive experience is backed by robust, reusable shell logic.
+- **Notable Templates:**
+  - Bash script for `~/bin/stream` with ADHD-friendly tips and ATHF easter eggs.
+
+---
+
+## system_ops.sh (Referenced by system_ops_interactive.sh)
+**Role:** Core system maintenance, repair, and health-check logic
+
+- **Key Functions:**
+  - `update_everything`: Updates all system packages (apt, snap, flatpak), and Ollama models if present, with colorful, ADHD-friendly output and ATHF easter eggs.
+  - `fix_audio`: Repairs audio subsystems (PulseAudio, ALSA, PipeWire) with clear, step-by-step feedback.
+  - `fix_network`: Restores network connectivity (NetworkManager, DHCP) with playful, neurodivergent-friendly metaphors.
+  - `fix_display`: Diagnoses and provides emergency steps for display/server issues.
+  - `check_system_health`: Runs a full system diagnostic (CPU, RAM, disk, GPU), with fun commentary and health assessment.
+  - `show_menu`: Provides a clear, color-coded, ADHD-friendly menu for all maintenance protocols.
+- **Integration:**
+  - All functions are called by the interactive module for a seamless, menu-driven repair and maintenance experience.
+  - Sourced ATHF easter eggs for humor and engagement.
+- **Notable Templates:**
+  - Colorful, emoji-rich output for every function.
+  - Menu-driven main loop for continuous system maintenance.
+
+---
+
+## Core Utility Libraries
+
+### lib/interactive.sh
+**Purpose:** Provides a standardized, ADHD-friendly interactive shell UX for all modules.
+
+- **Key Features:**
+  - Secure, sanitized user prompts (with fallback if input_sanitization is unavailable).
+  - Themed ASCII art banners for context switching (Gaming, AI, Productivity, etc.).
+  - Menu/choice helpers with validation and error feedback.
+  - Logging of user choices with timestamps for auditability.
+  - Completion messages and next-step guidance.
+  - Exported functions for easy use in any module.
+- **Role in System:**
+  - Reduces boilerplate and ensures a consistent, accessible, and visually engaging experience across all interactive modules.
+
+### lib/error_handling.sh
+**Purpose:** Delivers robust, consistent error handling and feedback for all scripts and modules.
+
+- **Key Features:**
+  - Color-coded logging for errors, warnings, info, success, debug, progress, and steps.
+  - Log file support for persistent error tracking.
+  - Fatal error handling with safe exit.
+  - Command wrappers for error-checked execution and retry with exponential backoff.
+  - Required command checks, safe directory creation, and file backup utilities.
+  - User prompts with timeout and confirmation, plus ADHD-friendly progress indicators.
+  - Visual section headers and separators for clarity.
+  - Self-test function for library validation.
+- **Role in System:**
+  - Ensures all modules provide clear, actionable, and neurodivergent-friendly feedback, making troubleshooting and usage safer and more transparent.
+
+### lib/input_sanitization.sh
+**Purpose:** Ensures all user input, file paths, and commands are safely sanitized to prevent injection and security issues.
+
+- **Key Features:**
+  - Functions to sanitize user input, file paths, and filenames (removes dangerous characters, enforces length, and restricts directory access).
+  - Email and URL validation, integer sanitization, and safe command execution (whitelisting allowed commands).
+  - Secure prompt helpers for safe, length-limited, and optionally space-allowed input.
+  - Security event logging and malicious input detection (logs suspicious patterns for audit).
+  - Safe directory and file creation utilities.
+- **Role in System:**
+  - Underpins all interactive modules and utilities, providing a robust security layer for user-driven workflows and automation.
+
+### lib/module_health_checker.sh
+**Purpose:** Automated health checker for all Bill Sloth modules and system dependencies.
+
+- **Key Features:**
+  - Validates syntax of every module, checks for missing dependencies, and verifies required commands.
+  - Checks directory structure and core system tools (bash, git, curl, jq, sqlite3, etc.).
+  - Color-coded, ADHD-friendly output for critical, warning, info, and success states.
+  - Summarizes issues and provides actionable next steps for fixing problems.
+  - Exported functions for integration with other scripts and CI pipelines.
+- **Role in System:**
+  - Ensures system reliability, maintainability, and rapid troubleshooting by providing a single command for comprehensive health diagnostics.
+
+</rewritten_file>

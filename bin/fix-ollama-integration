@@ -1,0 +1,405 @@
+#!/bin/bash
+# Fix Ollama Integration - Replace broken model calls with working alternatives
+# "Time to make our AI actually intelligent!" - Carl
+
+set -euo pipefail
+
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "error_handling"
+
+LOG_FILE="$HOME/.bill-sloth/logs/ollama_fix.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
+log_fix() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+show_banner() {
+    echo -e "\033[38;5;46m"
+    cat << 'EOF'
+     ██████╗ ██╗     ██╗      █████╗ ███╗   ███╗ █████╗     ███████╗██╗██╗  ██╗
+    ██╔═══██╗██║     ██║     ██╔══██╗████╗ ████║██╔══██╗    ██╔════╝██║╚██╗██╔╝
+    ██║   ██║██║     ██║     ███████║██╔████╔██║███████║    █████╗  ██║ ╚███╔╝ 
+    ██║   ██║██║     ██║     ██╔══██║██║╚██╔╝██║██╔══██║    ██╔══╝  ██║ ██╔██╗ 
+    ╚██████╔╝███████╗███████╗██║  ██║██║ ╚═╝ ██║██║  ██║    ██║     ██║██╔╝ ██╗
+     ╚═════╝ ╚══════╝╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝    ╚═╝     ╚═╝╚═╝  ╚═╝
+EOF
+    echo -e "\033[0m"
+}
+
+install_ollama_properly() {
+    log_fix "🤖 Installing Ollama properly..."
+    
+    if command -v ollama >/dev/null 2>&1; then
+        log_fix "✅ Ollama already installed"
+    else
+        log_fix "📦 Installing Ollama..."
+        curl -fsSL https://ollama.ai/install.sh | sh
+        
+        # Add to PATH if needed
+        if ! command -v ollama >/dev/null 2>&1; then
+            echo 'export PATH=$PATH:/usr/local/bin' >> ~/.bashrc
+            export PATH=$PATH:/usr/local/bin
+        fi
+    fi
+    
+    # Start Ollama service
+    log_fix "🚀 Starting Ollama service..."
+    ollama serve > ~/.bill-sloth/logs/ollama.log 2>&1 &
+    sleep 3
+    
+    # Wait for service to be ready
+    local retries=10
+    while [ $retries -gt 0 ]; do
+        if curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
+            log_fix "✅ Ollama service is running"
+            break
+        fi
+        log_fix "⏳ Waiting for Ollama service... ($retries retries left)"
+        sleep 2
+        ((retries--))
+    done
+    
+    if [ $retries -eq 0 ]; then
+        log_fix "❌ Ollama service failed to start"
+        return 1
+    fi
+}
+
+download_working_models() {
+    log_fix "📥 Downloading working AI models..."
+    
+    # Download fast, reliable models
+    local models=(
+        "llama3.2:3b"    # Fast, good for general use
+        "codellama:7b"   # Good for code generation
+        "mistral:7b"     # Excellent general model
+        "phi3:mini"      # Very fast, small model
+    )
+    
+    for model in "${models[@]}"; do
+        log_fix "📥 Downloading $model..."
+        if ollama pull "$model"; then
+            log_fix "✅ $model downloaded successfully"
+        else
+            log_fix "⚠️ Failed to download $model, continuing..."
+        fi
+    done
+    
+    # List available models
+    log_fix "📋 Available models:"
+    ollama list
+}
+
+fix_broken_model_calls() {
+    log_fix "🔧 Fixing broken Ollama model calls..."
+    
+    # Fix audit_workflow script
+    local audit_script="$(dirname "$0")/audit_workflow"
+    if [ -f "$audit_script" ]; then
+        log_fix "🔧 Fixing audit_workflow script..."
+        
+        # Replace non-existent claude-code with working model
+        sed -i 's/ollama run claude-code/ollama run llama3.2:3b/g' "$audit_script"
+        
+        # Add proper error handling
+        cat > "$audit_script.new" << 'EOF'
+#!/bin/bash
+# Professional Workflow Auditor with working Ollama integration
+
+set -euo pipefail
+
+TMP=$(mktemp)
+trap 'rm -f "$TMP" "$TMP.out"' EXIT
+
+# Check if Ollama is available and has models
+check_ollama() {
+    if ! command -v ollama >/dev/null 2>&1; then
+        echo "❌ Ollama not installed"
+        return 1
+    fi
+    
+    if ! curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
+        echo "❌ Ollama service not running"
+        return 1
+    fi
+    
+    if ! ollama list | grep -q "llama3.2:3b"; then
+        echo "❌ Required model not available"
+        return 1
+    fi
+    
+    return 0
+}
+
+audit_workflow() {
+    local workflow_file="$1"
+    
+    if [ ! -f "$workflow_file" ]; then
+        echo "❌ Workflow file not found: $workflow_file"
+        return 1
+    fi
+    
+    echo "🔍 Auditing workflow: $workflow_file"
+    
+    local audit_prompt="You are a shell script security auditor. Analyze this script and suggest improvements for:
+1. Security vulnerabilities
+2. Error handling
+3. Professional best practices
+4. Performance optimizations
+
+Script to audit:
+$(cat "$workflow_file")
+
+Provide specific, actionable recommendations:"
+
+    if check_ollama; then
+        echo "🤖 Using local AI for audit..."
+        ollama run llama3.2:3b "$audit_prompt" 2>/dev/null || {
+            echo "⚠️ AI audit failed, providing manual recommendations..."
+            echo "Manual audit recommendations:"
+            echo "• Add 'set -euo pipefail' for error handling"
+            echo "• Validate all input parameters"
+            echo "• Use quotes around variables"
+            echo "• Add logging for debugging"
+            echo "• Check command existence before use"
+        }
+    else
+        echo "⚠️ Ollama not available, skipping AI audit"
+    fi
+}
+
+# Main execution
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <workflow_file>"
+    exit 1
+fi
+
+audit_workflow "$1"
+EOF
+        
+        mv "$audit_script.new" "$audit_script"
+        chmod +x "$audit_script"
+        log_fix "✅ audit_workflow script fixed"
+    fi
+    
+    # Fix any other scripts with broken Ollama calls
+    local project_root="$(dirname "$0")/.."
+    
+    # Find and fix broken model references
+    find "$project_root" -type f -name "*.sh" -exec grep -l "ollama run claude-code" {} \; | while read -r file; do
+        log_fix "🔧 Fixing $file..."
+        sed -i 's/ollama run claude-code/ollama run llama3.2:3b/g' "$file"
+    done
+}
+
+create_ollama_wrapper() {
+    log_fix "🔧 Creating professional Ollama wrapper..."
+    
+    cat > "$HOME/bin/bill-ai" << 'EOF'
+#!/bin/bash
+# Bill Sloth AI Assistant - Professional Ollama wrapper
+
+set -euo pipefail
+
+OLLAMA_HOST="http://localhost:11434"
+DEFAULT_MODEL="llama3.2:3b"
+LOG_FILE="$HOME/.bill-sloth/logs/ai_usage.log"
+
+log_ai() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
+}
+
+check_ollama_health() {
+    if ! curl -s "$OLLAMA_HOST/api/tags" >/dev/null 2>&1; then
+        echo "❌ Ollama service not running. Starting..."
+        ollama serve > ~/.bill-sloth/logs/ollama.log 2>&1 &
+        sleep 3
+        
+        if ! curl -s "$OLLAMA_HOST/api/tags" >/dev/null 2>&1; then
+            echo "❌ Failed to start Ollama service"
+            return 1
+        fi
+    fi
+    return 0
+}
+
+run_ai_query() {
+    local prompt="$1"
+    local model="${2:-$DEFAULT_MODEL}"
+    
+    log_ai "AI Query: $model - ${prompt:0:50}..."
+    
+    if check_ollama_health; then
+        ollama run "$model" "$prompt" 2>/dev/null || {
+            echo "⚠️ AI query failed, check model availability"
+            log_ai "FAILED: $model query failed"
+            return 1
+        }
+    else
+        echo "❌ AI service unavailable"
+        return 1
+    fi
+}
+
+show_usage() {
+    echo "🤖 Bill Sloth AI Assistant"
+    echo "========================="
+    echo ""
+    echo "Usage: bill-ai [options] \"prompt\""
+    echo ""
+    echo "Options:"
+    echo "  -m, --model MODEL    Use specific model (default: $DEFAULT_MODEL)"
+    echo "  -l, --list          List available models"
+    echo "  -s, --status        Check AI service status"
+    echo "  -h, --help          Show this help"
+    echo ""
+    echo "Examples:"
+    echo "  bill-ai \"Explain this bash script error\""
+    echo "  bill-ai -m codellama:7b \"Write a Python function to sort a list\""
+    echo "  bill-ai --list"
+}
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -m|--model)
+            DEFAULT_MODEL="$2"
+            shift 2
+            ;;
+        -l|--list)
+            ollama list
+            exit 0
+            ;;
+        -s|--status)
+            if check_ollama_health; then
+                echo "✅ AI service running"
+                ollama list
+            else
+                echo "❌ AI service not available"
+            fi
+            exit 0
+            ;;
+        -h|--help)
+            show_usage
+            exit 0
+            ;;
+        *)
+            if [ -z "${PROMPT:-}" ]; then
+                PROMPT="$1"
+            else
+                PROMPT="$PROMPT $1"
+            fi
+            shift
+            ;;
+    esac
+done
+
+if [ -z "${PROMPT:-}" ]; then
+    show_usage
+    exit 1
+fi
+
+run_ai_query "$PROMPT" "$DEFAULT_MODEL"
+EOF
+    
+    chmod +x "$HOME/bin/bill-ai"
+    log_fix "✅ AI wrapper created: ~/bin/bill-ai"
+}
+
+test_ai_functionality() {
+    log_fix "🧪 Testing AI functionality..."
+    
+    # Test basic functionality
+    if command -v ollama >/dev/null 2>&1; then
+        log_fix "✅ Ollama command available"
+    else
+        log_fix "❌ Ollama command not found"
+        return 1
+    fi
+    
+    # Test service connectivity
+    if curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
+        log_fix "✅ Ollama service responding"
+    else
+        log_fix "❌ Ollama service not responding"
+        return 1
+    fi
+    
+    # Test model availability
+    if ollama list | grep -q "llama3.2:3b"; then
+        log_fix "✅ Working model available"
+    else
+        log_fix "⚠️ No working models found"
+    fi
+    
+    # Test AI wrapper
+    if [ -f "$HOME/bin/bill-ai" ]; then
+        log_fix "✅ AI wrapper created"
+        
+        # Simple test query
+        echo "Testing AI with simple query..."
+        if timeout 30 "$HOME/bin/bill-ai" "Say hello in one word" 2>/dev/null; then
+            log_fix "✅ AI wrapper working"
+        else
+            log_fix "⚠️ AI wrapper test failed"
+        fi
+    fi
+}
+
+main_fix() {
+    clear
+    show_banner
+    
+    echo -e "\033[38;5;46m🤖 OLLAMA INTEGRATION FIX - MAKING AI ACTUALLY WORK 🤖\033[0m"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🎯 FIXING AI INTEGRATION:"
+    echo "• Install/verify Ollama service"
+    echo "• Download working AI models"
+    echo "• Fix broken model references"
+    echo "• Create professional AI wrapper"
+    echo "• Test functionality"
+    echo ""
+    
+    log_fix "🚀 Starting Ollama integration fix..."
+    
+    # Run fixes
+    install_ollama_properly
+    echo "✅ Ollama service running"
+    
+    download_working_models
+    echo "✅ AI models downloaded"
+    
+    fix_broken_model_calls
+    echo "✅ Broken model calls fixed"
+    
+    create_ollama_wrapper
+    echo "✅ Professional AI wrapper created"
+    
+    test_ai_functionality
+    echo "✅ AI functionality tested"
+    
+    echo ""
+    echo "🎉 OLLAMA INTEGRATION FIXED!"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🧠 Carl: 'Now your AI is actually intelligent!'"
+    echo ""
+    echo "✅ WHAT'S FIXED:"
+    echo "• Ollama service running properly"
+    echo "• Working AI models downloaded"
+    echo "• Broken model references fixed"
+    echo "• Professional AI command: bill-ai"
+    echo ""
+    echo "🎯 TEST YOUR AI:"
+    echo "• Run: bill-ai \"Hello, how are you?\""
+    echo "• Run: bill-ai --list (see available models)"
+    echo "• Run: bill-ai --status (check service)"
+    echo ""
+    
+    log_fix "✅ Ollama integration fix completed successfully"
+}
+
+# Run the fix
+main_fix

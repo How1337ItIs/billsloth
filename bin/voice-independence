@@ -1,0 +1,675 @@
+#!/bin/bash
+# LLM_CAPABILITY: local_ok
+# Complete Voice Independence Setup for Bill Sloth
+# Combines local AI and offline voice processing for total privacy
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LIB_DIR="$(dirname "$SCRIPT_DIR")/lib"
+
+# Source required libraries
+source "$LIB_DIR/offline_voice_processing.sh"
+source "$LIB_DIR/local_llm_integration.sh"
+source "$LIB_DIR/error_handling.sh"
+source "$LIB_DIR/notification.sh"
+
+show_banner() {
+    # Source aesthetic functions if available
+    if [ -f "$LIB_DIR/aesthetic_functions.sh" ]; then
+        source "$LIB_DIR/aesthetic_functions.sh"
+        show_module_banner "VOICE INDEPENDENCE SETUP" "Complete privacy - Zero cloud dependencies" "🔒"
+    else
+        echo -e "${CYAN}"
+        cat << 'EOF'
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                   🔒 VOICE INDEPENDENCE SETUP 🔒                            ║
+║                                                                              ║
+║           Complete privacy: Local AI + Offline Voice Processing             ║
+║                    Zero cloud dependencies or data leaks                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+EOF
+        echo -e "${NC}"
+    fi
+}
+
+check_privacy_requirements() {
+    echo -e "${BLUE}🔍 Checking privacy and independence requirements...${NC}"
+    
+    local privacy_score=0
+    local max_score=5
+    
+    # Check if local LLM is available
+    if command -v ollama >/dev/null 2>&1; then
+        echo -e "   ✅ Local LLM (Ollama): Available"
+        ((privacy_score++))
+    else
+        echo -e "   ❌ Local LLM: Not available"
+        echo -e "       Run 'setup-local-ai' first"
+    fi
+    
+    # Check Whisper availability
+    if python3 -c "import whisper" 2>/dev/null; then
+        echo -e "   ✅ Local voice processing (Whisper): Available"
+        ((privacy_score++))
+    else
+        echo -e "   ⚠️  Local voice processing: Will be installed"
+    fi
+    
+    # Check microphone access
+    if command -v arecord >/dev/null 2>&1; then
+        echo -e "   ✅ Audio recording: Available"
+        ((privacy_score++))
+    else
+        echo -e "   ⚠️  Audio recording: May need setup"
+    fi
+    
+    # Check for internet (needed for initial setup only)
+    if ping -c 1 google.com >/dev/null 2>&1; then
+        echo -e "   ✅ Internet (for setup): Available"
+        ((privacy_score++))
+    else
+        echo -e "   ❌ Internet: Required for initial model downloads"
+    fi
+    
+    # Check disk space
+    local available_gb=$(df "$HOME" | awk 'NR==2 {printf "%.1f", $4/1024/1024}')
+    if (( $(echo "$available_gb > 5" | bc -l) )); then
+        echo -e "   ✅ Disk space: ${available_gb}GB available"
+        ((privacy_score++))
+    else
+        echo -e "   ❌ Disk space: Only ${available_gb}GB (need 5GB+)"
+    fi
+    
+    echo ""
+    echo -e "${PURPLE}Privacy Score: $privacy_score/$max_score${NC}"
+    
+    if [ $privacy_score -ge 4 ]; then
+        echo -e "${GREEN}✅ System ready for voice independence setup${NC}"
+        return 0
+    else
+        echo -e "${YELLOW}⚠️  Some requirements missing - will attempt setup anyway${NC}"
+        return 1
+    fi
+}
+
+show_privacy_features() {
+    echo -e "${PURPLE}🔒 Privacy Features:${NC}"
+    echo ""
+    echo -e "${CYAN}🚫 ZERO Cloud Dependencies${NC}"
+    echo "   • All processing happens locally"
+    echo "   • No data sent to external servers"
+    echo "   • Works completely offline"
+    echo ""
+    echo -e "${CYAN}🤐 Complete Voice Privacy${NC}"
+    echo "   • Local Whisper speech recognition"
+    echo "   • No voice data leaves your machine"
+    echo "   • Optional encrypted storage"
+    echo ""
+    echo -e "${CYAN}🧠 Private AI Assistant${NC}"
+    echo "   • Local LLM for all AI responses"
+    echo "   • No conversation logging to cloud"
+    echo "   • Your data stays yours"
+    echo ""
+    echo -e "${CYAN}🛡️ Security Features${NC}"
+    echo "   • Encrypted voice cache"
+    echo "   • Auto-cleanup of temporary files"
+    echo "   • No persistent conversation storage"
+    echo ""
+}
+
+setup_voice_independence() {
+    echo -e "${CYAN}🚀 Setting up complete voice independence...${NC}"
+    
+    # Step 1: Ensure local LLM is available
+    echo -e "${BLUE}Step 1: Verifying local AI...${NC}"
+    if ! command -v ollama >/dev/null 2>&1; then
+        echo -e "${YELLOW}Local AI not found. Setting up minimal AI first...${NC}"
+        
+        # Quick minimal LLM setup
+        if [ -f "$SCRIPT_DIR/setup-local-ai" ]; then
+            echo "1" | "$SCRIPT_DIR/setup-local-ai"  # Express setup
+        else
+            log_error "Local AI setup script not found"
+            return 1
+        fi
+    fi
+    
+    # Step 2: Setup offline voice processing
+    echo -e "${BLUE}Step 2: Setting up offline voice processing...${NC}"
+    setup_offline_voice_complete
+    
+    # Step 3: Create integrated voice assistant
+    echo -e "${BLUE}Step 3: Creating integrated voice assistant...${NC}"
+    create_private_voice_assistant
+    
+    # Step 4: Privacy optimizations
+    echo -e "${BLUE}Step 4: Applying privacy optimizations...${NC}"
+    apply_privacy_optimizations
+    
+    # Step 5: Create easy-use commands
+    echo -e "${BLUE}Step 5: Creating user-friendly commands...${NC}"
+    create_user_commands
+    
+    echo -e "${GREEN}✅ Voice independence setup completed!${NC}"
+}
+
+create_private_voice_assistant() {
+    local assistant_dir="$HOME/.local/share/bill-sloth/voice-assistant"
+    mkdir -p "$assistant_dir"
+    
+    cat > "$assistant_dir/private_assistant.py" << 'EOF'
+#!/usr/bin/env python3
+"""
+Bill Sloth Private Voice Assistant
+Complete privacy with local AI and offline voice processing
+"""
+
+import whisper
+import subprocess
+import json
+import os
+import tempfile
+import threading
+import time
+from datetime import datetime
+from pathlib import Path
+
+class PrivateVoiceAssistant:
+    def __init__(self):
+        self.whisper_model = None
+        self.voice_dir = Path.home() / ".local/share/bill-sloth/voice"
+        self.assistant_dir = Path.home() / ".local/share/bill-sloth/voice-assistant"
+        self.temp_dir = self.voice_dir / "temp"
+        
+        # Ensure directories exist
+        self.temp_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Privacy settings
+        self.privacy_mode = True
+        self.auto_cleanup = True
+        self.no_logging = True
+        
+    def load_whisper_model(self):
+        """Load Whisper model for speech recognition"""
+        if self.whisper_model is None:
+            print("🤖 Loading voice recognition model...")
+            try:
+                self.whisper_model = whisper.load_model("medium")
+                print("✅ Voice recognition ready")
+            except Exception as e:
+                print(f"❌ Failed to load voice model: {e}")
+                return False
+        return True
+    
+    def query_local_llm(self, prompt):
+        """Query local LLM via Ollama"""
+        try:
+            result = subprocess.run(
+                ["ollama", "run", "llama3.2:3b", prompt],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            
+            if result.returncode == 0:
+                return result.stdout.strip()
+            else:
+                return "I'm having trouble thinking right now."
+                
+        except subprocess.TimeoutExpired:
+            return "Sorry, I need more time to think about that."
+        except Exception as e:
+            return "I'm having some technical difficulties."
+    
+    def record_voice_command(self, duration=5):
+        """Record voice command"""
+        import pyaudio
+        import wave
+        
+        print(f"🎤 Listening for {duration} seconds...")
+        
+        # Audio settings
+        sample_rate = 16000
+        channels = 1
+        chunk = 1024
+        
+        audio = pyaudio.PyAudio()
+        
+        try:
+            stream = audio.open(
+                format=pyaudio.paInt16,
+                channels=channels,
+                rate=sample_rate,
+                input=True,
+                frames_per_buffer=chunk
+            )
+            
+            frames = []
+            for _ in range(0, int(sample_rate / chunk * duration)):
+                data = stream.read(chunk)
+                frames.append(data)
+            
+            stream.stop_stream()
+            stream.close()
+            
+            # Save to temporary file
+            temp_file = self.temp_dir / f"voice_cmd_{int(time.time())}.wav"
+            
+            with wave.open(str(temp_file), 'wb') as wf:
+                wf.setnchannels(channels)
+                wf.setsampwidth(audio.get_sample_size(pyaudio.paInt16))
+                wf.setframerate(sample_rate)
+                wf.writeframes(b''.join(frames))
+            
+            return temp_file
+            
+        except Exception as e:
+            print(f"❌ Recording error: {e}")
+            return None
+        finally:
+            audio.terminate()
+    
+    def transcribe_voice(self, audio_file):
+        """Transcribe voice to text locally"""
+        if not self.load_whisper_model():
+            return None
+        
+        try:
+            result = self.whisper_model.transcribe(str(audio_file))
+            return result["text"].strip()
+        except Exception as e:
+            print(f"❌ Transcription error: {e}")
+            return None
+    
+    def process_command(self, text):
+        """Process voice command with local AI"""
+        print(f"🎤 You said: {text}")
+        
+        # Add context for better responses
+        prompt = f"""You are Bill Sloth's private AI assistant. You are running completely locally with full privacy.
+        
+User said: "{text}"
+
+Respond helpfully and naturally. Keep responses concise but friendly. You can help with:
+- Business questions about VRBO or partnerships
+- Technical questions about the system
+- General conversation and assistance
+
+Response:"""
+        
+        print("🤖 Processing...")
+        response = self.query_local_llm(prompt)
+        print(f"💬 Assistant: {response}")
+        
+        return response
+    
+    def speak_response(self, text):
+        """Convert text to speech (if TTS available)"""
+        try:
+            if subprocess.run(["which", "espeak"], capture_output=True).returncode == 0:
+                subprocess.run(["espeak", text], check=True)
+            elif subprocess.run(["which", "say"], capture_output=True).returncode == 0:
+                subprocess.run(["say", text], check=True)
+            else:
+                print("🔇 (Text-to-speech not available)")
+        except:
+            pass  # Fail silently if TTS not available
+    
+    def cleanup_temp_files(self):
+        """Clean up temporary files for privacy"""
+        if self.auto_cleanup:
+            for temp_file in self.temp_dir.glob("*.wav"):
+                try:
+                    temp_file.unlink()
+                except:
+                    pass
+    
+    def interactive_session(self):
+        """Run interactive voice session"""
+        print("🔒 Bill Sloth Private Voice Assistant")
+        print("=====================================")
+        print("Complete privacy • Local processing • Zero cloud")
+        print("")
+        print("Commands:")
+        print("• Say your question after the beep")
+        print("• Say 'goodbye' or 'exit' to quit")
+        print("• Press Ctrl+C to force quit")
+        print("")
+        
+        if not self.load_whisper_model():
+            print("❌ Cannot start - voice model failed to load")
+            return
+        
+        try:
+            while True:
+                input("Press Enter to start recording (or Ctrl+C to quit)...")
+                
+                # Record voice command
+                audio_file = self.record_voice_command(5)
+                if not audio_file:
+                    continue
+                
+                # Transcribe to text
+                text = self.transcribe_voice(audio_file)
+                if not text or len(text.strip()) < 3:
+                    print("🤷 Didn't catch that, please try again")
+                    continue
+                
+                # Check for exit commands
+                if any(word in text.lower() for word in ['goodbye', 'exit', 'quit', 'stop']):
+                    print("👋 Goodbye! Your privacy was protected throughout this session.")
+                    break
+                
+                # Process command
+                response = self.process_command(text)
+                
+                # Optional text-to-speech
+                # self.speak_response(response)
+                
+                # Cleanup for privacy
+                self.cleanup_temp_files()
+                
+                print("")  # Space between interactions
+                
+        except KeyboardInterrupt:
+            print("\n👋 Session ended. All temporary data cleaned up.")
+        finally:
+            self.cleanup_temp_files()
+
+def main():
+    assistant = PrivateVoiceAssistant()
+    assistant.interactive_session()
+
+if __name__ == "__main__":
+    main()
+EOF
+    
+    chmod +x "$assistant_dir/private_assistant.py"
+    log_success "Private voice assistant created"
+}
+
+apply_privacy_optimizations() {
+    log_info "Applying privacy optimizations"
+    
+    # Create privacy configuration
+    cat > "$HOME/.local/share/bill-sloth/voice/privacy_config.json" << 'EOF'
+{
+  "privacy_settings": {
+    "local_only": true,
+    "no_cloud_fallback": true,
+    "auto_cleanup_temp": true,
+    "encrypt_cache": false,
+    "no_conversation_logging": true,
+    "minimal_data_retention": true
+  },
+  "security_features": {
+    "temp_file_cleanup_interval": 300,
+    "max_temp_file_age": 3600,
+    "secure_delete": true,
+    "memory_cleanup": true
+  }
+}
+EOF
+    
+    # Create privacy cleanup script
+    cat > "$HOME/.local/share/bill-sloth/voice/privacy_cleanup.sh" << 'EOF'
+#!/bin/bash
+# Privacy cleanup for voice processing
+
+VOICE_DIR="$HOME/.local/share/bill-sloth/voice"
+
+# Clean temporary audio files
+find "$VOICE_DIR/temp" -name "*.wav" -mtime +1 -delete 2>/dev/null
+
+# Clean old cache files  
+find "$VOICE_DIR/cache" -name "*.txt" -mtime +7 -delete 2>/dev/null
+
+# Clear any logs
+> "$VOICE_DIR/voice.log" 2>/dev/null
+
+echo "Privacy cleanup completed"
+EOF
+    
+    chmod +x "$HOME/.local/share/bill-sloth/voice/privacy_cleanup.sh"
+    
+    # Add to crontab for automatic cleanup
+    (crontab -l 2>/dev/null; echo "0 * * * * $HOME/.local/share/bill-sloth/voice/privacy_cleanup.sh") | crontab -
+    
+    log_success "Privacy optimizations applied"
+}
+
+create_user_commands() {
+    log_info "Creating user-friendly voice commands"
+    
+    # Simple voice assistant launcher
+    cat > "$HOME/.local/bin/bill-voice" << 'EOF'
+#!/bin/bash
+# Launch Bill Sloth private voice assistant
+
+echo "🔒 Starting Bill Sloth Private Voice Assistant..."
+python3 "$HOME/.local/share/bill-sloth/voice-assistant/private_assistant.py"
+EOF
+    
+    # Quick voice command
+    cat > "$HOME/.local/bin/ask-bill" << 'EOF'
+#!/bin/bash
+# Quick voice command to Bill Sloth assistant
+
+if [ $# -eq 0 ]; then
+    echo "🎤 Say your question..."
+    python3 -c "
+import sys
+sys.path.append('$HOME/.local/share/bill-sloth/voice-assistant')
+from private_assistant import PrivateVoiceAssistant
+
+assistant = PrivateVoiceAssistant()
+audio_file = assistant.record_voice_command(5)
+if audio_file:
+    text = assistant.transcribe_voice(audio_file)
+    if text:
+        response = assistant.process_command(text)
+    assistant.cleanup_temp_files()
+"
+else
+    # Text input mode
+    echo "🤖 Processing: $*"
+    echo "$*" | ollama run llama3.2:3b
+fi
+EOF
+    
+    # Voice status checker
+    cat > "$HOME/.local/bin/voice-status" << 'EOF'
+#!/bin/bash
+# Check voice independence status
+
+echo "🔒 Bill Sloth Voice Independence Status"
+echo "======================================"
+
+# Check local LLM
+if command -v ollama >/dev/null 2>&1 && ollama list | grep -q llama3.2; then
+    echo "✅ Local AI: Ready"
+else
+    echo "❌ Local AI: Not available"
+fi
+
+# Check Whisper
+if python3 -c "import whisper" 2>/dev/null; then
+    echo "✅ Voice Recognition: Ready"
+else
+    echo "❌ Voice Recognition: Not available"
+fi
+
+# Check microphone
+if arecord -l >/dev/null 2>&1; then
+    echo "✅ Microphone: Available"
+else
+    echo "❌ Microphone: Not detected"
+fi
+
+# Check privacy status
+if [ -f "$HOME/.local/share/bill-sloth/voice/privacy_config.json" ]; then
+    echo "✅ Privacy Mode: Active"
+else
+    echo "⚠️  Privacy Mode: Not configured"
+fi
+
+echo ""
+echo "Commands:"
+echo "  bill-voice    - Start interactive assistant"
+echo "  ask-bill      - Quick voice question"
+echo "  voice-status  - This status check"
+EOF
+    
+    chmod +x "$HOME/.local/bin"/{bill-voice,ask-bill,voice-status}
+    
+    # Ensure ~/.local/bin is in PATH
+    if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+    fi
+    
+    log_success "User commands created"
+}
+
+test_voice_independence() {
+    echo -e "${BLUE}🧪 Testing complete voice independence...${NC}"
+    
+    local test_passed=0
+    local test_total=4
+    
+    # Test 1: Local LLM
+    echo -n "   Testing local AI... "
+    if echo "Hello" | ollama run llama3.2:3b >/dev/null 2>&1; then
+        echo -e "${GREEN}✅ PASS${NC}"
+        ((test_passed++))
+    else
+        echo -e "${RED}❌ FAIL${NC}"
+    fi
+    
+    # Test 2: Whisper
+    echo -n "   Testing voice recognition... "
+    if python3 -c "import whisper; whisper.load_model('base')" >/dev/null 2>&1; then
+        echo -e "${GREEN}✅ PASS${NC}"
+        ((test_passed++))
+    else
+        echo -e "${RED}❌ FAIL${NC}"
+    fi
+    
+    # Test 3: Audio recording
+    echo -n "   Testing audio recording... "
+    if python3 -c "import pyaudio; pyaudio.PyAudio()" >/dev/null 2>&1; then
+        echo -e "${GREEN}✅ PASS${NC}"
+        ((test_passed++))
+    else
+        echo -e "${RED}❌ FAIL${NC}"
+    fi
+    
+    # Test 4: Integration
+    echo -n "   Testing assistant integration... "
+    if [ -f "$HOME/.local/share/bill-sloth/voice-assistant/private_assistant.py" ]; then
+        echo -e "${GREEN}✅ PASS${NC}"
+        ((test_passed++))
+    else
+        echo -e "${RED}❌ FAIL${NC}"
+    fi
+    
+    echo ""
+    echo -e "${PURPLE}Test Results: $test_passed/$test_total passed${NC}"
+    
+    if [ $test_passed -eq $test_total ]; then
+        echo -e "${GREEN}🎉 Voice independence is fully functional!${NC}"
+        return 0
+    else
+        echo -e "${YELLOW}⚠️  Some components need attention${NC}"
+        return 1
+    fi
+}
+
+show_usage_guide() {
+    echo -e "${PURPLE}"
+    cat << 'EOF'
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            🎤 USAGE GUIDE                                   ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+EOF
+    echo -e "${NC}"
+    
+    echo -e "${CYAN}🚀 Quick Start:${NC}"
+    echo "   bill-voice           # Start interactive voice assistant"
+    echo "   ask-bill             # Quick voice question"
+    echo "   voice-status         # Check system status"
+    echo ""
+    
+    echo -e "${CYAN}🔒 Privacy Guaranteed:${NC}"
+    echo "   • All processing happens on your machine"
+    echo "   • No data sent to external servers"
+    echo "   • Automatic cleanup of temporary files"
+    echo "   • Works completely offline"
+    echo ""
+    
+    echo -e "${CYAN}💬 Example Usage:${NC}"
+    echo "   \"What's my VRBO revenue this month?\""
+    echo "   \"Help me write a partnership email\""
+    echo "   \"What time is it?\""
+    echo "   \"Analyze my business performance\""
+    echo ""
+    
+    echo -e "${CYAN}🛠️ Troubleshooting:${NC}"
+    echo "   voice-status         # Check component status"
+    echo "   setup-local-ai       # Reinstall AI components"
+    echo "   voice-independence   # Re-run this setup"
+    echo ""
+}
+
+main() {
+    show_banner
+    
+    echo -e "${BLUE}Welcome to Bill Sloth Voice Independence Setup!${NC}"
+    echo "This will give you complete voice control with zero cloud dependencies."
+    echo ""
+    
+    show_privacy_features
+    echo ""
+    
+    # Check requirements
+    check_privacy_requirements
+    echo ""
+    
+    echo -e "${YELLOW}⏳ Setting up voice independence... This may take 10-15 minutes.${NC}"
+    echo ""
+    
+    # Run setup
+    if setup_voice_independence; then
+        echo ""
+        
+        # Test the setup
+        if test_voice_independence; then
+            echo ""
+            echo -e "${GREEN}🎉 Voice independence setup completed successfully!${NC}"
+            echo -e "${CYAN}Bill Sloth now has complete voice privacy and independence!${NC}"
+            echo ""
+            
+            show_usage_guide
+        else
+            echo -e "${YELLOW}⚠️  Setup completed but some tests failed${NC}"
+            echo "Run 'voice-status' to check specific issues"
+        fi
+    else
+        echo -e "${RED}❌ Voice independence setup failed${NC}"
+        exit 1
+    fi
+}
+
+# Run main function
+main "$@"

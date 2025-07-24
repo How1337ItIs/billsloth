@@ -1,0 +1,236 @@
+{
+  "partnership_types": {
+    "sponsorship": {
+      "description": "Brand sponsorship for content creation",
+      "typical_commission": "15-25%",
+      "contract_length": "3-12 months",
+      "deliverables": [
+        "Product placement in videos",
+        "Social media mentions",
+        "Dedicated review content",
+        "Brand integration in streams"
+      ],
+      "payment_terms": "Monthly or per deliverable",
+      "examples": [
+        "Gaming hardware sponsors",
+        "Software tool partnerships",
+        "Gaming chair/desk sponsors"
+      ]
+    },
+    "affiliate": {
+      "description": "Commission-based product recommendations",
+      "typical_commission": "5-15%",
+      "contract_length": "Ongoing",
+      "deliverables": [
+        "Affiliate link placement",
+        "Product recommendations",
+        "Discount code distribution"
+      ],
+      "payment_terms": "Monthly based on sales",
+      "tracking_methods": [
+        "Unique affiliate links",
+        "Discount codes",
+        "UTM parameters"
+      ]
+    },
+    "content_collaboration": {
+      "description": "Joint content creation partnerships",
+      "typical_commission": "Revenue share 20-50%",
+      "contract_length": "Per project or ongoing",
+      "deliverables": [
+        "Co-created content",
+        "Cross-promotion",
+        "Shared resources"
+      ],
+      "payment_terms": "Revenue split after costs"
+    },
+    "service_provider": {
+      "description": "B2B service partnerships",
+      "typical_commission": "10-20% or flat fee",
+      "contract_length": "Retainer or project-based",
+      "deliverables": [
+        "Consulting services",
+        "Technical support",
+        "Content strategy"
+      ],
+      "payment_terms": "Monthly retainer or per project"
+    }
+  },
+  "deal_stages": {
+    "research": {
+      "description": "Initial research and qualification",
+      "duration": "1-7 days",
+      "activities": [
+        "Company research",
+        "Contact identification",
+        "Fit assessment",
+        "Initial value proposition"
+      ],
+      "exit_criteria": "Contact identified and qualified"
+    },
+    "contact": {
+      "description": "Initial outreach and connection",
+      "duration": "1-14 days",
+      "activities": [
+        "Send initial email",
+        "LinkedIn connection",
+        "Follow-up sequence",
+        "Schedule discovery call"
+      ],
+      "exit_criteria": "Meeting scheduled or no response after 3 attempts"
+    },
+    "proposal_sent": {
+      "description": "Formal proposal delivered",
+      "duration": "3-10 days",
+      "activities": [
+        "Create custom proposal",
+        "Send proposal document",
+        "Follow up on proposal",
+        "Address questions"
+      ],
+      "exit_criteria": "Proposal accepted or rejected"
+    },
+    "negotiation": {
+      "description": "Terms negotiation",
+      "duration": "3-14 days",
+      "activities": [
+        "Discuss terms",
+        "Negotiate rates",
+        "Clarify deliverables",
+        "Legal review"
+      ],
+      "exit_criteria": "Terms agreed or deal dead"
+    },
+    "closing": {
+      "description": "Finalizing the deal",
+      "duration": "1-7 days",
+      "activities": [
+        "Final contract review",
+        "Sign agreements",
+        "Setup payment terms",
+        "Kickoff planning"
+      ],
+      "exit_criteria": "Contract signed"
+    }
+  },
+  "email_templates": {
+    "initial_outreach": {
+      "gaming_brand": {
+        "subject": "Partnership Opportunity - [YOUR_CHANNEL] x [BRAND_NAME]",
+        "variables": ["brand_name", "contact_name", "channel_name", "subscriber_count", "specific_interest"],
+        "template": "Hi [CONTACT_NAME],\n\nI've been following [BRAND_NAME]'s incredible work in the gaming space, particularly [SPECIFIC_INTEREST].\n\nI run [CHANNEL_NAME], a gaming-focused channel with [SUBSCRIBER_COUNT] engaged subscribers who are passionate about [RELEVANT_TOPICS]. Our audience demographics align perfectly with [BRAND_NAME]'s target market.\n\nI believe there's a strong opportunity for collaboration that could benefit both our audiences. Some initial ideas:\n• Authentic product reviews and demonstrations\n• Integrated sponsorship segments\n• Social media cross-promotion\n• Custom content series featuring [BRAND_NAME] products\n\nOur recent sponsorship with [SIMILAR_BRAND] generated [IMPRESSIVE_METRIC], and I'm confident we could achieve similar or better results together.\n\nWould you be open to a brief 15-minute call next week to explore how we might work together?\n\nBest regards,\n[YOUR_NAME]"
+      },
+      "streaming_platform": {
+        "subject": "Streaming Tools Partnership - Growing Together",
+        "variables": ["platform_name", "contact_name", "monthly_viewers", "stream_frequency"],
+        "template": "Hi [CONTACT_NAME],\n\nAs an active streamer with [MONTHLY_VIEWERS] monthly viewers, I've been searching for the perfect [TOOL_CATEGORY] solution, and [PLATFORM_NAME] stands out.\n\nI stream [STREAM_FREQUENCY] and my community frequently asks about my streaming setup. I'd love to explore a partnership where I can:\n• Showcase [PLATFORM_NAME] features during streams\n• Create tutorial content for new streamers\n• Provide feedback from an active creator's perspective\n• Offer exclusive discounts to my community\n\nI'm particularly interested in [SPECIFIC_FEATURE] and how it could enhance my content.\n\nCould we schedule a quick call to discuss a mutually beneficial partnership?\n\nLooking forward to connecting!\n[YOUR_NAME]"
+      }
+    },
+    "follow_up": {
+      "no_response": {
+        "subject": "Re: Partnership Opportunity - Quick Follow-up",
+        "template": "Hi [CONTACT_NAME],\n\nI wanted to follow up on my previous email about a potential partnership between [BRAND_NAME] and [YOUR_CHANNEL].\n\nI understand you're likely busy, so I'll keep this brief. Since my last email:\n• We've grown to [NEW_SUBSCRIBER_COUNT] subscribers\n• Our recent [CONTENT_TYPE] video hit [VIEW_COUNT] views\n• Several viewers specifically asked about [BRAND_PRODUCT]\n\nIf partnership discussions aren't a priority right now, I completely understand. Would it be helpful if I reached out again in [TIMEFRAME]?\n\nThanks for your time!\n[YOUR_NAME]"
+      },
+      "post_meeting": {
+        "subject": "Great connecting! Next steps for [BRAND_NAME] partnership",
+        "template": "Hi [CONTACT_NAME],\n\nThank you for taking the time to meet today! I'm excited about the potential partnership between [BRAND_NAME] and [YOUR_CHANNEL].\n\nAs discussed, here's what I'll do next:\n• [ACTION_ITEM_1]\n• [ACTION_ITEM_2]\n• [ACTION_ITEM_3]\n\nAnd from your side:\n• [THEIR_ACTION_1]\n• [THEIR_ACTION_2]\n\nI'll have the [DELIVERABLE] ready by [DATE]. In the meantime, feel free to reach out with any questions.\n\nLooking forward to working together!\n[YOUR_NAME]"
+      }
+    },
+    "proposal": {
+      "comprehensive": {
+        "subject": "[YOUR_CHANNEL] x [BRAND_NAME] Partnership Proposal",
+        "attachments": ["media_kit.pdf", "analytics_snapshot.pdf", "content_examples.pdf"],
+        "template": "Hi [CONTACT_NAME],\n\nFollowing our conversation, I'm pleased to present a comprehensive partnership proposal for [BRAND_NAME] and [YOUR_CHANNEL].\n\n📊 PARTNERSHIP OVERVIEW\n[YOUR_CHANNEL] will create authentic, engaging content that showcases [BRAND_NAME] products to our [SUBSCRIBER_COUNT] subscribers and [MONTHLY_VIEWS] monthly viewers.\n\n🎯 PROPOSED DELIVERABLES\n• [DELIVERABLE_1]: [DESCRIPTION]\n• [DELIVERABLE_2]: [DESCRIPTION]\n• [DELIVERABLE_3]: [DESCRIPTION]\n\n💰 INVESTMENT & TERMS\n• Partnership Fee: $[AMOUNT] per [PERIOD]\n• Performance Bonus: [BONUS_STRUCTURE]\n• Contract Length: [DURATION]\n• Payment Terms: [PAYMENT_TERMS]\n\n📈 EXPECTED OUTCOMES\n• Estimated Reach: [REACH_NUMBER]\n• Engagement Rate: [PERCENTAGE]%\n• Conversion Estimate: [CONVERSION_METRIC]\n\n📎 ATTACHMENTS\n• Media Kit with detailed analytics\n• Examples of previous sponsored content\n• Audience demographics breakdown\n\nI'm confident this partnership will deliver excellent ROI for [BRAND_NAME] while providing valuable content to my audience.\n\nLet's schedule a call to discuss any questions and finalize the details.\n\nBest regards,\n[YOUR_NAME]"
+      }
+    }
+  },
+  "contract_templates": {
+    "sponsorship_agreement": {
+      "sections": [
+        "Parties and Effective Date",
+        "Sponsorship Services and Deliverables",
+        "Compensation and Payment Terms",
+        "Usage Rights and Licenses",
+        "Performance Metrics and Reporting",
+        "Term and Termination",
+        "Confidentiality",
+        "Representations and Warranties",
+        "Indemnification",
+        "General Provisions"
+      ],
+      "key_clauses": {
+        "exclusivity": "During the Term, Creator agrees not to promote direct competitors of Sponsor in the [CATEGORY] space",
+        "content_approval": "Sponsor shall have 48 hours to review and approve content before publication",
+        "usage_rights": "Sponsor receives perpetual, worldwide license to use created content for marketing purposes",
+        "payment_terms": "Net 30 payment terms upon completion of monthly deliverables",
+        "termination": "Either party may terminate with 30 days written notice"
+      }
+    },
+    "affiliate_agreement": {
+      "commission_structures": {
+        "flat_rate": "X% commission on all referred sales",
+        "tiered": {
+          "tier1": "0-10 sales: 5%",
+          "tier2": "11-25 sales: 7%",
+          "tier3": "26+ sales: 10%"
+        },
+        "category_based": {
+          "hardware": "8%",
+          "software": "15%",
+          "accessories": "10%"
+        }
+      },
+      "tracking_requirements": [
+        "Use provided affiliate links exclusively",
+        "Include FTC disclosure on all content",
+        "Report metrics monthly",
+        "Maintain minimum quality standards"
+      ]
+    }
+  },
+  "partnership_kpis": {
+    "financial_metrics": [
+      "Total Revenue Generated",
+      "Commission Earned",
+      "Average Deal Size",
+      "Cost Per Acquisition",
+      "Lifetime Value"
+    ],
+    "performance_metrics": [
+      "Click-through Rate",
+      "Conversion Rate",
+      "Engagement Rate",
+      "Reach/Impressions",
+      "ROI/ROAS"
+    ],
+    "relationship_metrics": [
+      "Response Time",
+      "Content Approval Rate",
+      "Contract Renewal Rate",
+      "Partner Satisfaction Score",
+      "Payment Timeliness"
+    ]
+  },
+  "negotiation_strategies": {
+    "value_propositions": [
+      "Highly engaged, targeted audience",
+      "Professional content quality",
+      "Multi-platform presence",
+      "Proven track record with similar brands",
+      "Authentic, non-scripted endorsements"
+    ],
+    "common_objections": {
+      "budget_concerns": "Let's explore performance-based compensation or a smaller pilot program to prove ROI",
+      "audience_size": "Our engagement rate of X% significantly outperforms industry average, meaning better conversion",
+      "content_control": "We can establish clear brand guidelines while maintaining authentic voice that resonates with audience",
+      "exclusivity_demands": "We can offer category exclusivity rather than complete exclusivity to maintain diverse revenue streams"
+    },
+    "negotiation_levers": [
+      "Contract length (longer = better rates)",
+      "Deliverable quantity",
+      "Usage rights scope",
+      "Performance bonuses",
+      "Payment terms"
+    ]
+  }
+}

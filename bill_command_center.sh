@@ -454,9 +454,18 @@ bill_command_center() {
         echo "📋 FULL MODULES:"
         echo "  1) Automation Mastery     2) Network Management    3) Data Hoarding"
         echo "  4) Media Processing       5) System Doctor         6) Mobile Integration"
+        echo "  7) Business Partnerships  8) VRBO Automation Pro"
         echo ""
         echo "⚙️  SYSTEM TOOLS:"
-        echo "  7) Backup Management      8) Architecture Config   9) Workflow Orchestration"
+        echo "  9) Backup Management      10) Architecture Config  11) Workflow Orchestration"
+        echo "  12) Professional Tools Upgrade"
+        echo ""
+        echo "🔧 SYSTEM FIXES:"
+        echo "  fix1) Fix Ollama AI Integration    fix2) Fix Placeholder Code"
+        echo "  fix3) Verify Docker Health        fix4) Setup API Credentials"
+        echo ""
+        echo "🎤 VOICE CONTROL:"
+        echo "  voice) Optimize Voice Control (Jarvis Mode)"
         echo ""
         echo "🏥 DIAGNOSTICS:"
         echo "  health) System Health Check     debug) Debug Mode"
@@ -653,8 +662,52 @@ EOF
                 source "$SCRIPT_DIR/modules/automation_mastery_interactive.sh"
                 ;;
             2)
-                log_activity "Opened Network Management"
-                source "$SCRIPT_DIR/modules/network_management_interactive.sh"
+                log_activity "Opened Network Management Hub"
+                echo -e "\033[38;5;51m🌐 NETWORK COMMAND CENTER\033[0m"
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo ""
+                echo "🎯 Choose your network mission:"
+                echo ""
+                echo "1) 🔐 VPN & Security - WireGuard, OpenVPN, firewall management"
+                echo "2) 📶 Wireless Connectivity - Wi-Fi, Bluetooth, hotspots"
+                echo "3) 📊 Network Monitoring - Real-time analysis and speed tests"
+                echo "4) ⚡ Performance Optimization - DNS, TCP tuning, gaming mode"
+                echo "5) 🔧 Diagnostics & Repair - Troubleshooting and fixes"
+                echo "6) 🗂️ Legacy Network Manager - Full original interface"
+                echo ""
+                echo "0) Return to main menu"
+                echo ""
+                read -p "🌐 Select network tool (0-6): " network_choice
+                
+                case $network_choice in
+                    1)
+                        log_activity "Opened VPN Security Module"
+                        source "$SCRIPT_DIR/modules/vpn_security_interactive.sh"
+                        ;;
+                    2)
+                        log_activity "Opened Wireless Connectivity Module"
+                        source "$SCRIPT_DIR/modules/wireless_connectivity_interactive.sh"
+                        ;;
+                    3)
+                        log_activity "Opened Network Monitoring Module"
+                        source "$SCRIPT_DIR/modules/network_monitoring_interactive.sh"
+                        ;;
+                    4)
+                        log_activity "Opened Network Optimization Module"
+                        source "$SCRIPT_DIR/modules/network_optimization_interactive.sh"
+                        ;;
+                    5)
+                        log_activity "Opened Network Diagnostics Module"
+                        source "$SCRIPT_DIR/modules/network_diagnostics_interactive.sh"
+                        ;;
+                    6)
+                        log_activity "Opened Legacy Network Management"
+                        source "$SCRIPT_DIR/modules/network_management_interactive.sh"
+                        ;;
+                    0|*)
+                        echo "Returning to main menu..."
+                        ;;
+                esac
                 ;;
             3)
                 log_activity "Opened Data Hoarding"
@@ -675,6 +728,14 @@ EOF
                 source "$SCRIPT_DIR/modules/mobile_integration_interactive.sh"
                 ;;
             7)
+                log_activity "Opened Business Partnerships"
+                source "$SCRIPT_DIR/modules/business_partnerships_interactive.sh"
+                ;;
+            8)
+                log_activity "Opened VRBO Automation Pro"
+                source "$SCRIPT_DIR/modules/vrbo_automation_pro.sh"
+                ;;
+            9)
                 log_activity "Opened Backup Management"
                 if command -v bill_backup_list &> /dev/null; then
                     echo "🎯 BACKUP MANAGEMENT:"
@@ -714,7 +775,7 @@ EOF
                     setup_bill_backup_system
                 fi
                 ;;
-            8)
+            10)
                 log_activity "Opened Architecture Config"
                 if [ -f ~/.bill-sloth/architecture/architecture_dashboard.sh ]; then
                     ~/.bill-sloth/architecture/architecture_dashboard.sh
@@ -723,13 +784,43 @@ EOF
                     setup_unified_architecture
                 fi
                 ;;
-            9)
+            11)
                 log_activity "Opened Workflow Orchestration"
                 if [ -f ~/.bill-sloth/workflows/launch_workflow.sh ]; then
                     ~/.bill-sloth/workflows/launch_workflow.sh
                 else
                     setup_bill_workflows
                 fi
+                ;;
+            12)
+                log_activity "Ran Professional Tools Upgrade"
+                echo "🚀 Running Professional Tools Upgrade..."
+                source "$SCRIPT_DIR/bin/professional-tools-upgrade"
+                ;;
+            "fix1")
+                log_activity "Fixed Ollama AI Integration"
+                echo "🤖 Fixing Ollama AI Integration..."
+                source "$SCRIPT_DIR/bin/fix-ollama-integration"
+                ;;
+            "fix2")
+                log_activity "Fixed Placeholder Implementations"
+                echo "🔧 Fixing Placeholder Code..."
+                source "$SCRIPT_DIR/bin/fix-placeholder-implementations"
+                ;;
+            "fix3")
+                log_activity "Verified Docker Health"
+                echo "🐳 Verifying Docker Health..."
+                source "$SCRIPT_DIR/bin/docker-health-verifier"
+                ;;
+            "fix4")
+                log_activity "Setup API Credentials"
+                echo "🔗 Setting up API Credentials..."
+                source "$SCRIPT_DIR/bin/api-credential-wizard"
+                ;;
+            "voice")
+                log_activity "Optimized Voice Control System"
+                echo "🎤 Optimizing Voice Control System..."
+                source "$SCRIPT_DIR/bin/voice-control-optimizer"
                 ;;
             "health")
                 log_activity "Ran system health check"

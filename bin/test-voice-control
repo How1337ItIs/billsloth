@@ -1,0 +1,324 @@
+#!/bin/bash
+# Test Voice Control - Quick demonstration of voice capabilities
+# "Testing 1-2-3, is this thing on?" - Every person ever
+
+set -euo pipefail
+
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "error_handling"
+
+show_banner() {
+    echo -e "\033[38;5;226m"
+    cat << 'EOF'
+    ████████╗███████╗███████╗████████╗    ██╗   ██╗ ██████╗ ██╗ ██████╗███████╗
+    ╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝    ██║   ██║██╔═══██╗██║██╔════╝██╔════╝
+       ██║   █████╗  ███████╗   ██║       ██║   ██║██║   ██║██║██║     █████╗  
+       ██║   ██╔══╝  ╚════██║   ██║       ╚██╗ ██╔╝██║   ██║██║██║     ██╔══╝  
+       ██║   ███████╗███████║   ██║        ╚████╔╝ ╚██████╔╝██║╚██████╗███████╗
+       ╚═╝   ╚══════╝╚══════╝   ╚═╝         ╚═══╝   ╚═════╝ ╚═╝ ╚═════╝╚══════╝
+EOF
+    echo -e "\033[0m"
+}
+
+test_voice_installation() {
+    echo "🔍 TESTING VOICE CONTROL INSTALLATION"
+    echo "======================================"
+    echo ""
+    
+    local issues=0
+    
+    # Check Python virtual environment
+    if [ -d ~/.bill-sloth/voice/venv ]; then
+        echo "✅ Python virtual environment exists"
+    else
+        echo "❌ Python virtual environment missing"
+        ((issues++))
+    fi
+    
+    # Check voice daemon
+    if [ -f ~/.bill-sloth/voice/voice_daemon.py ]; then
+        echo "✅ Voice daemon installed"
+    else
+        echo "❌ Voice daemon missing"
+        ((issues++))
+    fi
+    
+    # Check systemd service
+    if [ -f ~/.config/systemd/user/bill-voice-daemon.service ]; then
+        echo "✅ Systemd service configured"
+    else
+        echo "❌ Systemd service missing"
+        ((issues++))
+    fi
+    
+    # Check voice commands
+    if [ -d ~/.bill-sloth/voice/scripts ]; then
+        local script_count=$(find ~/.bill-sloth/voice/scripts -name "*.py" -o -name "*.sh" | wc -l)
+        echo "✅ Voice command scripts: $script_count found"
+    else
+        echo "❌ Voice command scripts missing"
+        ((issues++))
+    fi
+    
+    # Check training system
+    if [ -f ~/.bill-sloth/voice/voice_trainer.py ]; then
+        echo "✅ Voice training system available"
+    else
+        echo "❌ Voice training system missing"
+        ((issues++))
+    fi
+    
+    echo ""
+    if [ $issues -eq 0 ]; then
+        echo "🎉 Voice control installation complete!"
+        return 0
+    else
+        echo "⚠️  Found $issues issues. Run voice control optimizer first."
+        return 1
+    fi
+}
+
+test_voice_dependencies() {
+    echo "🧪 TESTING VOICE DEPENDENCIES"
+    echo "============================="
+    echo ""
+    
+    local issues=0
+    
+    # Test Python packages
+    if source ~/.bill-sloth/voice/venv/bin/activate 2>/dev/null; then
+        echo "✅ Python virtual environment activated"
+        
+        # Test Whisper
+        if python -c "import whisper" 2>/dev/null; then
+            echo "✅ OpenAI Whisper available"
+        else
+            echo "❌ OpenAI Whisper not installed"
+            ((issues++))
+        fi
+        
+        # Test PyAudio
+        if python -c "import pyaudio" 2>/dev/null; then
+            echo "✅ PyAudio available"
+        else
+            echo "❌ PyAudio not installed"
+            ((issues++))
+        fi
+        
+        # Test TTS
+        if python -c "import pyttsx3" 2>/dev/null; then
+            echo "✅ Text-to-Speech available"
+        else
+            echo "❌ Text-to-Speech not installed"
+            ((issues++))
+        fi
+        
+        deactivate 2>/dev/null || true
+    else
+        echo "❌ Cannot activate Python environment"
+        ((issues++))
+    fi
+    
+    # Test system audio
+    if command -v pulseaudio >/dev/null 2>&1 || command -v pipewire >/dev/null 2>&1; then
+        echo "✅ Audio system available"
+    else
+        echo "❌ No audio system found"
+        ((issues++))
+    fi
+    
+    # Test microphone
+    if ls /dev/dsp* /dev/audio* 2>/dev/null || pactl list sources short 2>/dev/null | grep -q input; then
+        echo "✅ Microphone input detected"
+    else
+        echo "⚠️  No microphone input detected"
+    fi
+    
+    echo ""
+    if [ $issues -eq 0 ]; then
+        echo "🎉 All dependencies working!"
+        return 0
+    else
+        echo "⚠️  Found $issues dependency issues."
+        return 1
+    fi
+}
+
+demonstrate_voice_commands() {
+    echo "🎯 AVAILABLE VOICE COMMANDS"
+    echo "==========================="
+    echo ""
+    echo "🏠 BUSINESS COMMANDS:"
+    echo "• 'Hey Bill, check bookings' → Check VRBO reservation status"
+    echo "• 'Jarvis, revenue report' → Generate financial summary"
+    echo "• 'Bill Sloth, guest status' → Check current guest information"
+    echo "• 'Computer, new booking' → Handle new reservation workflow"
+    echo ""
+    echo "🎬 STREAMING COMMANDS:"
+    echo "• 'Hey Bill, start streaming' → Activate OBS + audio setup"
+    echo "• 'Jarvis, gaming mode' → Switch to gaming audio profile"
+    echo "• 'Bill Sloth, recording mode' → Professional recording setup"
+    echo "• 'Computer, stream stats' → Current stream analytics"
+    echo ""
+    echo "🖥️  SYSTEM COMMANDS:"
+    echo "• 'Hey Bill, system status' → CPU, memory, disk usage"
+    echo "• 'Jarvis, backup now' → Immediate system backup"
+    echo "• 'Bill Sloth, check services' → Docker container status"
+    echo "• 'Computer, restart services' → Restart business services"
+    echo ""
+    echo "🤖 AI COMMANDS:"
+    echo "• 'Hey Bill, summarize this' → AI summary of clipboard"
+    echo "• 'Jarvis, explain code' → Code explanation with AI"
+    echo "• 'Bill Sloth, generate response' → AI-powered text generation"
+    echo ""
+    echo "🎯 WAKE WORDS: 'Hey Bill', 'Bill Sloth', 'Jarvis', 'Computer'"
+}
+
+test_voice_service() {
+    echo "🔧 TESTING VOICE SERVICE"
+    echo "========================"
+    echo ""
+    
+    # Check if service is running
+    if systemctl --user is-active bill-voice-daemon.service >/dev/null 2>&1; then
+        echo "✅ Voice daemon is running"
+        
+        # Check logs
+        if journalctl --user -u bill-voice-daemon.service --since "5 minutes ago" --no-pager | grep -q "listening"; then
+            echo "✅ Voice daemon is actively listening"
+        else
+            echo "⚠️  Voice daemon running but may not be listening properly"
+        fi
+    else
+        echo "❌ Voice daemon not running"
+        echo "💡 Start with: systemctl --user start bill-voice-daemon.service"
+    fi
+    
+    # Check log file
+    if [ -f ~/.bill-sloth/logs/voice_daemon.log ]; then
+        local log_lines=$(wc -l < ~/.bill-sloth/logs/voice_daemon.log)
+        echo "✅ Voice logs available ($log_lines lines)"
+        
+        if [ $log_lines -gt 0 ]; then
+            echo "📄 Recent log entries:"
+            tail -3 ~/.bill-sloth/logs/voice_daemon.log | sed 's/^/   /'
+        fi
+    else
+        echo "⚠️  No voice logs found"
+    fi
+}
+
+interactive_voice_demo() {
+    echo "🎤 INTERACTIVE VOICE DEMO"
+    echo "========================="
+    echo ""
+    echo "This will demonstrate voice recognition without the full daemon."
+    echo "You'll speak into your microphone and see what the system understands."
+    echo ""
+    
+    read -p "Start voice demo? (y/n): " start_demo
+    if [[ ! "$start_demo" =~ ^[Yy] ]]; then
+        return
+    fi
+    
+    if ! source ~/.bill-sloth/voice/venv/bin/activate 2>/dev/null; then
+        echo "❌ Cannot activate Python environment"
+        return
+    fi
+    
+    # Simple voice test
+    python3 << 'EOF'
+try:
+    import whisper
+    import pyaudio
+    import wave
+    import os
+    
+    print("🎤 Voice Recognition Demo")
+    print("=" * 25)
+    print("Speak now (3 seconds)...")
+    
+    # Simple audio recording
+    model = whisper.load_model("base")
+    
+    # Audio setup
+    chunk = 1024
+    format = pyaudio.paInt16
+    channels = 1
+    rate = 16000
+    record_seconds = 3
+    
+    audio = pyaudio.PyAudio()
+    stream = audio.open(format=format, channels=channels, rate=rate, input=True, frames_per_buffer=chunk)
+    
+    frames = []
+    for _ in range(0, int(rate / chunk * record_seconds)):
+        data = stream.read(chunk, exception_on_overflow=False)
+        frames.append(data)
+    
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+    
+    # Save and transcribe
+    temp_file = "/tmp/voice_test.wav"
+    wf = wave.open(temp_file, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(audio.get_sample_size(format))
+    wf.setframerate(rate)
+    wf.writeframes(b''.join(frames))
+    wf.close()
+    
+    result = model.transcribe(temp_file)
+    transcribed = result["text"].strip()
+    
+    print(f"✅ I heard: '{transcribed}'")
+    print(f"🎯 Confidence: {result.get('confidence', 'N/A')}")
+    
+    os.remove(temp_file)
+    
+except Exception as e:
+    print(f"❌ Demo failed: {e}")
+    print("💡 Try running the voice control optimizer first")
+EOF
+    
+    deactivate 2>/dev/null || true
+}
+
+main_test() {
+    clear
+    show_banner
+    
+    echo -e "\033[38;5;226m🎤 VOICE CONTROL TEST SUITE - VERIFY JARVIS FUNCTIONALITY 🎤\033[0m"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    
+    # Run all tests
+    if test_voice_installation; then
+        echo ""
+        if test_voice_dependencies; then
+            echo ""
+            test_voice_service
+            echo ""
+            demonstrate_voice_commands
+            echo ""
+            interactive_voice_demo
+        fi
+    fi
+    
+    echo ""
+    echo "🎉 VOICE CONTROL TEST COMPLETE!"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🧠 Carl: 'Your voice is now your most powerful tool!'"
+    echo ""
+    echo "🎯 NEXT STEPS:"
+    echo "• Start daemon: systemctl --user start bill-voice-daemon"
+    echo "• Train custom commands: python3 ~/.bill-sloth/voice/voice_trainer.py"
+    echo "• Monitor activity: tail -f ~/.bill-sloth/logs/voice_daemon.log"
+    echo ""
+    echo "🎤 TRY IT NOW: Say 'Hey Bill, system status' to test!"
+}
+
+# Run the test
+main_test

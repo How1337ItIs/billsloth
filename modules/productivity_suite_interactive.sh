@@ -6,6 +6,149 @@
 # Source the non-interactive productivity suite module
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SOURCE_DIR/productivity_suite.sh"
+source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
+
+# Google Tasks Integration Function (extracted from automation_mastery_interactive.sh)
+setup_google_tasks_automation() {
+    echo "✅ GOOGLE TASKS INTEGRATION"
+    echo "============================"
+    echo ""
+    echo "📝 Google Tasks Automation & Integration"
+    echo "• Automated task creation from various triggers"
+    echo "• Task prioritization and scheduling" 
+    echo "• Integration with Bill Sloth workflows"
+    echo "• Smart task management with local backup"
+    echo ""
+    
+    echo "🔧 Setting up Google Tasks integration..."
+    
+    # Create Google Tasks automation directory
+    mkdir -p ~/.bill-sloth/google-tasks/{scripts,templates,sync,backups}
+    
+    # Google Tasks CLI wrapper script (VRBO references removed for productivity focus)
+    cat > ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh << 'EOF'
+#!/bin/bash
+# Google Tasks CLI Management
+# Wrapper for Google Tasks operations with Bill-specific workflows
+
+source "$(dirname "$0")/../../../lib/notification_system.sh" 2>/dev/null || true
+
+TASKS_DIR="$HOME/.bill-sloth/google-tasks"
+PENDING_TASKS="$TASKS_DIR/pending-tasks.txt"
+WEEKLY_TASKS="$TASKS_DIR/weekly-tasks.txt"
+MONTHLY_TASKS="$TASKS_DIR/monthly-tasks.txt"
+COMPLETED_TASKS="$TASKS_DIR/completed-tasks.log"
+
+# Initialize task files
+touch "$PENDING_TASKS" "$WEEKLY_TASKS" "$MONTHLY_TASKS" "$COMPLETED_TASKS"
+
+add_task() {
+    local task_text="$1"
+    local priority="${2:-normal}"
+    local due_date="${3:-}"
+    local list_type="${4:-pending}"
+    
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    local task_entry="[$timestamp] [$priority] $task_text"
+    
+    if [ -n "$due_date" ]; then
+        task_entry="$task_entry (Due: $due_date)"
+    fi
+    
+    case "$list_type" in
+        "weekly") echo "$task_entry" >> "$WEEKLY_TASKS" ;;
+        "monthly") echo "$task_entry" >> "$MONTHLY_TASKS" ;;
+        *) echo "$task_entry" >> "$PENDING_TASKS" ;;
+    esac
+    
+    echo "✅ Added task: $task_text"
+    
+    # If Google Tasks CLI is available, sync to actual Google Tasks
+    if command -v google-tasks &>/dev/null; then
+        google-tasks add "$task_text" --due="$due_date" 2>/dev/null || true
+    fi
+}
+
+list_tasks() {
+    local filter="${1:-all}"
+    
+    echo "📋 Current Tasks (Filter: $filter)"
+    echo "=================================="
+    
+    case "$filter" in
+        "pending"|"today")
+            echo "🔴 Pending Tasks:"
+            cat "$PENDING_TASKS" 2>/dev/null | tail -20
+            ;;
+        "weekly")
+            echo "📅 Weekly Tasks:"
+            cat "$WEEKLY_TASKS" 2>/dev/null
+            ;;
+        "monthly")
+            echo "🗓️ Monthly Tasks:"
+            cat "$MONTHLY_TASKS" 2>/dev/null
+            ;;
+        "all")
+            echo "🔴 Pending Tasks:"
+            cat "$PENDING_TASKS" 2>/dev/null | tail -10
+            echo ""
+            echo "📅 This Week:"
+            cat "$WEEKLY_TASKS" 2>/dev/null | head -5
+            echo ""
+            echo "🗓️ This Month:"
+            cat "$MONTHLY_TASKS" 2>/dev/null | head -5
+            ;;
+    esac
+}
+
+complete_task() {
+    local task_pattern="$1"
+    local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+    
+    # Find and move task to completed
+    local completed_task=$(grep -i "$task_pattern" "$PENDING_TASKS" | head -1)
+    
+    if [ -n "$completed_task" ]; then
+        echo "[$timestamp] COMPLETED: $completed_task" >> "$COMPLETED_TASKS"
+        grep -v "$task_pattern" "$PENDING_TASKS" > "${PENDING_TASKS}.tmp" && mv "${PENDING_TASKS}.tmp" "$PENDING_TASKS"
+        echo "✅ Completed: $task_pattern"
+    else
+        echo "❌ Task not found: $task_pattern"
+    fi
+}
+
+# Command dispatcher
+case "${1:-menu}" in
+    "add") add_task "$2" "$3" "$4" "$5" ;;
+    "list") list_tasks "$2" ;;
+    "complete") complete_task "$2" ;;
+    "menu"|*)
+        echo "✅ Google Tasks Manager Commands:"
+        echo "• add <task> [priority] [due_date] [list_type]"
+        echo "• list [pending|weekly|monthly|all]"
+        echo "• complete <task_pattern>"
+        ;;
+esac
+EOF
+    
+    chmod +x ~/.bill-sloth/google-tasks/scripts/tasks-manager.sh
+    
+    # Add to PATH for easy access
+    echo 'export PATH="$HOME/.bill-sloth/google-tasks/scripts:$PATH"' >> ~/.bashrc
+    
+    echo ""
+    echo "✅ Google Tasks integration setup complete!"
+    echo "📁 Task management: ~/.bill-sloth/google-tasks/"
+    echo "🔧 Quick commands:"
+    echo "   • Add task: tasks-manager.sh add 'Task description'"
+    echo "   • List tasks: tasks-manager.sh list"
+    echo "   • Complete task: tasks-manager.sh complete 'task keyword'"
+    echo ""
+    echo "🔄 Reload your shell (source ~/.bashrc) to use commands globally!"
+    echo ""
+    echo "🧠 Carl: 'My tasks are now managed by an intelligent system!'"
+}
 
 productivity_suite_interactive() {
     # Brain/productivity-themed header with ASCII art and colors
@@ -108,6 +251,12 @@ BRAIN_BANNER
     echo "   ✅ Pros: Ultimate external brain with redundant capture methods"
     echo "   🧠 ADHD-Friendly: Something for every mood and mental state"
     echo "   📖 Learn: The full 'life operating system' for neurodivergent minds"
+    echo ""
+    echo "7) ✅ Google Tasks Integration - Smart Task Management"
+    echo "   💡 What it does: Intelligent Google Tasks automation with Bill-specific workflows"
+    echo "   ✅ Features: Task sync, automation triggers, priority management"
+    echo "   🧠 ADHD-Friendly: External brain for task management with smart reminders"
+    echo "   📖 Learn: Professional task automation and workflow integration"
     echo ""
     echo "🥤 Shake: 'Click on it. Click it!'"
     echo ""
@@ -275,6 +424,11 @@ EOF
                 echo "✅ COMPLETE PRODUCTIVITY ECOSYSTEM DEPLOYED!"
                 echo "Access with: productivity-hub (once you reload your shell)"
             fi
+            ;;
+        7)
+            # Google Tasks Integration
+            echo "[LOG] $(date): Bill chose Google Tasks Integration" >> ~/Productivity/assistant.log
+            setup_google_tasks_automation
             ;;
         other|Other|OTHER)
             echo "[LOG] $(date): Bill requested more options from Claude Code" >> ~/Productivity/assistant.log

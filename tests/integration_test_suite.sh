@@ -650,6 +650,7 @@ run_integration_tests() {
                 run_test "monitoring_system" "performance" test_performance_monitoring_system
                 run_test "optimization" "performance" test_performance_optimization
                 ;;
+        esac
     done
     
     # Generate test report

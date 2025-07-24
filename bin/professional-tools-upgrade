@@ -1,0 +1,347 @@
+#!/bin/bash
+# Professional Tools Upgrade - Replace amateur tools with enterprise alternatives
+# "Time to upgrade from stone-age meat-puppet tools to professional supremacy!" - Carl
+
+set -euo pipefail
+
+source "$(dirname "$0")/../lib/include_loader.sh"
+load_includes "core" "notification" "error_handling"
+
+LOG_FILE="$HOME/.bill-sloth/logs/professional_upgrade.log"
+mkdir -p "$(dirname "$LOG_FILE")"
+
+log_upgrade() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
+
+show_banner() {
+    echo -e "\033[38;5;196m"
+    cat << 'EOF'
+    ██████╗ ██████╗  ██████╗     ██╗   ██╗██████╗  ██████╗ ██████╗  ██████╗ ██████╗ ███████╗
+    ██╔══██╗██╔══██╗██╔═══██╗    ██║   ██║██╔══██╗██╔════╝ ██╔══██╗██╔══██╗██╔══██╗██╔════╝
+    ██████╔╝██████╔╝██║   ██║    ██║   ██║██████╔╝██║  ███╗██████╔╝██████╔╝██║  ██║█████╗  
+    ██╔═══╝ ██╔══██╗██║   ██║    ██║   ██║██╔═══╝ ██║   ██║██╔══██╗██╔══██╗██║  ██║██╔══╝  
+    ██║     ██║  ██║╚██████╔╝    ╚██████╔╝██║     ╚██████╔╝██║  ██║██║  ██║██████╔╝███████╗
+    ╚═╝     ╚═╝  ╚═╝ ╚═════╝      ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
+EOF
+    echo -e "\033[0m"
+}
+
+upgrade_audio_system() {
+    log_upgrade "🎵 Upgrading audio system to PipeWire..."
+    
+    if command -v pipewire >/dev/null 2>&1; then
+        log_upgrade "✅ PipeWire already installed"
+        return
+    fi
+    
+    # Install PipeWire (modern audio server)
+    sudo apt update
+    sudo apt install -y pipewire pipewire-alsa pipewire-pulse pipewire-jack-audio-connection-kit
+    sudo apt install -y wireplumber pipewire-media-session-
+    
+    # Professional audio tools
+    sudo apt install -y \
+        carla \
+        qpwgraph \
+        helvum \
+        pavucontrol \
+        pulseeffects \
+        lsp-plugins \
+        calf-plugins \
+        x42-plugins
+    
+    # Enable PipeWire services
+    systemctl --user --now enable pipewire pipewire-pulse
+    systemctl --user --now enable wireplumber
+    
+    log_upgrade "✅ Professional audio system (PipeWire) installed"
+}
+
+upgrade_backup_system() {
+    log_upgrade "💾 Upgrading backup system to Borg..."
+    
+    if command -v borg >/dev/null 2>&1; then
+        log_upgrade "✅ Borg already installed"
+        return
+    fi
+    
+    # Install Borg Backup (professional backup solution)
+    sudo apt install -y borgbackup
+    
+    # Install Restic as alternative
+    sudo apt install -y restic
+    
+    # Create professional backup script
+    cat > "$HOME/bin/bill-backup-pro" << 'EOF'
+#!/bin/bash
+# Professional Backup System using Borg
+
+BACKUP_DIR="$HOME/.bill-sloth-backups"
+BORG_REPO="$BACKUP_DIR/borg-repo"
+DATE=$(date +%Y-%m-%d_%H-%M-%S)
+
+# Initialize repository if not exists
+if [ ! -d "$BORG_REPO" ]; then
+    borg init --encryption=repokey "$BORG_REPO"
+fi
+
+# Create backup
+borg create \
+    --stats --progress \
+    "$BORG_REPO::bill-sloth-{now}" \
+    "$HOME/.bill-sloth" \
+    "$HOME/bill sloth" \
+    --exclude '*.log' \
+    --exclude 'cache/*' \
+    --exclude 'tmp/*'
+
+# Prune old backups (keep 7 daily, 4 weekly, 6 monthly)
+borg prune \
+    --keep-daily=7 \
+    --keep-weekly=4 \
+    --keep-monthly=6 \
+    "$BORG_REPO"
+
+echo "✅ Professional backup complete: $DATE"
+EOF
+    
+    chmod +x "$HOME/bin/bill-backup-pro"
+    log_upgrade "✅ Professional backup system (Borg) installed"
+}
+
+upgrade_task_scheduling() {
+    log_upgrade "⏰ Upgrading task scheduling to systemd timers..."
+    
+    # Create systemd user directory
+    mkdir -p "$HOME/.config/systemd/user"
+    
+    # Professional backup timer
+    cat > "$HOME/.config/systemd/user/bill-backup.service" << 'EOF'
+[Unit]
+Description=Bill Sloth Professional Backup
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/bill-backup-pro
+User=%i
+EOF
+    
+    cat > "$HOME/.config/systemd/user/bill-backup.timer" << 'EOF'
+[Unit]
+Description=Run Bill Sloth backup daily
+Requires=bill-backup.service
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+    
+    # VRBO sync timer
+    cat > "$HOME/.config/systemd/user/vrbo-sync.service" << 'EOF'
+[Unit]
+Description=VRBO Data Synchronization
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c 'curl -X POST http://localhost:8000/sync-bookings'
+User=%i
+EOF
+    
+    cat > "$HOME/.config/systemd/user/vrbo-sync.timer" << 'EOF'
+[Unit]
+Description=Sync VRBO data every hour
+Requires=vrbo-sync.service
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF
+    
+    # Enable timers
+    systemctl --user daemon-reload
+    systemctl --user enable --now bill-backup.timer
+    systemctl --user enable --now vrbo-sync.timer
+    
+    log_upgrade "✅ Professional task scheduling (systemd timers) configured"
+}
+
+upgrade_monitoring_system() {
+    log_upgrade "📊 Installing professional monitoring tools..."
+    
+    # Install system monitoring tools
+    sudo apt install -y \
+        htop \
+        btop \
+        iotop \
+        nethogs \
+        glances \
+        ncdu \
+        tree \
+        fd-find \
+        ripgrep \
+        bat \
+        exa \
+        zoxide
+    
+    # Create professional aliases
+    cat >> "$HOME/.bill-sloth/aliases.sh" << 'EOF'
+
+# Professional tool aliases
+alias ls='exa --icons --group-directories-first'
+alias ll='exa -la --icons --group-directories-first'
+alias cat='bat --style=auto'
+alias find='fd'
+alias grep='rg'
+alias cd='z'  # zoxide smart cd
+alias top='btop'
+alias du='ncdu'
+
+# Professional shortcuts
+alias bill-status='glances'
+alias bill-logs='journalctl --user -f'
+alias bill-services='systemctl --user status'
+EOF
+    
+    log_upgrade "✅ Professional monitoring tools installed"
+}
+
+upgrade_development_tools() {
+    log_upgrade "🛠️ Installing professional development environment..."
+    
+    # Modern Python
+    sudo apt install -y python3.11 python3.11-venv python3.11-dev python3-pip
+    
+    # Node.js LTS
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+    
+    # Modern Git configuration
+    git config --global init.defaultBranch main
+    git config --global pull.rebase true
+    git config --global core.autocrlf input
+    
+    # Professional text editors
+    sudo apt install -y neovim code
+    
+    log_upgrade "✅ Professional development environment configured"
+}
+
+upgrade_network_tools() {
+    log_upgrade "🌐 Installing professional network tools..."
+    
+    sudo apt install -y \
+        nmap \
+        wireshark-qt \
+        tcpdump \
+        netstat-nat \
+        ss \
+        iperf3 \
+        mtr \
+        dig \
+        whois \
+        curl \
+        wget2
+    
+    # Professional network monitoring
+    cat > "$HOME/bin/bill-network-status" << 'EOF'
+#!/bin/bash
+# Professional network monitoring dashboard
+
+echo "🌐 BILL SLOTH NETWORK STATUS DASHBOARD"
+echo "======================================"
+echo ""
+
+echo "📊 INTERFACE STATUS:"
+ip -c addr show | grep -E "(^\d|inet )"
+echo ""
+
+echo "🔗 ACTIVE CONNECTIONS:"
+ss -tulpn | head -10
+echo ""
+
+echo "📈 BANDWIDTH USAGE:"
+if command -v vnstat >/dev/null; then
+    vnstat -i $(ip route | grep default | awk '{print $5}' | head -1) -d -l 1
+else
+    echo "Install vnstat for bandwidth statistics"
+fi
+echo ""
+
+echo "🎯 DOCKER SERVICES:"
+docker compose ps 2>/dev/null || echo "Docker services not running"
+EOF
+    
+    chmod +x "$HOME/bin/bill-network-status"
+    log_upgrade "✅ Professional network tools installed"
+}
+
+main_upgrade() {
+    clear
+    show_banner
+    
+    echo -e "\033[38;5;46m💀 PROFESSIONAL TOOLS UPGRADE - TRANSCEND AMATEUR LIMITATIONS 💀\033[0m"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🎯 UPGRADE TO ENTERPRISE-GRADE TOOLS:"
+    echo "• Replace PulseAudio → PipeWire (professional audio)"
+    echo "• Replace cron → systemd timers (reliable scheduling)"
+    echo "• Replace basic tools → professional alternatives"
+    echo "• Add monitoring, backup, and automation"
+    echo ""
+    
+    log_upgrade "🚀 Starting professional tools upgrade..."
+    
+    echo "🔧 PROFESSIONAL UPGRADES IN PROGRESS:"
+    echo ""
+    
+    upgrade_audio_system
+    echo "✅ Audio system upgraded to PipeWire"
+    
+    upgrade_backup_system  
+    echo "✅ Backup system upgraded to Borg"
+    
+    upgrade_task_scheduling
+    echo "✅ Task scheduling upgraded to systemd"
+    
+    upgrade_monitoring_system
+    echo "✅ Monitoring tools installed"
+    
+    upgrade_development_tools
+    echo "✅ Development environment modernized"
+    
+    upgrade_network_tools
+    echo "✅ Network tools professionalized"
+    
+    echo ""
+    echo "🎉 PROFESSIONAL UPGRADE COMPLETE!"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "🧠 Carl: 'Now you're operating with professional-grade equipment!'"
+    echo ""
+    echo "✅ WHAT'S NEW:"
+    echo "• PipeWire for broadcast-quality audio"
+    echo "• Borg for military-grade backups"
+    echo "• systemd timers for reliable automation"
+    echo "• Professional monitoring dashboard"
+    echo "• Enterprise development tools"
+    echo ""
+    echo "🎯 NEXT STEPS:"
+    echo "• Run: bill-network-status (network dashboard)"
+    echo "• Run: bill-backup-pro (create backup)"
+    echo "• Check: systemctl --user status (service status)"
+    echo ""
+    
+    log_upgrade "✅ Professional tools upgrade completed successfully"
+}
+
+# Run the upgrade
+main_upgrade

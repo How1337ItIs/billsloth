@@ -1,0 +1,276 @@
+{
+  "business_optimization": {
+    "vrbo_properties": {
+      "auto_pricing": {
+        "enabled": true,
+        "base_price_adjustment": 0.95,
+        "seasonal_multipliers": {
+          "spring": 1.1,
+          "summer": 1.3,
+          "fall": 1.0,
+          "winter": 0.85
+        },
+        "day_of_week_multipliers": {
+          "monday": 0.9,
+          "tuesday": 0.9,
+          "wednesday": 0.9,
+          "thursday": 0.95,
+          "friday": 1.15,
+          "saturday": 1.25,
+          "sunday": 1.1
+        },
+        "occupancy_thresholds": {
+          "high_demand": {
+            "threshold": 0.8,
+            "price_increase": 1.2
+          },
+          "low_demand": {
+            "threshold": 0.3,
+            "price_decrease": 0.9
+          }
+        }
+      },
+      "guest_communication": {
+        "auto_messages": {
+          "welcome": {
+            "enabled": true,
+            "send_hours_before_checkin": 24,
+            "template": "welcome_message"
+          },
+          "checkin_reminder": {
+            "enabled": true,
+            "send_hours_before_checkin": 4,
+            "template": "checkin_reminder"
+          },
+          "midstay_checkin": {
+            "enabled": true,
+            "send_on_day": 2,
+            "template": "midstay_checkin"
+          },
+          "checkout_reminder": {
+            "enabled": true,
+            "send_hours_before_checkout": 12,
+            "template": "checkout_reminder"
+          },
+          "review_request": {
+            "enabled": true,
+            "send_hours_after_checkout": 6,
+            "template": "review_request"
+          }
+        },
+        "personalization": {
+          "use_guest_name": true,
+          "include_local_weather": true,
+          "include_local_events": true,
+          "custom_recommendations": true
+        }
+      },
+      "performance_optimization": {
+        "listing_optimization": {
+          "auto_title_testing": true,
+          "photo_optimization": true,
+          "amenity_highlighting": true,
+          "description_enhancement": true
+        },
+        "booking_optimization": {
+          "instant_book": true,
+          "minimum_stay_optimization": true,
+          "cancellation_policy_optimization": "moderate",
+          "advance_booking_discounts": true
+        }
+      }
+    },
+    "partnership_management": {
+      "outreach_automation": {
+        "enabled": true,
+        "sequences": {
+          "cold_outreach": {
+            "email_1": {
+              "delay_days": 0,
+              "template": "initial_outreach"
+            },
+            "email_2": {
+              "delay_days": 7,
+              "template": "followup_1"
+            },
+            "email_3": {
+              "delay_days": 14,
+              "template": "followup_2"
+            }
+          },
+          "proposal_followup": {
+            "email_1": {
+              "delay_days": 3,
+              "template": "proposal_followup"
+            },
+            "email_2": {
+              "delay_days": 7,
+              "template": "proposal_reminder"
+            }
+          }
+        }
+      },
+      "campaign_tracking": {
+        "auto_roi_calculation": true,
+        "performance_alerts": {
+          "low_performance_threshold": 0.02,
+          "high_performance_threshold": 0.08
+        },
+        "automated_reporting": {
+          "frequency": "weekly",
+          "recipients": ["business@billsloth.com"]
+        }
+      },
+      "contract_management": {
+        "auto_renewal_reminders": true,
+        "renewal_notice_days": 30,
+        "performance_review_triggers": {
+          "quarterly_review": true,
+          "low_performance_review": true
+        }
+      }
+    },
+    "revenue_optimization": {
+      "diversification_targets": {
+        "vrbo_percentage": 60,
+        "partnerships_percentage": 30,
+        "other_percentage": 10
+      },
+      "goal_tracking": {
+        "monthly_revenue_target": 5000,
+        "quarterly_growth_target": 0.15,
+        "annual_revenue_target": 60000
+      },
+      "cost_optimization": {
+        "auto_expense_categorization": true,
+        "tax_deduction_tracking": true,
+        "vendor_cost_monitoring": true
+      }
+    },
+    "automation_settings": {
+      "email_sending": {
+        "max_emails_per_hour": 50,
+        "business_hours_only": false,
+        "timezone": "America/New_York"
+      },
+      "data_sync": {
+        "vrbo_sync_interval_hours": 6,
+        "partnership_data_sync_hours": 24,
+        "backup_frequency_hours": 12
+      },
+      "monitoring": {
+        "performance_alerts": true,
+        "revenue_threshold_alerts": true,
+        "system_health_monitoring": true
+      }
+    },
+    "ai_recommendations": {
+      "pricing_suggestions": {
+        "enabled": true,
+        "confidence_threshold": 0.7,
+        "auto_apply_threshold": 0.9
+      },
+      "content_optimization": {
+        "listing_description_ai": true,
+        "email_template_optimization": true,
+        "partnership_proposal_ai": true
+      },
+      "market_analysis": {
+        "competitor_monitoring": true,
+        "market_trend_analysis": true,
+        "seasonal_demand_prediction": true
+      }
+    }
+  },
+  "performance_metrics": {
+    "vrbo_kpis": [
+      "occupancy_rate",
+      "average_daily_rate",
+      "revenue_per_available_night",
+      "guest_satisfaction_score",
+      "booking_lead_time",
+      "cancellation_rate"
+    ],
+    "partnership_kpis": [
+      "roi_percentage",
+      "campaign_conversion_rate",
+      "average_deal_size",
+      "partnership_retention_rate",
+      "time_to_close_deals",
+      "referral_rate"
+    ],
+    "business_kpis": [
+      "monthly_recurring_revenue",
+      "profit_margin",
+      "customer_acquisition_cost",
+      "customer_lifetime_value",
+      "cash_flow",
+      "tax_optimization_savings"
+    ]
+  },
+  "alerts_and_notifications": {
+    "revenue_alerts": {
+      "daily_revenue_drop": {
+        "threshold_percentage": -20,
+        "enabled": true
+      },
+      "monthly_goal_risk": {
+        "threshold_percentage": 0.8,
+        "enabled": true
+      }
+    },
+    "operational_alerts": {
+      "booking_issues": true,
+      "guest_complaints": true,
+      "partnership_opportunities": true,
+      "system_errors": true
+    },
+    "notification_channels": {
+      "email": {
+        "enabled": true,
+        "address": "alerts@billsloth.com"
+      },
+      "slack": {
+        "enabled": false,
+        "webhook_url": ""
+      },
+      "sms": {
+        "enabled": false,
+        "phone_number": ""
+      }
+    }
+  },
+  "integration_settings": {
+    "vrbo_api": {
+      "rate_limit_per_minute": 60,
+      "retry_attempts": 3,
+      "timeout_seconds": 30
+    },
+    "email_service": {
+      "provider": "sendgrid",
+      "daily_limit": 1000,
+      "rate_limit_per_hour": 100
+    },
+    "analytics_service": {
+      "data_retention_days": 365,
+      "aggregation_intervals": ["daily", "weekly", "monthly"],
+      "export_formats": ["csv", "json", "pdf"]
+    }
+  },
+  "security_and_privacy": {
+    "data_encryption": {
+      "enabled": true,
+      "encryption_algorithm": "AES-256"
+    },
+    "api_security": {
+      "rate_limiting": true,
+      "api_key_rotation_days": 90,
+      "ip_whitelisting": false
+    },
+    "guest_data_privacy": {
+      "data_retention_days": 1095,
+      "anonymization_after_days": 730,
+      "gdpr_compliance": true
+    }
+  }
+}
