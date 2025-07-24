@@ -61,7 +61,7 @@ function New-CyberpunkLiveBuildConfig {
 # Bill Sloth Cyberpunk Live-Build Configuration
 
 lb config noauto \
-    --distribution $UbuntuVersion \
+    --distribution jammy \
     --archive-areas "main restricted universe multiverse" \
     --linux-flavours generic \
     --linux-packages linux-image \
@@ -83,7 +83,7 @@ lb config noauto \
     --cache-stages "bootstrap rootfs" \
     --compression gzip \
     --zsync false \
-    "{"@"}"
+    "\${@}"
 "@
     
     $autoConfig | Out-File -FilePath "$autoConfigDir\config" -Encoding UTF8
