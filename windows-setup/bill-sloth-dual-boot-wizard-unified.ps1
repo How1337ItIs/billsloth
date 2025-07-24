@@ -7,6 +7,7 @@ param(
     [int]$UbuntuSizeGB = 500,
     [switch]$FastMode,
     [switch]$SkipClaude,
+    [switch]$NonInteractive,
     [string]$ExistingISO = ""
 )
 
@@ -108,13 +109,15 @@ function Get-ISOBuilderPath {
         # Try same directory as current script using PSCommandPath
         (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-custom-iso-builder.ps1"),
         
-        # Try MyInvocation path (may be null in some contexts)
-        (if ($MyInvocation.MyCommand.Path) { Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1" } else { $null }),
-        
         # Try common installation paths
         "C:\Users\natha\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1",
         "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-custom-iso-builder.ps1"
     )
+    
+    # Add MyInvocation path conditionally (avoid inline if in array)
+    if ($MyInvocation.MyCommand.Path) {
+        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1"
+    }
     
     foreach ($path in $possiblePaths) {
         if ($path -and (Test-Path $path)) {
@@ -139,6 +142,12 @@ function Get-ISOBuilderPath {
     Write-Host "2. Use standard Ubuntu ISO (loses Bill Sloth integration)" -ForegroundColor White
     Write-Host "3. Exit and fix installation" -ForegroundColor White
     Write-Host ""
+    
+    # Handle NonInteractive mode for ISO builder path resolution
+    if ($NonInteractive) {
+        Write-Host "NonInteractive mode: Using standard Ubuntu ISO fallback..." -ForegroundColor Yellow
+        return $null # This will trigger fallback
+    }
     
     do {
         $choice = Read-Host "Choose option (1-3)"
@@ -177,7 +186,14 @@ function Get-CyberpunkBillSlothISO {
     
     if (Test-Path $customISOPath) {
         Write-Host "Found existing Bill Sloth Cyberpunk ISO" -ForegroundColor Green
-        $useExisting = Read-Host "Use existing cyberpunk ISO? (Y/n)"
+        
+        if ($NonInteractive) {
+            $useExisting = "Y"
+            Write-Host "Auto-using existing cyberpunk ISO (NonInteractive mode)" -ForegroundColor Yellow
+        } else {
+            $useExisting = Read-Host "Use existing cyberpunk ISO? (Y/n)"
+        }
+        
         if ($useExisting -ne 'n' -and $useExisting -ne 'N') {
             Write-Host "SUCCESS: Using existing cyberpunk ISO: $customISOPath" -ForegroundColor Green
             return $customISOPath
@@ -194,7 +210,13 @@ function Get-CyberpunkBillSlothISO {
     Write-Host "  - ADHD/dyslexia optimized interface" -ForegroundColor White
     Write-Host ""
     
-    $confirm = Read-Host "Proceed with custom cyberpunk ISO creation? This may take 30-60 minutes (Y/n)"
+    if ($NonInteractive) {
+        $confirm = "Y"
+        Write-Host "Auto-proceeding with custom ISO creation (NonInteractive mode)" -ForegroundColor Yellow
+    } else {
+        $confirm = Read-Host "Proceed with custom cyberpunk ISO creation? This may take 30-60 minutes (Y/n)"
+    }
+    
     if ($confirm -eq 'n' -or $confirm -eq 'N') {
         Write-Host "Custom ISO creation cancelled - falling back to standard Ubuntu..." -ForegroundColor Yellow
         return Get-StandardUbuntuISO
@@ -268,6 +290,13 @@ function Get-StandardUbuntuISO {
     Write-Host "WARNING: No Ubuntu ISOs found locally"
     Write-Host "Please download Ubuntu 24.04+ LTS from ubuntu.com"
     
+    # Handle NonInteractive mode
+    if ($NonInteractive) {
+        Write-Host "ERROR: NonInteractive mode requires Ubuntu ISO to be present" -ForegroundColor Red
+        Write-Host "Please ensure Ubuntu ISO is in Downloads folder and retry" -ForegroundColor Yellow
+        exit 1
+    }
+    
     do {
         $manualPath = Read-Host "Enter path to Ubuntu ISO file"
         if (Test-Path $manualPath) {
@@ -313,25 +342,37 @@ function New-TransitionUSB {
             Write-Host "  [$i] $($drive.DeviceID) - $label ($sizeGB GB)" -ForegroundColor White
         }
         
-        do {
-            $selection = Read-Host "Select USB drive number (0-$($usbDrives.Count-1))"
-            if ($selection -match '^\d+$' -and [int]$selection -lt $usbDrives.Count) {
-                $selectedUSB = $usbDrives[[int]$selection]
-                break
-            }
-            Write-Host "Invalid selection" -ForegroundColor Red
-        } while ($true)
+        if ($NonInteractive) {
+            # Auto-select first available USB drive
+            $selectedUSB = $usbDrives[0]
+            Write-Host "Auto-selected USB drive: $($selectedUSB.DeviceID) (NonInteractive mode)" -ForegroundColor Yellow
+        } else {
+            do {
+                $selection = Read-Host "Select USB drive number (0-$($usbDrives.Count-1))"
+                if ($selection -match '^\d+$' -and [int]$selection -lt $usbDrives.Count) {
+                    $selectedUSB = $usbDrives[[int]$selection]
+                    break
+                }
+                Write-Host "Invalid selection" -ForegroundColor Red
+            } while ($true)
+        }
     }
     
     $usbSizeGB = [math]::Round($selectedUSB.Size / 1GB, 2)
     Write-Host "Target USB: $($selectedUSB.DeviceID) ($usbSizeGB GB)" -ForegroundColor Green
     Write-Host ""
     
-    # Safety confirmation
+    # Safety confirmation with NonInteractive support
     Write-Host "WARNING: ALL DATA on $($selectedUSB.DeviceID) will be ERASED!" -ForegroundColor Red
     Write-Host "This will create a bootable Ubuntu USB for dual-boot installation" -ForegroundColor Yellow
     Write-Host ""
-    $confirm = Read-Host "Continue with USB creation? (y/N)"
+    
+    if ($NonInteractive) {
+        $confirm = "y"
+        Write-Host "Auto-confirming USB creation (NonInteractive mode)" -ForegroundColor Yellow
+    } else {
+        $confirm = Read-Host "Continue with USB creation? (y/N)"
+    }
     
     if ($confirm -ne 'y' -and $confirm -ne 'Y') {
         Write-Host "USB creation cancelled" -ForegroundColor Red
@@ -644,16 +685,21 @@ function Show-InstallationInstructions {
     Write-Host "- Direct GPU, USB, and system hardware access" -ForegroundColor White
     Write-Host ""
     
-    Write-Host "Ready to restart and begin installation? (y/N)" -ForegroundColor Yellow
-    $restart = Read-Host
-    
-    if ($restart -eq 'y' -or $restart -eq 'Y') {
-        Write-Host "Restarting system in 10 seconds..." -ForegroundColor Green
-        Write-Host "Press Ctrl+C to cancel" -ForegroundColor Gray
-        Start-Sleep -Seconds 10
-        Restart-Computer -Force
+    if ($NonInteractive) {
+        Write-Host "NonInteractive mode: Manual restart required for installation" -ForegroundColor Yellow
+        Write-Host "Boot from USB and install Ubuntu when ready" -ForegroundColor White
     } else {
-        Write-Host "Manual restart required when ready for installation" -ForegroundColor Yellow
+        Write-Host "Ready to restart and begin installation? (y/N)" -ForegroundColor Yellow
+        $restart = Read-Host
+        
+        if ($restart -eq 'y' -or $restart -eq 'Y') {
+            Write-Host "Restarting system in 10 seconds..." -ForegroundColor Green
+            Write-Host "Press Ctrl+C to cancel" -ForegroundColor Gray
+            Start-Sleep -Seconds 10
+            Restart-Computer -Force
+        } else {
+            Write-Host "Manual restart required when ready for installation" -ForegroundColor Yellow
+        }
     }
 }
 
