@@ -25,13 +25,19 @@ Please start by downloading the Bill Sloth auto-setup script and running the aut
 Run as Administrator in PowerShell:
 
 ```powershell
-# RECOMMENDED: Complete system creator (includes full Bill Sloth automation)
+# ⭐ NEW: Fine-tuned dual-boot wizard (maximum automation + token efficiency)
+.\fine-tuned-dual-boot-wizard.ps1
+
+# Token conservation mode for Pro subscriptions
+.\fine-tuned-dual-boot-wizard.ps1 -ClaudeLevel minimal -ConserveTokens
+
+# High-speed mode (skip Claude integration)
+.\fine-tuned-dual-boot-wizard.ps1 -SkipClaude
+
+# ALTERNATIVE: Complete system creator (includes full Bill Sloth automation)
 .\bill-sloth-complete-system-creator.ps1
 
-# OR traditional approach:
-# One-click auto-setup (downloads and runs everything)
-iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/how1337itis/billsloth/main/windows-setup/bill-sloth-auto-setup.ps1'))
-
+# Traditional approach:
 # Complete setup with Claude assistance
 .\bill-sloth-claude-assisted-setup.ps1 -Interactive
 
@@ -49,7 +55,30 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercon
 
 ### Core Scripts
 
-#### `bill-sloth-complete-system-creator.ps1` **⭐ RECOMMENDED**
+#### `fine-tuned-dual-boot-wizard.ps1` **⭐ NEW & RECOMMENDED**
+**Maximum automation dual-boot wizard with token-efficient Claude integration**
+- 🚀 Comprehensive system analysis and compatibility checking
+- 🤖 Strategic Claude Code integration with token conservation for Pro subscriptions
+- 🎯 Intelligent Ubuntu ISO detection and automated download
+- 💾 Smart USB drive selection with multiple creation methods  
+- 📦 Complete Bill Sloth automation system integration
+- 🔧 Built-in troubleshooting and error recovery
+- ⚡ High-speed mode option (skip Claude for maximum performance)
+- 🧠 ADHD/dyslexia optimized with clear progress indicators
+
+**Usage Examples:**
+```powershell
+# Standard mode with smart Claude usage
+.\fine-tuned-dual-boot-wizard.ps1
+
+# Token conservation mode for Pro subscriptions  
+.\fine-tuned-dual-boot-wizard.ps1 -ClaudeLevel minimal -ConserveTokens
+
+# Maximum speed mode
+.\fine-tuned-dual-boot-wizard.ps1 -SkipClaude
+```
+
+#### `bill-sloth-complete-system-creator.ps1` **⭐ ALTERNATIVE**
 **Complete Bill Sloth automation system deployment**
 - 🚀 Creates Ubuntu USB with full Bill Sloth system pre-loaded
 - 🎯 Auto-detects Ubuntu ISOs and USB drives
@@ -317,6 +346,21 @@ npm install -g @anthropic-ai/claude-code
 ```powershell
 # Use simple USB creator for specific drives
 .\simple-usb-creator.ps1  # (available in repository root)
+
+# Or run setup troubleshooter
+.\troubleshoot-setup-failure.ps1 -IssueType usb
+```
+
+**Any setup failures:**
+```powershell
+# Automated troubleshooting and recovery
+.\troubleshoot-setup-failure.ps1
+
+# Auto-fix common issues
+.\troubleshoot-setup-failure.ps1 -AutoFix
+
+# Get Claude assistance for complex issues
+.\troubleshoot-setup-failure.ps1 -SendToClaude
 ```
 
 **Partition shrink fails:**
