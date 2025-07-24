@@ -97,28 +97,84 @@ function Get-WSL2Status {
 }
 
 # Phase 2: Ubuntu ISO Preparation  
-function Get-OptimalUbuntuISO {
-    Write-Host "=== PHASE 2: UBUNTU ISO PREPARATION ===" -ForegroundColor Cyan
+function Get-CyberpunkBillSlothISO {
+    Write-Host "=== PHASE 2: CYBERPUNK BILL SLOTH ISO CREATION ===" -ForegroundColor Cyan
     Write-Host ""
     
-    # Check for existing ISOs (Bill has multiple Ubuntu 24.04.2 ISOs)
+    # Check for existing Bill Sloth cyberpunk ISO
+    $customISOPath = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso"
+    
+    if (Test-Path $customISOPath) {
+        Write-Host "Found existing Bill Sloth Cyberpunk ISO" -ForegroundColor Green
+        $useExisting = Read-Host "Use existing cyberpunk ISO? (Y/n)"
+        if ($useExisting -ne 'n' -and $useExisting -ne 'N') {
+            Write-Host "SUCCESS: Using existing cyberpunk ISO: $customISOPath" -ForegroundColor Green
+            return $customISOPath
+        }
+    }
+    
+    Write-Host "Creating custom cyberpunk Bill Sloth ISO..." -ForegroundColor Magenta
+    Write-Host "This badass ISO will include:" -ForegroundColor Yellow
+    Write-Host "  - Complete Bill Sloth automation system" -ForegroundColor White
+    Write-Host "  - Claude Code pre-installed and configured" -ForegroundColor White
+    Write-Host "  - All dependencies integrated (audio, voice, dev tools)" -ForegroundColor White
+    Write-Host "  - Cyberpunk aesthetics with ASCII sloth boot animations" -ForegroundColor White
+    Write-Host "  - Automated first-boot setup" -ForegroundColor White
+    Write-Host "  - ADHD/dyslexia optimized interface" -ForegroundColor White
+    Write-Host ""
+    
+    $confirm = Read-Host "Proceed with custom cyberpunk ISO creation? This may take 30-60 minutes (Y/n)"
+    if ($confirm -eq 'n' -or $confirm -eq 'N') {
+        Write-Host "Custom ISO creation cancelled - falling back to standard Ubuntu..." -ForegroundColor Yellow
+        return Get-StandardUbuntuISO
+    }
+    
+    try {
+        # Execute the custom ISO builder
+        Write-Host "Launching cyberpunk ISO constructor..." -ForegroundColor Magenta
+        $isoBuilderPath = Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-custom-iso-builder.ps1"
+        
+        if (Test-Path $isoBuilderPath) {
+            & $isoBuilderPath -OutputISO $customISOPath -MaxCyberpunk
+            
+            if (Test-Path $customISOPath) {
+                Write-Host "SUCCESS: Cyberpunk Bill Sloth ISO created!" -ForegroundColor Green
+                return $customISOPath
+            } else {
+                throw "ISO creation failed"
+            }
+        } else {
+            Write-Host "ERROR: Custom ISO builder not found" -ForegroundColor Red
+            Write-Host "Falling back to standard Ubuntu ISO..." -ForegroundColor Yellow
+            return Get-StandardUbuntuISO
+        }
+    }
+    catch {
+        Write-Host "ERROR: Custom ISO creation failed: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Falling back to standard Ubuntu ISO..." -ForegroundColor Yellow
+        return Get-StandardUbuntuISO
+    }
+}
+
+# Fallback standard Ubuntu ISO detection
+function Get-StandardUbuntuISO {
+    Write-Host "Scanning for standard Ubuntu ISOs..." -ForegroundColor Yellow
+    
+    # Check for existing ISOs
     if ($ExistingISO -and (Test-Path $ExistingISO)) {
-        Write-Host "Using specified ISO: $ExistingISO" -ForegroundColor Green
+        Write-Host "SUCCESS: Using specified ISO: $ExistingISO"
         return $ExistingISO
     }
     
-    Write-Host "Scanning for existing Ubuntu ISOs..." -ForegroundColor Yellow
-    
     $searchPaths = @(
-        "$env:USERPROFILE\Downloads",
-        "$env:USERPROFILE\Desktop", 
-        "$env:USERPROFILE\Documents",
-        "C:\Users\*\Downloads"
+        "$env:USERPROFILE\Downloads\*ubuntu*.iso",
+        "$env:USERPROFILE\Desktop\*ubuntu*.iso",
+        "$env:USERPROFILE\Documents\*ubuntu*.iso"
     )
     
     $foundISOs = @()
-    foreach ($path in $searchPaths) {
-        $found = Get-ChildItem -Path $path -Filter "*ubuntu*.iso" -ErrorAction SilentlyContinue
+    foreach ($pattern in $searchPaths) {
+        $found = Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue
         $foundISOs += $found
     }
     
@@ -129,19 +185,19 @@ function Get-OptimalUbuntuISO {
             Select-Object -First 1
             
         $isoSizeGB = [math]::Round($bestISO.Length / 1GB, 2)
-        Write-Host "Found optimal ISO: $($bestISO.Name) ($isoSizeGB GB)" -ForegroundColor Green
+        Write-Host "SUCCESS: Found standard ISO: $($bestISO.Name) ($isoSizeGB GB)"
         return $bestISO.FullName
     }
     
-    Write-Host "No Ubuntu ISOs found locally" -ForegroundColor Yellow
-    Write-Host "Please download Ubuntu 24.04+ LTS from ubuntu.com" -ForegroundColor White
+    Write-Host "WARNING: No Ubuntu ISOs found locally"
+    Write-Host "Please download Ubuntu 24.04+ LTS from ubuntu.com"
     
     do {
         $manualPath = Read-Host "Enter path to Ubuntu ISO file"
         if (Test-Path $manualPath) {
             return $manualPath
         }
-        Write-Host "File not found: $manualPath" -ForegroundColor Red
+        Write-Host "ERROR: File not found: $manualPath"
     } while ($true)
 }
 
@@ -206,31 +262,26 @@ function New-TransitionUSB {
         return $null
     }
     
-    # Create USB using Rufus (most reliable for UEFI dual-boot)  
-    Write-Host "Downloading Rufus for USB creation..." -ForegroundColor Yellow
-    $rufusPath = "$env:TEMP\rufus.exe"
+    # Create USB using fully automated CLI method
+    Write-Host "Creating bootable Ubuntu USB (fully automated)..." -ForegroundColor Yellow
     
     try {
-        if (-not (Test-Path $rufusPath)) {
-            $rufusUrl = "https://github.com/pbatard/rufus/releases/download/v4.5/rufus-4.5.exe"
-            Invoke-WebRequest -Uri $rufusUrl -OutFile $rufusPath -UseBasicParsing
+        # Method 1: Try PowerShell native method first
+        $success = New-BootableUSBNative $ISOPath $selectedUSB.DeviceID
+        
+        if (-not $success) {
+            Write-Host "Native method failed, trying automated Rufus..." -ForegroundColor Yellow
+            $success = New-BootableUSBRufusAutomated $ISOPath $selectedUSB.DeviceID
         }
         
-        Write-Host "Rufus ready" -ForegroundColor Green
-        Write-Host ""
-        Write-Host "Launching Rufus for USB creation..." -ForegroundColor Green
-        Write-Host ""
-        Write-Host "RUFUS CONFIGURATION FOR BILL'S SYSTEM:" -ForegroundColor Yellow
-        Write-Host "1. Device: Select $($selectedUSB.DeviceID)" -ForegroundColor White
-        Write-Host "2. Boot selection: SELECT -> $ISOPath" -ForegroundColor White
-        Write-Host "3. Image option: Standard Windows installation" -ForegroundColor White
-        Write-Host "4. Partition scheme: GPT (for UEFI)" -ForegroundColor White
-        Write-Host "5. Target system: UEFI (non CSM)" -ForegroundColor White
-        Write-Host "6. File system: FAT32" -ForegroundColor White
-        Write-Host "7. Click START" -ForegroundColor White
-        Write-Host ""
+        if (-not $success) {
+            Write-Host "Automated methods failed, falling back to manual Rufus..." -ForegroundColor Yellow
+            $success = New-BootableUSBRufusManual $ISOPath $selectedUSB.DeviceID
+        }
         
-        Start-Process -FilePath $rufusPath -Wait
+        if (-not $success) {
+            throw "All USB creation methods failed"
+        }
         
         Write-Host "USB creation completed!" -ForegroundColor Green
         
@@ -538,7 +589,7 @@ Write-Host ""
 $wslStatus = Get-WSL2Status
 
 # Phase 2: Find Ubuntu ISO
-$ubuntuISO = Get-OptimalUbuntuISO
+$ubuntuISO = Get-CyberpunkBillSlothISO
 
 if (-not $ubuntuISO) {
     Write-Host "Ubuntu ISO required for installation. Exiting." -ForegroundColor Red
