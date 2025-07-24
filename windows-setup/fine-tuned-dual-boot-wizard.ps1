@@ -10,7 +10,8 @@ param(
     [switch]$SkipClaude,
     [int]$UbuntuSizeGB = 100,
     [string]$USBDrive = "",
-    [string]$ISOPath = ""
+    [string]$ISOPath = "",
+    [string]$PreFlightData = ""
 )
 
 #Requires -RunAsAdministrator
@@ -32,7 +33,38 @@ trap {
     exit 1
 }
 
-# ASCII banner with token conservation notice
+# Load pre-flight data if provided
+$script:PreFlightAnalysis = $null
+if ($PreFlightData) {
+    try {
+        if (Test-Path $PreFlightData) {
+            $preFlightContent = Get-Content -Path $PreFlightData -Raw | ConvertFrom-Json
+            $script:PreFlightAnalysis = $preFlightContent
+            Write-Host "📋 Pre-flight analysis loaded from: $PreFlightData" -ForegroundColor Green
+        } else {
+            # Assume it's JSON data directly
+            $script:PreFlightAnalysis = $PreFlightData | ConvertFrom-Json
+            Write-Host "📋 Pre-flight analysis loaded from parameter" -ForegroundColor Green
+        }
+        
+        # Override parameters based on pre-flight recommendations
+        if ($script:PreFlightAnalysis.optimization_recommendations.skip_claude_recommended) {
+            $SkipClaude = $true
+        }
+        if ($script:PreFlightAnalysis.optimization_recommendations.claude_assistance_level) {
+            $ClaudeLevel = $script:PreFlightAnalysis.optimization_recommendations.claude_assistance_level
+        }
+        if ($script:PreFlightAnalysis.wizard_parameters.ubuntu_partition_size) {
+            $UbuntuSizeGB = $script:PreFlightAnalysis.wizard_parameters.ubuntu_partition_size
+        }
+    }
+    catch {
+        Write-Host "⚠️  Invalid pre-flight data format, proceeding with standard analysis" -ForegroundColor Yellow
+        $script:PreFlightAnalysis = $null
+    }
+}
+
+# ASCII banner with optimization notice
 Write-Host @"
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  🚀 BILL SLOTH FINE-TUNED DUAL-BOOT WIZARD 🚀                               ║
@@ -43,6 +75,16 @@ Write-Host @"
 "@ -ForegroundColor Cyan
 
 Write-Host ""
+if ($script:PreFlightAnalysis) {
+    Write-Host "🎯 OPTIMIZED MODE: Using pre-flight system analysis" -ForegroundColor Green
+    Write-Host "   System complexity: $($script:PreFlightAnalysis.system_profile.complexity)" -ForegroundColor Cyan
+    Write-Host "   Ubuntu compatibility: $($script:PreFlightAnalysis.system_profile.ubuntu_compatibility)" -ForegroundColor Cyan
+    Write-Host "   Estimated time: $($script:PreFlightAnalysis.system_profile.estimated_setup_time)" -ForegroundColor Cyan
+    if ($script:PreFlightAnalysis.wizard_parameters.estimated_token_usage) {
+        Write-Host "   Estimated tokens: $($script:PreFlightAnalysis.wizard_parameters.estimated_token_usage)" -ForegroundColor Green
+    }
+}
+
 if (-not $SkipClaude) {
     Write-Host "🔋 Claude Code integration: $ClaudeLevel level" -ForegroundColor Green
     if ($ConserveTokens) {
@@ -55,6 +97,12 @@ Write-Host ""
 
 # Initialize comprehensive system data collection
 function Get-ComprehensiveSystemData {
+    # Use pre-flight data if available to skip expensive analysis
+    if ($script:PreFlightAnalysis -and $script:PreFlightAnalysis.system_data) {
+        Write-Host "⚡ Using pre-flight system analysis (skipping redundant checks)" -ForegroundColor Green
+        return $script:PreFlightAnalysis.system_data
+    }
+    
     Write-Host "🔍 Analyzing system configuration..." -ForegroundColor Yellow
     
     $systemData = @{
@@ -118,6 +166,17 @@ function Get-ComprehensiveSystemData {
 # Intelligent hardware compatibility assessment
 function Test-UbuntuCompatibility {
     param([hashtable]$SystemData)
+    
+    # Use pre-flight compatibility assessment if available
+    if ($script:PreFlightAnalysis -and $script:PreFlightAnalysis.system_profile) {
+        Write-Host "⚡ Using pre-flight compatibility assessment" -ForegroundColor Green
+        return @{
+            overall = $script:PreFlightAnalysis.system_profile.ubuntu_compatibility
+            issues = if ($script:PreFlightAnalysis.critical_actions_needed) { $script:PreFlightAnalysis.critical_actions_needed } else { @() }
+            recommendations = if ($script:PreFlightAnalysis.hardware_considerations) { $script:PreFlightAnalysis.hardware_considerations } else { @() }
+            blockers = @()  # Pre-flight should have caught these
+        }
+    }
     
     Write-Host "🔍 Testing Ubuntu compatibility..." -ForegroundColor Yellow
     
@@ -408,6 +467,16 @@ function New-USBViaDISM {
 # Strategic Claude integration for critical decisions
 function Get-ClaudeGuidance {
     param([hashtable]$SystemData, [hashtable]$CompatibilityData)
+    
+    # Skip Claude entirely if pre-flight analysis is comprehensive
+    if ($script:PreFlightAnalysis -and $script:PreFlightAnalysis.optimization_recommendations.skip_claude_recommended) {
+        Write-Host "⚡ Skipping Claude integration (pre-flight analysis is sufficient)" -ForegroundColor Green
+        return @{ 
+            skip = $true 
+            reason = "pre_flight_comprehensive"
+            estimated_tokens_saved = $script:PreFlightAnalysis.wizard_parameters.estimated_token_usage
+        }
+    }
     
     if ($SkipClaude) {
         Write-Host "⚡ Skipping Claude integration (high-speed mode)" -ForegroundColor Yellow

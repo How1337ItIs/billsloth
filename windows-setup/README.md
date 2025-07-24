@@ -25,7 +25,16 @@ Please start by downloading the Bill Sloth auto-setup script and running the aut
 Run as Administrator in PowerShell:
 
 ```powershell
-# ⭐ NEW: Fine-tuned dual-boot wizard (maximum automation + token efficiency)
+# 🎯 ULTIMATE: Pre-flight optimized launcher (RECOMMENDED FOR BILL)
+.\optimized-setup-launcher.ps1
+
+# Manual pre-flight with Claude (maximum optimization)
+.\optimized-setup-launcher.ps1 -ManualPreFlight
+
+# Skip pre-flight analysis
+.\optimized-setup-launcher.ps1 -SkipPreFlight
+
+# ⭐ DIRECT: Fine-tuned dual-boot wizard (maximum automation + token efficiency)
 .\fine-tuned-dual-boot-wizard.ps1
 
 # Token conservation mode for Pro subscriptions
@@ -55,7 +64,29 @@ Run as Administrator in PowerShell:
 
 ### Core Scripts
 
-#### `fine-tuned-dual-boot-wizard.ps1` **⭐ NEW & RECOMMENDED**
+#### `optimized-setup-launcher.ps1` **🎯 ULTIMATE & RECOMMENDED FOR BILL**
+**Pre-flight system analysis + Token-efficient wizard launcher**  
+- 🔍 **Automated system analysis** without using Claude tokens
+- 🎯 **Smart optimization** based on system complexity and resources
+- 💰 **Token conservation** - only uses Claude when actually needed
+- ⚡ **Skip unnecessary checks** for simple, compatible systems
+- 📊 **Pre-identifies issues** before setup starts (missing dependencies, low disk space)
+- 🚀 **Launches optimized wizard** with perfect settings for your system
+- 📋 **Supports manual pre-flight** with Claude for maximum optimization
+
+**Usage Examples:**
+```powershell
+# Automated optimization (RECOMMENDED)
+.\optimized-setup-launcher.ps1
+
+# Manual Claude pre-flight for complex systems
+.\optimized-setup-launcher.ps1 -ManualPreFlight
+
+# High-speed mode  
+.\optimized-setup-launcher.ps1 -SkipPreFlight
+```
+
+#### `fine-tuned-dual-boot-wizard.ps1` **⭐ DIRECT ACCESS**
 **Maximum automation dual-boot wizard with token-efficient Claude integration**
 - 🚀 Comprehensive system analysis and compatibility checking
 - 🤖 Strategic Claude Code integration with token conservation for Pro subscriptions
