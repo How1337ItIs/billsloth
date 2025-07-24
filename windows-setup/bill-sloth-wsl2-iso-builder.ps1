@@ -758,8 +758,8 @@ echo "████ CYBERPUNK BILL SLOTH ISO COMPLETE ████"
     # Convert script path to WSL format
     $wslScriptPath = $tempScript -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
     
-    # Execute with proper error handling
-    $result = wsl -d $DistroName bash -c "bash $wslScriptPath"
+    # Execute with proper error handling (fix line endings)
+    $result = wsl -d $DistroName bash -c "sed 's/\r$//' '$wslScriptPath' | bash"
     
     if ($LASTEXITCODE -ne 0) {
         throw "WSL2 build failed with exit code $LASTEXITCODE"
