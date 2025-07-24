@@ -437,7 +437,7 @@ function Initialize-DualBootPartitioning {
     
     Write-Host "Analyzing $TargetDrive drive for Ubuntu installation..." -ForegroundColor Yellow
     
-    $targetDisk = Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "$TargetDrive:" }
+    $targetDisk = Get-CimInstance -ClassName Win32_LogicalDisk | Where-Object { $_.DeviceID -eq "${TargetDrive}:" }
     
     if (-not $targetDisk) {
         Write-Host "Error: Drive $TargetDrive not found!" -ForegroundColor Red
