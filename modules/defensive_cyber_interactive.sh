@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Network Scanner, 2=Vulnerability Assessment, 3=Security Monitoring, 4=Penetration Testing, 5=Complete Security Suite
+# CLAUDE_PROMPTS: Security tool selection, Target configuration, Scan parameters
+# CLAUDE_DEPENDENCIES: nmap, wireshark, metasploit, aircrack-ng, john
 # Defensive Cybersecurity - Ethical hacking and security testing tools
 # "You know what I'm gonna get you next Christmas, mom? A big wooden cross, so that every time you see it, you'll think of how much I care about you." - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🛡️  DEFENSIVE CYBERSECURITY SETUP"

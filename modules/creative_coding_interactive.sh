@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Processing IDE, 2=p5.js Web Editor, 3=Blender Python, 4=OpenFrameworks, 5=Complete Creative Suite
+# CLAUDE_PROMPTS: Creative platform selection, Project setup confirmation, Template selection
+# CLAUDE_DEPENDENCIES: java, nodejs, python3, git, blender (optional)
 # CREATIVE CODING SUITE - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive creative coding module
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source the non-interactive creative coding module
 source "$SOURCE_DIR/creative_coding.sh"
 
 creative_coding_interactive() {

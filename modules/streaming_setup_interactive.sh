@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=OBS Studio, 2=Streamlabs, 3=Audio Setup, 4=Scene Templates, 5=Complete Streaming Suite
+# CLAUDE_PROMPTS: Streaming platform selection, Quality settings, Audio configuration
+# CLAUDE_DEPENDENCIES: obs-studio, pulseaudio, ffmpeg, v4l2loopback
 # STREAMING SETUP - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive streaming setup module
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source the non-interactive streaming setup module
 source "$SOURCE_DIR/streaming_setup.sh"
 
 # Generate personalized streaming recommendations

@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Ollama Local LLM, 2=Stable Diffusion, 3=Voice AI, 4=AI Development, 5=Complete AI Suite
+# CLAUDE_PROMPTS: AI tool selection, Model configuration, Integration setup
+# CLAUDE_DEPENDENCIES: python3, docker, cuda (optional), nodejs, git
 # AI MASTERY - INTERACTIVE ASSISTANT PATTERN
 # Complete AI toolkit: local models, development, workflow automation, and integration
 
-# Source required libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
 

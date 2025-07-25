@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Browser Privacy, 2=VPN Setup, 3=Encrypted Messaging, 4=File Encryption, 5=Complete Privacy Suite
+# CLAUDE_PROMPTS: Privacy tool selection, Installation confirmation, Additional security measures
+# CLAUDE_DEPENDENCIES: tor, openvpn, firefox, signal-desktop, veracrypt
 # PRIVACY TOOLS - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive privacy tools module
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source the non-interactive privacy tools module
 source "$SOURCE_DIR/privacy_tools.sh"
 
 privacy_tools_interactive() {

@@ -3,11 +3,16 @@
 # PRODUCTIVITY SUITE - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
+# CLAUDE_OPTIONS: 1=Taskwarrior CLI, 2=Super Productivity (ADHD), 3=Logseq Brain, 4=Kanboard Visual, 5=ADHD Memory Palace, 6=Complete Ecosystem, 7=Google Tasks
+# CLAUDE_PROMPTS: Main menu selection, Install confirmation, Additional tools
+# CLAUDE_DEPENDENCIES: git, curl, nodejs (for some tools)
+
 # Source the non-interactive productivity suite module
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SOURCE_DIR/productivity_suite.sh"
+source "$SOURCE_DIR/productivity_suite.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 # Google Tasks Integration Function (extracted from automation_mastery_interactive.sh)
 setup_google_tasks_automation() {
@@ -261,7 +266,11 @@ BRAIN_BANNER
     echo "🥤 Shake: 'Click on it. Click it!'"
     echo ""
     echo "Type the number of your choice, or 'other' to ask Claude Code for more options:"
-    read -p "Your choice: " prod_choice
+    if is_claude_execution; then
+        prod_choice=$(claude_enhanced_read "Your choice: " "2" "productivity_suite")
+    else
+        read -p "Your choice: " prod_choice
+    fi
     
     # Ensure log directory exists
     mkdir -p ~/Productivity
@@ -417,7 +426,11 @@ EOF
             echo "Each tool complements the others for different mental states and tasks."
             echo ""
             
-            read -p "Continue with complete ecosystem? (y/n): " confirm
+            if is_claude_execution; then
+                confirm=$(claude_enhanced_read "Continue with complete ecosystem? (y/n): " "y" "productivity_suite")
+            else
+                read -p "Continue with complete ecosystem? (y/n): " confirm
+            fi
             if [[ $confirm =~ ^[Yy]$ ]]; then
                 echo "Installing complete ecosystem (this may take a few minutes)..."
                 # Run condensed versions of all installations

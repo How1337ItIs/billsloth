@@ -3,6 +3,14 @@
 # DATA HOARDING SUITE - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
+# CLAUDE_OPTIONS: 1=FileBot (Media), 2=Keka (Archives), 3=SyncThing (Sync), 4=Restic (Backup), 5=Complete Hoarding Suite
+# CLAUDE_PROMPTS: Main tool selection, Installation confirmation, Additional tools
+# CLAUDE_DEPENDENCIES: java, python3, curl, git
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
 data_hoarding_interactive() {
     # Pirate-themed header with ASCII art and colors
     echo -e "\033[31m"

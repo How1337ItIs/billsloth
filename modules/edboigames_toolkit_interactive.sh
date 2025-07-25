@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Video Editor, 2=Stream Setup, 3=Content Planning, 4=Analytics Tools, 5=Complete Creator Suite
+# CLAUDE_PROMPTS: Content type selection, Platform configuration, Tool setup
+# CLAUDE_DEPENDENCIES: obs-studio, kdenlive, ffmpeg, youtube-dl
 # EdBoiGames Content Creation Toolkit - YouTube business and content creation
 # "Time to get rad and make some moolah!" - Carl Brutananadilewski
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "$(dirname "$0")/../lib/include_loader.sh"
 load_includes "core" "notification" "adaptive_learning" "data_persistence" "error_handling"

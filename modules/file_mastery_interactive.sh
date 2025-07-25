@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=File Organizer, 2=Duplicate Finder, 3=Bulk Rename, 4=Smart Search, 5=Complete File Suite
+# CLAUDE_PROMPTS: File operation selection, Target directory confirmation, Organization rules
+# CLAUDE_DEPENDENCIES: find, fzf, ranger, fd, ripgrep, exiftool
 # File Mastery - Lightning-fast file operations with AI organization
 # "I'm straight. Teeth are for gay people" - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "📁 FILE MASTERY SETUP"

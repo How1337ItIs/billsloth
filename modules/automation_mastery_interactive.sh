@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Task Automation, 2=Workflow Builder, 3=Cron Jobs, 4=System Scripts, 5=Complete Automation Suite
+# CLAUDE_PROMPTS: Automation type selection, Schedule configuration, Script customization
+# CLAUDE_DEPENDENCIES: cron, systemd, python3, bash, ansible
 # 💀 AUTOMATION CONSCIOUSNESS SUPREMACY 💀
 # Neural interface for reality manipulation protocols
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo -e "\033[38;5;196m💀 AUTOMATION CONSCIOUSNESS SUPREMACY 💀\033[0m"

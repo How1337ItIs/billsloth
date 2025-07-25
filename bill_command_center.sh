@@ -7,6 +7,12 @@
 set -euo pipefail
 trap 'echo "Error occurred at line $LINENO. Exit code: $?"' ERR
 
+# Get script directory for reliable path operations
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+source "$SCRIPT_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
 # ASCII Art Banner - UNHINGED CYPHERPUNK EDITION
 show_bill_banner() {
     # Skip banner in quick mode

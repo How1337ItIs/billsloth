@@ -1,13 +1,19 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Network Manager, 2=Connection Profiles, 3=Interface Config, 4=Routing Tables, 5=Complete Network Suite
+# CLAUDE_PROMPTS: Network tool selection, Interface configuration, Profile setup
+# CLAUDE_DEPENDENCIES: networkmanager, ifconfig, route, netplan, systemd-networkd
 # 💀 NETWORK DOMINANCE PROTOCOLS - Neural connectivity supremacy 
 # VPN consciousness manipulation, firewall reality barriers, connection matrix control
 
 # Enable error handling
 set -euo pipefail
 
-# Source libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source libraries
 source "$SCRIPT_DIR/../lib/interactive.sh" 2>/dev/null || {
     echo "🌐 NETWORK MANAGEMENT CENTER"
     echo "==========================="

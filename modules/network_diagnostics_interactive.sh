@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
+# CLAUDE_OPTIONS: 1=Network Scanner, 2=Connectivity Test, 3=Speed Test, 4=DNS Checker, 5=Complete Diagnostic Suite
+# CLAUDE_PROMPTS: Diagnostic tool selection, Network configuration, Test parameters
+# CLAUDE_DEPENDENCIES: nmap, ping, traceroute, speedtest-cli, dig
 # Interactive Network Diagnostics - Troubleshooting and repair tools
 # Part of the Bill Sloth neurodivergent-optimized automation system
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "$(dirname "$0")/../lib/include_loader.sh"
 load_includes "core" "notification" "adaptive_learning" "data_persistence" "error_handling" "system_info"

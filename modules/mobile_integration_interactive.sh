@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=KDE Connect, 2=Scrcpy Screen, 3=File Sync, 4=Notification Bridge, 5=Complete Mobile Suite
+# CLAUDE_PROMPTS: Integration type selection, Device pairing, Sync configuration
+# CLAUDE_DEPENDENCIES: kdeconnect, scrcpy, adb, syncthing
 # Mobile Integration Hub - Connect your Linux system with mobile devices
 # Bridge the gap between desktop and mobile workflows
 
-# Source libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source libraries
 source "$SCRIPT_DIR/../lib/interactive.sh" 2>/dev/null || {
     echo "📱 MOBILE INTEGRATION HUB"
     echo "========================"

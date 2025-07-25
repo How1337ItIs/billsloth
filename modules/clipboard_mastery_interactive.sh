@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=CopyQ Manager, 2=Clipboard History, 3=Text Snippets, 4=AI Integration, 5=Complete Clipboard Suite
+# CLAUDE_PROMPTS: Clipboard tool selection, History configuration, Snippet setup
+# CLAUDE_DEPENDENCIES: copyq, xclip, xsel, python3
 # Clipboard Mastery - Advanced clipboard management with AI integration
 # "Well, let's compute it, and I will solve the answer... to your face!" - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🎯 CLIPBOARD MASTERY SETUP"

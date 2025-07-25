@@ -1,13 +1,19 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=WiFi Manager, 2=Bluetooth Setup, 3=Mobile Hotspot, 4=Network Profiles, 5=Complete Wireless Suite
+# CLAUDE_PROMPTS: Connection type selection, Device pairing, Profile configuration
+# CLAUDE_DEPENDENCIES: wifi-tools, bluetooth, hostapd, wpa_supplicant
 # 📡 WIRELESS CONNECTIVITY MANAGEMENT - Local connection protocols
 # Wi-Fi, Bluetooth, mobile hotspot, and network profile management
 
 # Enable error handling
 set -euo pipefail
 
-# Source libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source libraries
 source "$SCRIPT_DIR/../lib/interactive.sh" 2>/dev/null || {
     echo "📡 WIRELESS CONNECTIVITY MANAGEMENT"
     echo "=================================="
