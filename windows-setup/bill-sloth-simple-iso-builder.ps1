@@ -26,16 +26,15 @@ Write-Host ""
 # Check WSL2 Ubuntu availability
 $ubuntuDistro = $null
 try {
-    $wslList = wsl --list --quiet 2>$null
-    # Handle WSL output with spaces (e.g., "U b u n t u - 2 2 . 0 4")
-    $ubuntuLine = $wslList | Where-Object { $_ -like "*Ubuntu*" } | Select-Object -First 1
-    if (-not $ubuntuLine) {
-        throw "WSL2 Ubuntu not found. Please install: wsl --install -d Ubuntu"
-    }
+    # Use known working Ubuntu distribution
+    $ubuntuDistro = "Ubuntu-22.04"
     
-    # Clean up the distribution name by removing extra spaces
-    $ubuntuDistro = $ubuntuLine.Trim() -replace '\s+', '-'
-    Write-Host "✅ WSL2 Ubuntu detected: $ubuntuDistro" -ForegroundColor Green
+    # Verify it exists and works
+    $wslTest = wsl -d $ubuntuDistro bash -c "echo 'test'" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "WSL2 Ubuntu-22.04 not found or not working. Please install: wsl --install -d Ubuntu"
+    }
+    Write-Host "✅ WSL2 Ubuntu-22.04 detected and working" -ForegroundColor Green
 }
 catch {
     Write-Host "❌ WSL2 not available: $($_.Exception.Message)" -ForegroundColor Red
@@ -50,10 +49,10 @@ Write-Host "Output will be created at: $OutputISO" -ForegroundColor Cyan
 Write-Host "WSL path: $wslOutputPath" -ForegroundColor Gray
 Write-Host ""
 
-# Confirmed working WSL2 command - exactly as Bill tested
+# Fixed WSL2 command - build in /tmp to avoid noexec issues
 $buildCommand = @"
 set -e
-PROJECT_DIR='/tmp/billsloth-iso-$(date +%s)'
+PROJECT_DIR='/tmp/billsloth-iso-`$(date +%s)'
 OUTPUT_PATH='$wslOutputPath'
 
 echo '████████████████████████████████████████████████████████████████████████████████'
