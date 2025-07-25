@@ -1,6 +1,4 @@
-# Bill Sloth Simple ISO Builder - VERIFIED WORKING
-# Based on tested WSL2 commands that actually create custom ISO
-
+# Bill Sloth Fixed ISO Builder - No Line Ending Issues
 param(
     [string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso"
 )
@@ -9,22 +7,17 @@ param(
 
 Write-Host @"
 ████████████████████████████████████████████████████████████████████████████████
-██                                                                            ██
-██  ░▒▓█ BILL SLOTH SIMPLE ISO BUILDER - VERIFIED WORKING █▓▒░                ██
-██                                                                            ██
-██  ████ USING TESTED WSL2 LIVE-BUILD COMMANDS ████                           ██
-██  ▓▓▓▓ NO TEMPLATE COMPLEXITY - DIRECT EXECUTION ▓▓▓▓                       ██
-██                                                                            ██
+██  ░▒▓█ BILL SLOTH FIXED ISO BUILDER █▓▒░                                       ██
+██  ████ NO LINE ENDING ISSUES - WRITES SCRIPT TO WSL2 FIRST ████                ██
 ████████████████████████████████████████████████████████████████████████████████
 "@ -ForegroundColor Magenta
 
 Write-Host ""
-Write-Host "This builder uses the exact WSL2 commands that Bill verified working" -ForegroundColor Cyan
+Write-Host "Creating custom Bill Sloth cyberpunk ISO..." -ForegroundColor Cyan
 Write-Host "Build time: 20-60 minutes (real custom ISO creation)" -ForegroundColor Yellow
 Write-Host ""
 
 # Check WSL2 Ubuntu availability
-$ubuntuDistro = $null
 try {
     # Use known working Ubuntu distribution
     $ubuntuDistro = "Ubuntu-22.04"
@@ -49,34 +42,41 @@ Write-Host "Output will be created at: $OutputISO" -ForegroundColor Cyan
 Write-Host "WSL path: $wslOutputPath" -ForegroundColor Gray
 Write-Host ""
 
-# Create bash script with proper line endings for WSL2
-$buildScriptPath = "/tmp/billsloth-build-$(Get-Date -Format 'yyyyMMdd-HHmmss').sh"
-$buildScriptContent = @(
-    "set -e",
-    "PROJECT_DIR='/tmp/billsloth-iso-`$(date +%s)'",
-    "OUTPUT_PATH='$wslOutputPath'",
-    "",
-    "echo '████████████████████████████████████████████████████████████████████████████████'",
-    "echo '██  ░▒▓█ BUILDING BILL SLOTH CYBERPUNK ISO █▓▒░                                ██'",  
-    "echo '████████████████████████████████████████████████████████████████████████████████'",
-    "echo ''",
-    "echo 'Start time:' `$(date)",
-    "echo 'Available space:' `$(df -h /tmp | tail -1 | awk '{print `$4}')",
-    "echo ''",
-    "",
-    "mkdir -p `$PROJECT_DIR && cd `$PROJECT_DIR"
-    "",
-    "# Configure live-build with Bill Sloth branding",
-    "echo '▓▓▓ Configuring Bill Sloth live-build environment...'",
-    "lb config \\",
-    "    --distribution jammy \\",
-    "    --architecture amd64 \\",
-    "    --binary-images iso-hybrid \\",
-    "    --archive-areas 'main restricted universe multiverse' \\",
-    "    --iso-application 'Bill Sloth Cyberpunk Ubuntu' \\",
-    "    --iso-volume 'BILLSLOTH' \\",
-    "    --iso-preparer 'bill@slothlab.cyber' \\",
-    "    --iso-publisher 'Cyberpunk Sloth Automation Lab'"
+# Create the build script directly in WSL2 to avoid line ending issues
+$buildScriptPath = "/tmp/billsloth-build-$(Get-Date -Format 'yyyyMMddHHmmss').sh"
+
+Write-Host "Creating build script in WSL2..." -ForegroundColor Green
+
+# Write the script directly to WSL2 filesystem with proper line endings
+$createScriptCommand = @"
+cat > $buildScriptPath << 'SCRIPT_EOF'
+#!/bin/bash
+set -e
+
+PROJECT_DIR='/tmp/billsloth-iso-\$(date +%s)'
+OUTPUT_PATH='$wslOutputPath'
+
+echo '████████████████████████████████████████████████████████████████████████████████'
+echo '██  ░▒▓█ BUILDING BILL SLOTH CYBERPUNK ISO █▓▒░                                ██'  
+echo '████████████████████████████████████████████████████████████████████████████████'
+echo ''
+echo 'Start time:' \$(date)
+echo 'Available space:' \$(df -h /tmp | tail -1 | awk '{print \$4}')
+echo ''
+
+mkdir -p \$PROJECT_DIR && cd \$PROJECT_DIR
+
+# Configure live-build with Bill Sloth branding
+echo '▓▓▓ Configuring Bill Sloth live-build environment...'
+lb config \\
+    --distribution jammy \\
+    --architecture amd64 \\
+    --binary-images iso-hybrid \\
+    --archive-areas 'main restricted universe multiverse' \\
+    --iso-application 'Bill Sloth Cyberpunk Ubuntu' \\
+    --iso-volume 'BILLSLOTH' \\
+    --iso-preparer 'bill@slothlab.cyber' \\
+    --iso-publisher 'Cyberpunk Sloth Automation Lab'
 
 # Create comprehensive package list
 echo '▓▓▓ Creating Bill Sloth package list...'
@@ -160,7 +160,7 @@ if [ ! -f ~/.billsloth-setup-complete ]; then
     git clone https://github.com/How1337ItIs/billsloth.git ~/bill-sloth
     
     # Make scripts executable
-    find ~/bill-sloth -name "*.sh" -exec chmod +x {} \; 2>/dev/null
+    find ~/bill-sloth -name "*.sh" -exec chmod +x {} \\; 2>/dev/null
     
     # Run onboarding if available
     if [ -f ~/bill-sloth/onboard.sh ]; then
@@ -194,7 +194,7 @@ echo 'billsloth-init' >> config/includes.chroot/etc/skel/.bashrc
 # Build the ISO
 echo ''
 echo '████ BUILDING CYBERPUNK ISO (This will take 20-60 minutes) ████'
-echo 'Build started at:' `$(date)
+echo 'Build started at:' \$(date)
 echo ''
 
 sudo lb build 2>&1 | tee /tmp/billsloth-build.log
@@ -202,23 +202,23 @@ sudo lb build 2>&1 | tee /tmp/billsloth-build.log
 # Check for generated ISO
 echo ''
 echo '▓▓▓ Checking for generated ISO...'
-ISO_FILE=`$(find . -name '*.iso' -type f | head -1)
+ISO_FILE=\$(find . -name '*.iso' -type f | head -1)
 
-if [ -n "`$ISO_FILE" ]; then
-    echo "✅ ISO file found: `$ISO_FILE"
-    echo "Size: `$(ls -lh "`$ISO_FILE" | awk '{print `$5}')"
+if [ -n "\$ISO_FILE" ]; then
+    echo "✅ ISO file found: \$ISO_FILE"
+    echo "Size: \$(ls -lh "\$ISO_FILE" | awk '{print \$5}')"
     
     # Copy to Windows location
     echo "▓▓▓ Copying to Windows filesystem..."
-    if cp "`$ISO_FILE" `$OUTPUT_PATH; then
+    if cp "\$ISO_FILE" \$OUTPUT_PATH; then
         echo ""
         echo "████████████████████████████████████████████████████████████████████████████████"
         echo "██  ✅ BILL SLOTH CYBERPUNK ISO CREATED SUCCESSFULLY!                         ██"
         echo "████████████████████████████████████████████████████████████████████████████████"
         echo ""
-        echo "Location: `$OUTPUT_PATH"
-        echo "Size: `$(ls -lh `$OUTPUT_PATH | awk '{print `$5}')"
-        echo "Completed: `$(date)"
+        echo "Location: \$OUTPUT_PATH"
+        echo "Size: \$(ls -lh \$OUTPUT_PATH | awk '{print \$5}')"
+        echo "Completed: \$(date)"
         echo ""
         echo "🦥⚡ Your cyberpunk sloth ISO is ready for dual-boot installation!"
     else
@@ -237,16 +237,30 @@ fi
 
 # Cleanup
 cd /
-rm -rf `$PROJECT_DIR
+rm -rf \$PROJECT_DIR
+SCRIPT_EOF
+
+chmod +x $buildScriptPath
+echo "Build script created at: $buildScriptPath"
 "@
 
-Write-Host "Executing verified WSL2 live-build command..." -ForegroundColor Green
-Write-Host "This process will take 20-60 minutes for a real custom ISO build" -ForegroundColor Yellow
-Write-Host ""
-
 try {
-    # Execute the verified working command using detected Ubuntu distro
-    $result = wsl -d $ubuntuDistro bash -c $buildCommand
+    # Create the build script in WSL2
+    Write-Host "Writing build script to WSL2..." -ForegroundColor Green
+    $result = wsl -d $ubuntuDistro bash -c $createScriptCommand
+    
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to create build script in WSL2"
+    }
+    
+    Write-Host "✅ Build script created successfully" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Executing ISO build..." -ForegroundColor Green
+    Write-Host "This process will take 20-60 minutes for a real custom ISO build" -ForegroundColor Yellow
+    Write-Host ""
+    
+    # Execute the build script
+    $result = wsl -d $ubuntuDistro bash $buildScriptPath
     
     if ($LASTEXITCODE -eq 0) {
         Write-Host ""

@@ -1,0 +1,14 @@
+git
+curl
+wget
+build-essential
+python3
+python3-pip
+nodejs
+npm
+pipewire
+carla
+espeak
+neovim
+tmux
+htop
