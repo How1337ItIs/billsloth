@@ -77,7 +77,8 @@
       "Bash(\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\" -Command \"Get-ChildItem C:\\Users\\*\\Downloads\\*ubuntu*.iso -ErrorAction SilentlyContinue\")",
       "Bash(git rm:*)",
       "Bash(git fetch:*)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(del nul)"
     ],
     "deny": []
   }

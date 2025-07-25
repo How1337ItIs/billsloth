@@ -1,8 +1,26 @@
-# Bill Sloth Windows Dual-Boot Setup Package
+# Bill Sloth Windows Setup Package
 
-This package provides comprehensive Windows-based tools to prepare for Ubuntu dual-boot installation with full Claude Code integration.
+This package provides comprehensive Windows-based tools for Bill Sloth installation with multiple options: WSL testing, dual-boot production, and ISO creation.
 
-## 🚀 Quick Start
+## 🎯 Choose Your Setup Method
+
+### 🧪 **WSL Testing Mode (Quick Start)**
+Perfect for testing Bill Sloth functionality and ISO creation process:
+
+```powershell
+# Run as Administrator
+.\bill-sloth-wsl-wizard.ps1
+```
+
+### 🖥️ **Dual-Boot Production Mode (Full Features)**  
+For complete Bill Sloth functionality with native Ubuntu:
+
+```powershell
+# Run as Administrator  
+.\bill-sloth-dual-boot-wizard-unified.ps1
+```
+
+## 🚀 Quick Start Options
 
 ### **For Claude Code Users (Recommended - One-Click Setup):**
 

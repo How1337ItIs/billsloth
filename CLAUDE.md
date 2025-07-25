@@ -123,12 +123,23 @@ This project represents a sophisticated approach to making technology accessible
 ### 🚨 MANDATORY: Anti-Pattern Prevention
 **BEFORE working on ANY ISO builder, READ: `windows-setup/POWERSHELL-WSL2-ANTI-PATTERNS.md`**
 
-### Key Rules for ISO Builders:
-1. **NEVER use PowerShell here-strings (@"...") with bash content** - PowerShell parsing breaks everything
-2. **Use individual WSL commands only**: `wsl -d Ubuntu-22.04 bash -c "single_command"`
-3. **Avoid `&&` operators in WSL command strings** - PowerShell treats them as separators
-4. **Use `\$USER` not backticks** - PowerShell interprets backticks
-5. **Don't create new "fixed" versions** - modify `bill-sloth-RECOMMENDED-iso-builder.ps1` incrementally
+### 🚫 **ABSOLUTELY FORBIDDEN:**
+1. **DO NOT RUN ANY POWERSHELL ISO BUILDER SCRIPTS** - They all have unfixable syntax errors
+2. **DO NOT try to "fix" PowerShell syntax errors** - It's impossible due to parsing conflicts
+3. **DO NOT create new PowerShell ISO builders** - They will have the same errors
+4. **DO NOT use here-strings with bash content** - PowerShell always breaks them
+
+### ✅ **ONLY ACCEPTABLE METHOD:**
+**Use individual WSL commands manually:**
+```bash
+wsl -d Ubuntu-22.04 bash -c "single_command_only"
+wsl -d Ubuntu-22.04 bash -c "next_command"
+```
+
+### 🗂️ **Files Renamed to BROKEN-*.DONT-USE:**
+- All PowerShell ISO builders are renamed with BROKEN- prefix
+- This prevents accidental usage
+- **DO NOT rename them back**
 
 ### Working ISO Builder Pattern:
 ```powershell
