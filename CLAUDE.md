@@ -117,3 +117,35 @@ check_system_health
 - Adaptive learning captures patterns for future optimization
 
 This project represents a sophisticated approach to making technology accessible and empowering for neurodivergent users.
+
+## PowerShell + WSL2 ISO Builder Rules - CRITICAL
+
+### 🚨 MANDATORY: Anti-Pattern Prevention
+**BEFORE working on ANY ISO builder, READ: `windows-setup/POWERSHELL-WSL2-ANTI-PATTERNS.md`**
+
+### Key Rules for ISO Builders:
+1. **NEVER use PowerShell here-strings (@"...") with bash content** - PowerShell parsing breaks everything
+2. **Use individual WSL commands only**: `wsl -d Ubuntu-22.04 bash -c "single_command"`
+3. **Avoid `&&` operators in WSL command strings** - PowerShell treats them as separators
+4. **Use `\$USER` not backticks** - PowerShell interprets backticks
+5. **Don't create new "fixed" versions** - modify `bill-sloth-RECOMMENDED-iso-builder.ps1` incrementally
+
+### Working ISO Builder Pattern:
+```powershell
+# ✅ CORRECT - Individual commands
+wsl -d Ubuntu-22.04 mkdir -p /path
+wsl -d Ubuntu-22.04 bash -c "command1"
+wsl -d Ubuntu-22.04 bash -c "command2"
+
+# ❌ WRONG - Here-strings with bash
+$script = @"
+command1 && command2
+"@
+```
+
+### Local Ubuntu ISO Usage:
+- Local ISO available at: `C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso`
+- Use this to avoid network/repository issues
+- Extract and modify instead of live-build from scratch
+
+**This prevents the repeated cycle of creating broken ISO builders with the same PowerShell syntax errors.**
