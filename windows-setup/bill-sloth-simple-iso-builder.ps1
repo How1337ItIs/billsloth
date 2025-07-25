@@ -227,8 +227,8 @@ if [ -n "`$ISO_FILE" ]; then
 else
     echo "❌ ERROR: No ISO file generated!"
     echo ""
-    echo "Build log (last 20 lines):"
-    tail -20 /tmp/billsloth-build.log 2>/dev/null
+    echo "Build failed - check logs"
+    tail -20 /tmp/billsloth-build.log 2>/dev/null || echo "No log available"
     echo ""
     echo "NO FALLBACK TO STANDARD UBUNTU - Fix the issue and try again"
     exit 1
