@@ -20,178 +20,213 @@ IMPORTANT: Press 'e' to edit and add boot parameters if needed:
 
 ---
 
-## 🌍 **LANGUAGE AND REGION SETUP**
+## 🌍 **UBUNTU 24.04 INSTALLER SCREENS**
 
-### **Welcome Screen:**
+### **Screen 1: Language Selection:**
 ```
 ✅ SELECT: "English" (or Bill's preferred language)
-✅ CLICK: "Install Ubuntu" (not "Try Ubuntu")
-
-If trying first:
-✅ CLICK: "Try Ubuntu" → Test system → Then double-click "Install Ubuntu"
+✅ CLICK: "Continue"
 ```
 
-### **Keyboard Layout:**
+### **Screen 2: Accessibility Options (NEW in 24.04):**
+```
+✅ CONFIGURE: Any accessibility needs (Large text, High contrast, etc.)
+✅ OR SKIP: If no accessibility needs
+✅ CLICK: "Continue"
+```
+
+### **Screen 3: Keyboard Layout:**
 ```
 ✅ SELECT: "English (US)" (or Bill's layout)
 ✅ TEST: Type in the test box to verify
 ✅ CLICK: "Continue"
 ```
 
-### **Updates and Other Software:**
+### **Screen 4: Network Connection:**
 ```
-🎯 RECOMMENDED CHOICES:
+✅ CONNECT: To Wi-Fi network (recommended for updates)
+✅ OR SELECT: "Connect later" if using ethernet
+✅ CLICK: "Continue"
+```
 
-✅ CHECK: "Normal installation" 
-   (Full desktop environment with standard software)
+### **Screen 5: Installation Type Selection:**
+```
+🎯 CRITICAL CHOICE:
 
-✅ CHECK: "Download updates while installing Ubuntu"
-   (Ensures latest security patches)
+✅ SELECT: "Interactive Installation"
+   (Classic step-by-step guide - what Bill needs)
 
-✅ CHECK: "Install third-party software for graphics and Wi-Fi hardware and additional media formats"
+❌ AVOID: "Automated Installation" 
+   (Requires .yaml configuration file)
+
+✅ CLICK: "Continue"
+```
+
+### **Screen 6: Software Selection:**
+```
+🎯 RECOMMENDED CHOICES FOR BILL:
+
+✅ SELECT: "Extended selection"
+   (Full installation with all default apps including LibreOffice)
+
+❌ AVOID: "Default selection" 
+   (Minimal installation without office suite - too limited)
+
+ADDITIONAL OPTIONS:
+✅ CHECK: "Install third-party software for graphics and Wi-Fi hardware"
    (CRITICAL for ASUS hardware compatibility)
 
-❌ UNCHECK: "Configure Secure Boot" (if it appears)
-   (Can cause boot issues on some ASUS systems)
+✅ CHECK: "Download updates while installing"
+   (Ensures latest security patches)
 
 ✅ CLICK: "Continue"
 ```
 
 ---
 
-## 💽 **INSTALLATION TYPE (CRITICAL SECTION)**
+## 💽 **DISK CONFIGURATION (CRITICAL SECTION)**
 
-### **Installation Type Screen:**
+### **Screen 7: Disk Configuration - MOST IMPORTANT SCREEN:**
 ```
-🚨 CRITICAL CHOICES:
+🚨 CRITICAL CHOICES FOR BILL'S DUAL-BOOT:
 
-For Bill's ASUS System with Existing Windows:
+OPTIONS YOU'LL SEE:
 
 ✅ SELECT: "Install Ubuntu alongside Windows Boot Manager"
-   (Safest option - Ubuntu handles partitioning)
+   (SAFEST - Automatic dual-boot setup)
+   ⚠️  NOTE: Only appears if Windows is properly detected
 
-OR if more control needed:
-
-✅ SELECT: "Something else" 
-   (Manual partitioning - advanced users only)
+✅ ALTERNATIVE: "Manual Installation" 
+   (If "alongside Windows" not available - gives full control)
 
 ❌ NEVER SELECT: "Erase disk and install Ubuntu"
-   (Would delete Windows - catastrophic!)
+   (Would delete Windows - catastrophic data loss!)
 
-❌ AVOID: "Replace Windows with Ubuntu"
-   (Would delete Windows - catastrophic!)
+🎯 WHAT TO DO:
+1. If you see "Install Ubuntu alongside Windows Boot Manager" - SELECT IT
+2. If you DON'T see it, select "Manual Installation"
+3. Never select "Erase disk" unless you want to lose Windows
 ```
 
-### **Disk Selection Details:**
+### **If You Selected "Manual Installation":**
 ```
-Expected Disk Layout for Bill's System:
-- Primary Drive (C:): Windows system
-- E: Drive (9.25TB): Target for Ubuntu
+🔧 MANUAL PARTITIONING (Advanced):
 
-RECOMMENDED PARTITION SCHEME:
-✅ Root (/): 50-100GB (minimum)
-✅ Home (/home): Remaining space
-✅ Swap: 16GB (half of RAM, or 32GB max)
+Bill's System Expected Layout:
+- Disk 1 (C:): Windows system (don't touch!)
+- Disk 2 (E:): 9.25TB target for Ubuntu
 
-If using "Something else":
-1. SELECT: E: drive (larger drive)
-2. CREATE: New partition table if needed
-3. ADD: Root partition (ext4, mount point /)
-4. ADD: Swap partition (swap area)
-5. ADD: Home partition (ext4, mount point /home)
-```
+MANUAL STEPS:
+1. SELECT: E: drive (9.25TB drive)
+2. CLICK: "New Partition Table" if drive is empty
+3. CREATE PARTITIONS:
+   ✅ Root (/): 50-100GB, ext4 filesystem
+   ✅ Swap: 16-32GB (match your RAM)
+   ✅ Home (/home): Remaining space, ext4 filesystem
 
----
-
-## 🌐 **NETWORK AND LOCATION**
-
-### **Wi-Fi Setup:**
-```
-✅ SELECT: Your Wi-Fi network
-✅ ENTER: Wi-Fi password
-✅ CLICK: "Continue"
-
-If ethernet connected:
-✅ AUTOMATICALLY: Will be detected
-✅ CLICK: "Continue"
-```
-
-### **Time Zone:**
-```
-✅ SELECT: Your location on the map
-   (Should auto-detect based on network)
-✅ VERIFY: Correct time zone shown
-✅ CLICK: "Continue"
+⚠️ CRITICAL: Don't modify Windows partitions on C: drive!
 ```
 
 ---
 
 ## 👤 **USER ACCOUNT SETUP**
 
-### **Who Are You Screen:**
+### **Screen 8: User Account Creation (Before Time Zone in 24.04):**
 ```
-🎯 RECOMMENDED SETTINGS:
+🎯 BILL'S RECOMMENDED SETTINGS:
 
-✅ Your name: "Bill" (or full name)
-✅ Computer name: "bill-ubuntu" or "bill-asus-ubuntu"
+✅ Your name: "Bill" (or preferred full name)
+✅ Computer name: "bill-ubuntu" or "bill-asus"
 ✅ Username: "bill" (lowercase, no spaces)
 ✅ Password: [Strong password - Bill's choice]
 ✅ Confirm password: [Same password]
 
-LOGIN OPTIONS:
+LOGIN SECURITY:
 ✅ SELECT: "Require my password to log in"
    (More secure than automatic login)
 
 ❌ AVOID: "Log in automatically"
-   (Security risk, especially for business use)
+   (Security risk for business use)
 
 ✅ CLICK: "Continue"
 ```
 
 ---
 
+## 🌐 **TIME ZONE SELECTION**
+
+### **Screen 9: Time Zone (After User Account in 24.04):**
+```
+✅ SELECT: Your location on the map
+   (Should auto-detect based on network)
+✅ VERIFY: Correct time zone displayed
+✅ CLICK: "Continue"
+```
+
+
+---
+
 ## ⚙️ **INSTALLATION PROCESS**
 
-### **Installation Progress:**
+### **Screen 10: Installation Progress:**
 ```
-WHAT HAPPENS:
-- Files copy to disk (10-20 minutes)
-- Packages install and configure
-- Boot loader installs
-- System finalizes
+🔄 WHAT HAPPENS DURING INSTALLATION:
 
-WHAT TO DO:
-✅ WAIT: Let installation complete
-✅ MONITOR: Watch for any error messages
-✅ KEEP CONNECTED: Don't disconnect power/network
+PHASE 1 - File Copying (5-15 minutes):
+- Ubuntu system files copy to your drive
+- Package installation and configuration
+- Hardware drivers install
 
-ERROR HANDLING:
-❌ IF ERRORS APPEAR: Note exact error message
-❌ DON'T FORCE RESTART: Let installation attempt to complete
+PHASE 2 - System Configuration (5-10 minutes):
+- User account setup
+- Boot loader (GRUB) installation
+- Final system tweaks
+
+WHAT BILL SHOULD DO:
+✅ WAIT: Let installation complete (don't interrupt!)
+✅ MONITOR: Watch progress bar and messages
+✅ KEEP CONNECTED: Don't disconnect power or network
+✅ STAY AWAKE: Don't let system sleep during install
+
+⚠️ ERROR HANDLING:
+- If errors appear: Note exact error message
+- Don't force restart: Let installer attempt recovery
+- Most errors are non-fatal and installation continues
 ```
 
 ---
 
-## 🔄 **FINAL STEPS**
+## 🔄 **INSTALLATION COMPLETION**
 
-### **Installation Complete:**
+### **Final Screen - Installation Complete:**
 ```
-✅ WHEN PROMPTED: "Installation has finished"
-✅ CHOICE 1: "Continue Testing" (stay in live environment)
-✅ CHOICE 2: "Restart Now" (boot into new Ubuntu)
+🎉 SUCCESS MESSAGE: "Ubuntu 24.04 LTS is installed and ready to use"
 
-RECOMMENDED: Choose "Restart Now"
+YOUR OPTIONS:
+✅ RECOMMENDED: "Restart now" 
+   (Boot into your new Ubuntu system)
+
+✅ ALTERNATIVE: "Continue testing"
+   (Stay in live environment, restart later)
+
+🎯 FOR BILL: Choose "Restart now" to test the dual-boot
 ```
 
-### **First Boot:**
+### **First Boot - GRUB Menu:**
 ```
-GRUB Menu Will Show:
-✅ Ubuntu (default - will auto-select)
+🚀 AFTER RESTART, YOU'LL SEE:
+
+GRUB BOOT MENU:
+✅ Ubuntu (highlighted by default)
 ✅ Advanced options for Ubuntu
-✅ Windows Boot Manager (to boot Windows)
+✅ Windows Boot Manager (your Windows option)
 
-DEFAULT: Ubuntu boots automatically after 10 seconds
-TO CHANGE: Press arrow keys to select Windows
+BEHAVIOR:
+- Ubuntu auto-boots after 10 seconds
+- Press arrow keys to select Windows
+- Press Enter to boot selected option
+
+🎯 TEST BOTH: Boot Ubuntu first, then restart and test Windows
 ```
 
 ---
