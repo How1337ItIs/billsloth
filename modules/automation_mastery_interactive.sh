@@ -553,6 +553,7 @@ generate_recommendations() {
             echo "• Basic phone automation (free)"
             echo ""
             echo "🧙 wwwyzzerdd: 'Even primitive tools can provide automation, broadbrain.'"
+            echo "🧙 wwwyzzerdd: 'Welcome to Instant Pestering... I mean, automation!'"
             echo "## Budget: Free tools only" >> "$ASSESSMENT_FILE"
             ;;
         "b") # Under $25
@@ -857,6 +858,7 @@ EOF
     echo "====================================="
     echo ""
     echo "🧙 wwwyzzerdd: 'What is the nature of your employment, broadbrain?'"
+    echo "🧙 wwwyzzerdd: 'You have entered the cyberland portal of work automation.'"
     echo ""
     
     echo "7. What best describes your work situation?"

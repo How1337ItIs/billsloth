@@ -474,6 +474,8 @@ bill_command_center() {
         show_system_status
         show_quick_actions
         
+        echo "🧙 wwwyzzerdd: 'Welcome to the brainframe, broadbrain.'"
+        echo ""
         echo "📋 FULL MODULES:"
         echo "  1) Automation Mastery     2) Network Management    3) Data Hoarding"
         echo "  4) Media Processing       5) System Doctor         6) Mobile Integration"

@@ -723,6 +723,8 @@ create_data_hoarding_dashboard() {
 clear
 echo "🏴‍☠️ DIGITAL TREASURE COMMAND CENTER"
 echo "It is I, the wwwyzzerdd of data hoarding!"
+echo "🧙 'He can't hear you, Fry man. You are not on the brainframe.'"
+echo "🧙 'This is live streaming data, broadbrain.'"
 echo "====================================="
 echo ""
 echo "💾 Storage: $(df -h ~ | awk 'NR==2{print $3 "/" $2 " (" $5 " used)"}')"

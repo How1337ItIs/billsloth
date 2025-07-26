@@ -144,6 +144,7 @@ explain_adhd_moderation_strategies() {
     echo "• Minimize notification sounds during hyperfocus"
     echo ""
     echo "🧙 wwwyzzerdd: 'You are not on the mod-frame. This is live moderation, broadbrain.'"
+    echo "🧙 wwwyzzerdd: 'That's wireless, broadbrain. Welcome to Instant Pestering!'"
     echo ""
     read -p "Press Enter to continue..."
     clear

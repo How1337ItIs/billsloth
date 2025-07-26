@@ -170,8 +170,9 @@ while true; do
             ;;
         *"broadbrain"*|*"brainframe"*)
             espeak "You are not on the brainframe." 2>/dev/null &
-            echo "🧙 wwwyzzerdd: 'You are not on the brainframe.'"
-            echo "🧙 wwwyzzerdd: 'This is live streaming, broadbrrrain.'"
+            echo "🧙 wwwyzzerdd: 'He can't hear you, Fry man. You are not on the brainframe.'"
+            echo "🧙 wwwyzzerdd: 'This is live streaming, broadbrain.'"
+            echo "🧙 wwwyzzerdd: 'That's wireless, broadbrain.'"
             ;;
         *"exit"*|*"quit"*|*"bye"*)
             espeak "Goodbye! I understand!" 2>/dev/null &
@@ -190,6 +191,17 @@ while true; do
             espeak "Come on. To the crime lab!" 2>/dev/null &
             echo "🥤 Shake: 'Come on. To the crime lab!'"
             echo "🍔 Meatwad: 'Frylock says this ain't the crime lab, and this is his room, and he don't like us in it.'"
+            ;;
+        *"emails"*|*"instant pestering"*)
+            espeak "Congratulations, you have been signed up to receive emails!" 2>/dev/null &
+            echo "🧙 wwwyzzerdd: 'Congratulations, you have been signed up to receive e-mails.'"
+            echo "🧙 wwwyzzerdd: 'Welcome to Instant Pestering!'"
+            echo "🧙 wwwyzzerdd: 'You have entered the cyberland portal.'"
+            ;;
+        *"technology"*|*"rebuild"*)
+            espeak "We have the technology. We can rebuild him." 2>/dev/null &
+            echo "🍔 Meatwad: 'We have the technology. We can rebuild him.'"
+            echo "👨 Carl: 'I keep getting these freakin' emails!'"
             ;;
         *)
             espeak "I don't understand that one!" 2>/dev/null &
