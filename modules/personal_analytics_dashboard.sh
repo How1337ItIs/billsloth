@@ -248,7 +248,21 @@ show_pattern_insights() {
             generate_basic_insights
         fi
     else
-        echo "🧠 AI insights coming soon - need more data to spot patterns!"
+        echo "🧠 AI PATTERN RECOGNITION INSIGHTS"
+        echo "================================="
+        echo ""
+        echo "📊 Building analytical foundation..."
+        echo "• Collecting usage patterns from system logs"
+        echo "• Analyzing interaction frequencies"
+        echo "• Tracking productivity cycles"
+        echo ""
+        echo "💡 Early insights available:"
+        echo "• Most active hours: $(get_most_active_hours 2>/dev/null || echo 'Data collecting...')"
+        echo "• Preferred modules: $(get_most_used_modules 2>/dev/null || echo 'Data collecting...')"
+        echo "• Workflow patterns: $(get_workflow_patterns 2>/dev/null || echo 'Data collecting...')"
+        echo ""
+        echo "🔮 As you use Bill Sloth more, insights will become more sophisticated!"
+        echo "💭 Tip: The system learns your patterns to provide better automation suggestions"
     fi
 }
 

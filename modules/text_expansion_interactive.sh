@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Espanso Expander, 2=AutoKey Automation, 3=Custom Snippets, 4=AI-Powered Templates, 5=Complete Text Suite
+# CLAUDE_PROMPTS: Expansion tool selection, Snippet configuration, Template setup
+# CLAUDE_DEPENDENCIES: espanso, autokey, python3
 # Text Expansion Mastery - Intelligent text expansion with AI-powered snippets
 # "Click yes for yes" - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "📝 TEXT EXPANSION MASTERY SETUP"

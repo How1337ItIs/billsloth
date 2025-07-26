@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
+# CLAUDE_OPTIONS: 1=Budget Tracker, 2=Expense Monitor, 3=Business Finance, 4=Investment Tracker, 5=Complete Finance Suite
+# CLAUDE_PROMPTS: Finance tool selection, Account setup, Category configuration
+# CLAUDE_DEPENDENCIES: gnucash, ledger, python3, sqlite3
 # Finance Management Suite - Personal finance automation for Bill Sloth
 # ADHD-friendly money tracking and business finance management
 
-# Source required libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source required libraries
 source "$SCRIPT_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/../lib/data_persistence.sh" 2>/dev/null || true

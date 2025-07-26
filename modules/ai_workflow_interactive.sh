@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=AI Pipeline, 2=Workflow Builder, 3=Tool Integration, 4=Automation Scripts, 5=Complete AI Workflow
+# CLAUDE_PROMPTS: Workflow type selection, AI tool configuration, Integration setup
+# CLAUDE_DEPENDENCIES: python3, docker, api-tools, workflow-engines
 # AI WORKFLOW AUTOMATION - INTERACTIVE ASSISTANT PATTERN
 # AI integration, workflow automation, and intelligent tool orchestration
 
-# Source required libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
 
@@ -43,6 +49,13 @@ ai_workflow_interactive() {
     read -p "> " wants_automation
     echo "• Would you like AI-powered content generation? (y/n): "
     read -p "> " wants_content_ai
+    
+    # Safety checks for unbound variables
+    ai_goals="${ai_goals:-3}"
+    uses_ai="${uses_ai:-y}"
+    wants_local_ai="${wants_local_ai:-y}"
+    wants_automation="${wants_automation:-y}"
+    wants_content_ai="${wants_content_ai:-y}"
     
     # Generate personalized AI plan
     generate_ai_plan "$ai_goals" "$uses_ai" "$wants_local_ai" "$wants_automation" "$wants_content_ai"

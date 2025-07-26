@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=i3 Tiling, 2=Sway Wayland, 3=Window Rules, 4=Layout Manager, 5=Complete Window Suite
+# CLAUDE_PROMPTS: Window manager selection, Layout configuration, Keybind setup
+# CLAUDE_DEPENDENCIES: i3, sway, wmctrl, xdotool
 # Window Mastery - Advanced window management with AI-powered layouts
 # "Well, let's compute it, and I will solve the answer... to your face!" - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🪟 WINDOW MASTERY SETUP"

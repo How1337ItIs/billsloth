@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
+# CLAUDE_OPTIONS: 1=Partnership Tracker, 2=Commission Calculator, 3=Deal Manager, 4=Revenue Analytics, 5=Complete Business Suite
+# CLAUDE_PROMPTS: Partnership type selection, Deal configuration, Revenue tracking setup
+# CLAUDE_DEPENDENCIES: sqlite3, python3, spreadsheet-tools, accounting-software
 # Business Partnerships Manager - Commission tracking and sponsorship deals
 # Focused on Bill's actual work: EdBoiGames partnerships, sponsorship deals, revenue tracking
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "$(dirname "$0")/../lib/include_loader.sh"
 load_includes "core" "notification" "adaptive_learning" "data_persistence" "error_handling" "system_info"

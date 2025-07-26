@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Workflow Builder, 2=Task Scheduler, 3=Cross-Platform Scripts, 4=API Integration, 5=Complete Automation Core
+# CLAUDE_PROMPTS: Automation type selection, Platform configuration, Integration setup
+# CLAUDE_DEPENDENCIES: cron, systemd, python3, curl, jq
 # AUTOMATION CORE - INTERACTIVE ASSISTANT PATTERN
 # General automation patterns and cross-platform workflow orchestration
 
-# Source required libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
 

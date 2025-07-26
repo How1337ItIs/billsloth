@@ -9,6 +9,9 @@ echo "🤖 Preparing Claude Code context..."
 
 set -euo pipefail
 
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+source "$(dirname "$0")/lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
 # ATHF colors for terminal aesthetics
 R='\033[0;31m'    # Red (Shake)
 G='\033[0;32m'    # Green (Frylock)
@@ -96,30 +99,23 @@ show_menu() {
     echo "  L) Local AI (install / toggle)"
     echo "  0) Exit"
     echo ""
-    read -p "Your choice: " menu_choice
+    if is_claude_execution; then
+        menu_choice=$(claude_enhanced_read "Your choice: " "1" "main_menu")
+    else
+        read -p "Your choice: " menu_choice
+    fi
     case $menu_choice in
-        1) bash modules/productivity_suite_interactive.sh ;;
-        1a) bin/audit_workflow productivity_suite_interactive ;;
-        2) bash modules/data_hoarding_interactive.sh ;;
-        2a) bin/audit_workflow data_hoarding_interactive ;;
-        3) bash modules/streaming_setup_interactive.sh ;;
-        3a) bin/audit_workflow streaming_setup_interactive ;;
-        4) bash modules/gaming_boost_interactive.sh ;;
-        4a) bin/audit_workflow gaming_boost_interactive ;;
-        5) bash modules/privacy_tools_interactive.sh ;;
-        5a) bin/audit_workflow privacy_tools_interactive ;;
-        6) bash modules/creative_coding_interactive.sh ;;
-        6a) bin/audit_workflow creative_coding_interactive ;;
-        7) bash modules/ai_playground_interactive.sh ;;
-        7a) bin/audit_workflow ai_playground_interactive ;;
-        8) bash modules/system_ops_interactive.sh ;;
-        8a) bin/audit_workflow system_ops_interactive ;;
-        9) bash modules/edboigames_toolkit_interactive.sh ;;
-        9a) bin/audit_workflow edboigames_toolkit_interactive ;;
-        10) bash modules/repetitive_tasks_interactive.sh ;;
-        10a) bin/audit_workflow repetitive_tasks_interactive ;;
-        11) bash modules/vacation_rental_manager_interactive.sh ;;
-        11a) bin/audit_workflow vacation_rental_manager_interactive ;;
+        1|1a) run_with_claude_bridge modules/productivity_suite_interactive.sh ;;
+        2|2a) run_with_claude_bridge modules/data_hoarding_interactive.sh ;;
+        3|3a) run_with_claude_bridge modules/streaming_setup_interactive.sh ;;
+        4|4a) run_with_claude_bridge modules/gaming_boost_interactive.sh ;;
+        5|5a) run_with_claude_bridge modules/privacy_tools_interactive.sh ;;
+        6|6a) run_with_claude_bridge modules/creative_coding_interactive.sh ;;
+        7|7a) run_with_claude_bridge modules/ai_playground_interactive.sh ;;
+        8|8a) run_with_claude_bridge modules/system_ops_interactive.sh ;;
+        9|9a) run_with_claude_bridge modules/edboigames_toolkit_interactive.sh ;;
+        10|10a) run_with_claude_bridge modules/repetitive_tasks_interactive.sh ;;
+        11|11a) run_with_claude_bridge modules/vacation_rental_manager_interactive.sh ;;
         L|l) toggle_local_ai ;;
         0) echo "Bye!"; exit 0 ;;
         *) echo "No valid choice. Try again."; show_menu ;;

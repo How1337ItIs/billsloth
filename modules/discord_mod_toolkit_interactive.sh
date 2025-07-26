@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
+# CLAUDE_OPTIONS: 1=Bot Setup, 2=Moderation Tools, 3=Community Management, 4=Server Analytics, 5=Complete Discord Suite
+# CLAUDE_PROMPTS: Bot platform selection, Permission configuration, Feature setup
+# CLAUDE_DEPENDENCIES: nodejs, python3, discord.py, discord.js
 # Discord Moderation Toolkit - Complete interactive guide for community management
 # "Come on. To the crime lab!" - Master Shake
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🎮 DISCORD MOD TOOLKIT"

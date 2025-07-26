@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: local_ok
+# CLAUDE_OPTIONS: 1=Kodi Media Server, 2=XBMC Legacy, 3=Complete Home Theater, 4=Streaming Setup
+# CLAUDE_PROMPTS: Main setup selection, Installation confirmation, Additional plugins
+# CLAUDE_DEPENDENCIES: python3, curl, wget, media codecs
 # Kodi Debrid Setup - Complete interactive installer and configuration guide
 # "I got the eye of the tiger, a fighter!" - Master Shake
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🎬 KODI DEBRID SETUP"

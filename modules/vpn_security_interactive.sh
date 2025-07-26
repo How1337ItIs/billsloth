@@ -1,13 +1,19 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=WireGuard Setup, 2=OpenVPN Config, 3=Firewall Rules, 4=Security Audit, 5=Complete VPN Suite
+# CLAUDE_PROMPTS: VPN type selection, Server configuration, Security settings
+# CLAUDE_DEPENDENCIES: wireguard, openvpn, ufw, iptables, fail2ban
 # 🔐 VPN & SECURITY MANAGEMENT - Secure connection protocols
 # WireGuard, OpenVPN, and firewall configuration for privacy and security
 
 # Enable error handling
 set -euo pipefail
 
-# Source libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source libraries
 source "$SCRIPT_DIR/../lib/interactive.sh" 2>/dev/null || {
     echo "🔐 VPN & SECURITY MANAGEMENT"
     echo "============================"

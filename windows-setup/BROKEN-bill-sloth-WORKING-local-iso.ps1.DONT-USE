@@ -1,0 +1,210 @@
+# Bill Sloth Custom ISO Builder - WORKING VERSION with Local Ubuntu ISO
+param([string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso")
+
+$LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso"
+
+Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+Write-Host "██  🦥⚡ BILL SLOTH CUSTOM ISO BUILDER - LOCAL ISO VERSION ⚡🦥              ██" -ForegroundColor Green  
+Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+
+# Check local ISO
+if (-not (Test-Path $LocalUbuntuISO)) {
+    Write-Host "❌ Local Ubuntu ISO not found: $LocalUbuntuISO" -ForegroundColor Red
+    exit 1
+}
+
+# Test WSL2
+$test = wsl -d Ubuntu-22.04 echo "test"
+if ($LASTEXITCODE -ne 0) { Write-Host "WSL2 failed"; exit 1 }
+Write-Host "✅ WSL2 verified" -ForegroundColor Green
+
+Write-Host "✅ Using local Ubuntu ISO: $LocalUbuntuISO" -ForegroundColor Green
+
+# Clean start
+wsl -d Ubuntu-22.04 bash -c "sudo rm -rf /tmp/billsloth && sudo umount /mnt/ubuntu-iso 2>/dev/null || true"
+
+# Convert to WSL path
+$wslISOPath = $LocalUbuntuISO -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
+
+Write-Host "🏗️ Setting up build environment..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "sudo apt update && sudo apt install -y xorriso squashfs-tools"
+
+Write-Host "💿 Mounting and extracting Ubuntu ISO..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+sudo mkdir -p /mnt/ubuntu-iso
+sudo mount -o loop '$wslISOPath' /mnt/ubuntu-iso
+mkdir -p /tmp/billsloth/extract-cd
+sudo cp -r /mnt/ubuntu-iso/* /tmp/billsloth/extract-cd/
+sudo chown -R `$USER:`$USER /tmp/billsloth/
+"
+
+Write-Host "🦥 Customizing for Bill Sloth..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+cd /tmp/billsloth
+# Update grub menu
+sed -i 's/Ubuntu/Bill Sloth Cyberpunk Ubuntu/g' extract-cd/boot/grub/grub.cfg
+"
+
+Write-Host "📦 Extracting and modifying filesystem..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+cd /tmp/billsloth
+sudo unsquashfs -d squashfs-root extract-cd/casper/filesystem.squashfs
+"
+
+Write-Host "🧰 Adding Bill Sloth installer..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c 'cat > /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init << "INIT_EOF"
+#!/bin/bash
+
+if [ ! -f ~/.billsloth-setup-complete ]; then
+    echo "████████████████████████████████████████████████████████████████████████████████"
+    echo "██  INITIALIZING BILL SLOTH CYBERPUNK SYSTEM                                   ██"
+    echo "████████████████████████████████████████████████████████████████████████████████"
+    echo ""
+    
+    echo "This will install development tools and set up the Bill Sloth automation system."
+    echo "Press Enter to continue or Ctrl+C to skip..."
+    read -p ""
+    
+    echo "Updating package lists..."
+    sudo apt update
+    
+    echo "Installing Bill Sloth development packages..."
+    sudo apt install -y git curl wget build-essential python3 python3-pip python3-venv nodejs npm vim neovim tmux htop tree openssh-client rsync ffmpeg imagemagick jq sqlite3 pipewire-pulse pulseaudio-utils alsa-utils
+    
+    echo "Cloning Bill Sloth repository..."
+    git clone https://github.com/How1337ItIs/billsloth.git ~/bill-sloth || true
+    
+    if [ -d ~/bill-sloth ]; then
+        echo "Making Bill Sloth scripts executable..."
+        find ~/bill-sloth -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true
+        
+        echo "Running Bill Sloth onboarding..."
+        if [ -f ~/bill-sloth/onboard.sh ]; then
+            cd ~/bill-sloth && bash onboard.sh || true
+        fi
+        
+        echo "export PATH=\"\$HOME/bill-sloth:\$PATH\"" >> ~/.bashrc
+        
+        echo "Setting up directories..."
+        mkdir -p ~/Projects ~/Scripts
+        
+        echo "Configuring git..."
+        git config --global user.name "Bill Sloth" || true  
+        git config --global user.email "bill@slothlab.cyber" || true
+        
+        touch ~/.billsloth-setup-complete
+        
+        echo ""
+        echo "████████████████████████████████████████████████████████████████████████████████"
+        echo "██  ✅ BILL SLOTH CYBERPUNK SYSTEM READY!                                     ██"
+        echo "████████████████████████████████████████████████████████████████████████████████"
+        echo ""
+        echo "🦥⚡ Your cyberpunk sloth system is ready!"
+        echo ""
+        echo "Quick start:"
+        echo "  cd ~/bill-sloth && ./bill_command_center.sh"
+        echo ""
+        echo "Features installed:"
+        echo "  - Development tools: git, python, node, build tools"
+        echo "  - System tools: vim, tmux, htop, tree"  
+        echo "  - Audio tools: pipewire, pulseaudio"
+        echo "  - Media tools: ffmpeg, imagemagick"
+        echo "  - Network tools: openssh, rsync"
+        echo "  - Utilities: jq, sqlite3"
+        echo ""
+    else
+        echo "❌ Failed to clone Bill Sloth repository"
+        echo "Check your internet connection and try again"
+    fi
+else
+    echo "Bill Sloth system already initialized"
+    echo "Run: cd ~/bill-sloth && ./bill_command_center.sh"
+fi
+INIT_EOF'
+
+wsl -d Ubuntu-22.04 chmod +x /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init
+
+Write-Host "🖥️ Setting up auto-startup..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+# Add to default user profile
+echo 'billsloth-init' > /tmp/billsloth/squashfs-root/etc/skel/.bashrc
+
+# Create desktop shortcut
+mkdir -p /tmp/billsloth/squashfs-root/etc/skel/Desktop
+cat > /tmp/billsloth/squashfs-root/etc/skel/Desktop/BillSloth.desktop << 'DESKTOP_EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Bill Sloth Command Center
+Comment=Cyberpunk Automation System
+Exec=gnome-terminal -- bash -c \"cd ~/bill-sloth && ./bill_command_center.sh; bash\"
+Icon=terminal
+Terminal=false
+StartupNotify=true
+Categories=Development;System;
+DESKTOP_EOF
+"
+
+Write-Host "📦 Rebuilding filesystem..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+cd /tmp/billsloth
+sudo rm extract-cd/casper/filesystem.squashfs
+sudo mksquashfs squashfs-root extract-cd/casper/filesystem.squashfs -comp xz
+"
+
+Write-Host "🔧 Updating filesystem size..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "
+cd /tmp/billsloth
+printf \$(sudo du -sx --block-size=1 squashfs-root | cut -f1) > extract-cd/casper/filesystem.size
+"
+
+Write-Host "💿 Creating final ISO..." -ForegroundColor Yellow
+Write-Host "This may take several minutes..." -ForegroundColor Yellow
+
+wsl -d Ubuntu-22.04 bash -c "
+cd /tmp/billsloth/extract-cd
+sudo genisoimage -D -r -V 'Bill Sloth Cyberpunk Ubuntu' -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -o ../billsloth-custom.iso .
+"
+
+Write-Host "🧹 Cleaning up..." -ForegroundColor Green
+wsl -d Ubuntu-22.04 bash -c "sudo umount /mnt/ubuntu-iso 2>/dev/null || true"
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✅ Build process completed!" -ForegroundColor Green
+    
+    # Copy ISO to Windows
+    $wslPath = $OutputISO -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
+    wsl -d Ubuntu-22.04 cp /tmp/billsloth/billsloth-custom.iso $wslPath
+    
+    if (Test-Path $OutputISO) {
+        $size = (Get-Item $OutputISO).Length / 1GB
+        Write-Host ""
+        Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+        Write-Host "██  🎉 BILL SLOTH CYBERPUNK ISO CREATED SUCCESSFULLY! 🎉                     ██" -ForegroundColor Green
+        Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "📁 Location: $OutputISO" -ForegroundColor Cyan  
+        Write-Host "📊 Size: $([math]::Round($size, 2)) GB" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "🧪 NEXT STEPS:" -ForegroundColor Yellow
+        Write-Host "• Test in VirtualBox/VMware VM" -ForegroundColor White
+        Write-Host "• Create bootable USB with Rufus" -ForegroundColor White
+        Write-Host "• Boot and verify Bill Sloth auto-installer works" -ForegroundColor White
+        Write-Host "• Launch Bill Sloth Command Center after setup" -ForegroundColor White
+        Write-Host ""
+        Write-Host "🦥 CUSTOM ISO FEATURES:" -ForegroundColor Yellow
+        Write-Host "• Bill Sloth auto-installer runs on first login" -ForegroundColor White
+        Write-Host "• Complete development environment setup" -ForegroundColor White
+        Write-Host "• Cyberpunk Ubuntu branding" -ForegroundColor White
+        Write-Host "• Desktop shortcut for Command Center" -ForegroundColor White
+        Write-Host "• All Bill Sloth automation tools included" -ForegroundColor White
+        Write-Host ""
+        Write-Host "🎉 Ready for Bill to test and use!" -ForegroundColor Green
+    else
+        Write-Host "❌ Failed to copy ISO to Windows" -ForegroundColor Red
+        exit 1
+    fi
+} else {
+    Write-Host "❌ Build process failed!" -ForegroundColor Red
+    exit 1
+}

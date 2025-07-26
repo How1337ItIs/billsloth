@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=GameMode Optimizer, 2=Steam Setup, 3=Lutris Gaming, 4=Performance Tweaks, 5=Complete Gaming Suite
+# CLAUDE_PROMPTS: Gaming platform selection, Performance tweaks confirmation, Additional tools
+# CLAUDE_DEPENDENCIES: steam, lutris, gamemode, cpu-x, htop
 # GAMING BOOST - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive gaming boost module
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source the non-interactive gaming boost module
 source "$SOURCE_DIR/gaming_boost.sh"
 
 gaming_boost_interactive() {

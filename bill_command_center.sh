@@ -7,6 +7,29 @@
 set -euo pipefail
 trap 'echo "Error occurred at line $LINENO. Exit code: $?"' ERR
 
+# Get script directory for reliable path operations
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Load safety mechanisms first
+source "$SCRIPT_DIR/lib/safety_mechanisms.sh" 2>/dev/null || {
+    echo "⚠️  Safety mechanisms not available - continuing with basic safety"
+}
+
+# Load input validation
+source "$SCRIPT_DIR/lib/input_validation.sh" 2>/dev/null || {
+    echo "⚠️  Input validation not available - using basic input handling"
+}
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+source "$SCRIPT_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Enable safe mode for this script
+if command -v enable_safe_mode &>/dev/null; then
+    # Set flag to restore settings on exit
+    export BILL_SLOTH_RESTORE_SETTINGS="1"
+    enable_safe_mode "bill_command_center"
+fi
+
 # ASCII Art Banner - UNHINGED CYPHERPUNK EDITION
 show_bill_banner() {
     # Skip banner in quick mode
@@ -473,19 +496,21 @@ bill_command_center() {
         echo "  0) Exit Command Center"
         echo ""
         
-        # PRODUCTION SAFETY: Use safe input with timeout
+        # PRODUCTION SAFETY: Use safe input with validation
         local choice=""
         if command -v safe_read &>/dev/null; then
-            choice=$(safe_read "🎯 Select action or module [quick action/1-9/0]: " 300) || {
-                log_info "Input timeout - continuing session"
+            choice=$(safe_read "🎯 Select action or module [quick action/1-9/0]: " 30 50 "[[:alnum:][:space:]]") || {
+                log_info "Input timeout or invalid - continuing session"
                 continue
             }
         else
-            # Fallback with basic timeout
-            if ! read -t 300 -p "🎯 Select action or module [quick action/1-9/0]: " choice; then
+            # Fallback with basic timeout and validation
+            if ! read -t 30 -p "🎯 Select action or module [quick action/1-9/0]: " choice; then
                 log_info "Input timeout - continuing session"
                 continue
             fi
+            # Basic sanitization
+            choice=$(echo "$choice" | tr -cd '[:alnum:][:space:]' | head -c 50)
         fi
         
         # Log the choice

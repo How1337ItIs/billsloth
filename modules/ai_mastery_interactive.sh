@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Ollama Local LLM, 2=Stable Diffusion, 3=Voice AI, 4=AI Development, 5=Complete AI Suite
+# CLAUDE_PROMPTS: AI tool selection, Model configuration, Integration setup
+# CLAUDE_DEPENDENCIES: python3, docker, cuda (optional), nodejs, git
 # AI MASTERY - INTERACTIVE ASSISTANT PATTERN
 # Complete AI toolkit: local models, development, workflow automation, and integration
 
-# Source required libraries
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
 
@@ -52,6 +58,14 @@ ai_mastery_interactive() {
     read -p "> " wants_automation
     echo "• Would you like AI development capabilities? (y/n): "
     read -p "> " wants_development
+    
+    # Safety checks for unbound variables
+    ai_experience="${ai_experience:-3}"
+    ai_goals="${ai_goals:-3}"
+    wants_local="${wants_local:-y}"
+    wants_cloud="${wants_cloud:-y}"
+    wants_automation="${wants_automation:-y}"
+    wants_development="${wants_development:-y}"
     
     # Generate personalized AI plan
     generate_ai_mastery_plan "$ai_experience" "$ai_goals" "$wants_local" "$wants_cloud" "$wants_automation" "$wants_development"
@@ -101,6 +115,9 @@ ai_mastery_interactive() {
     echo ""
     echo "Type the number of your choice, or 'models' for AI model recommendations:"
     read -p "Your choice: " ai_choice
+    
+    # Safety check for unbound variable
+    ai_choice="${ai_choice:-3}"
     
     # Ensure log directory exists
     mkdir -p ~/ai_mastery

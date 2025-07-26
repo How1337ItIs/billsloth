@@ -1,10 +1,16 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=System Monitor, 2=Service Manager, 3=Log Analyzer, 4=Package Manager, 5=Complete System Suite
+# CLAUDE_PROMPTS: System tool selection, Service action confirmation, Package installation
+# CLAUDE_DEPENDENCIES: systemctl, htop, journalctl, apt/dnf/pacman, neofetch
 # SYSTEM OPS - INTERACTIVE ASSISTANT PATTERN
 # Presents mature open-source tools, explains pros/cons, logs choice, and allows open-ended input.
 
-# Source the non-interactive system ops module
+# Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Source the non-interactive system ops module
 source "$SOURCE_DIR/system_ops.sh"
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true

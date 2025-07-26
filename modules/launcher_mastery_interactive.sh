@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=Rofi Launcher, 2=Albert Search, 3=Ulauncher, 4=Custom Shortcuts, 5=Complete Launcher Suite
+# CLAUDE_PROMPTS: Launcher selection, Shortcut configuration, Theme customization
+# CLAUDE_DEPENDENCIES: rofi, albert, ulauncher, dmenu
 # Launcher Mastery - Advanced application launching with AI assistance
 # "I got a plan. I got a master plan. You know what it is? You don't touch my fries." - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "🚀 LAUNCHER MASTERY SETUP"

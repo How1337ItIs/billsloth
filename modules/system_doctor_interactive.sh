@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=System Health Check, 2=Performance Analysis, 3=Hardware Diagnostics, 4=Log Analysis, 5=Complete System Doctor
+# CLAUDE_PROMPTS: Diagnostic type selection, System scan configuration, Repair options
+# CLAUDE_DEPENDENCIES: htop, iostat, lshw, smartmontools, memtest
 # 💀 WETWARE DIAGNOSTICS & REALITY REPAIR MATRIX 💀
 # Neural system consciousness troubleshooting protocols
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo -e "\033[38;5;196m💀 WETWARE DIAGNOSTIC MATRIX 💀\033[0m"

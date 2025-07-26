@@ -1,0 +1,140 @@
+﻿BILL SLOTH CUSTOM ISO CREATION - COMPLETE GUIDE
+===============================================
+
+OVERVIEW:
+This process creates a true custom Ubuntu ISO with Bill Sloth automation
+system pre-installed and ready to launch on first boot.
+
+REQUIREMENTS:
+- Ubuntu 22.04+ (VM, WSL2, or native)
+- 8GB RAM minimum
+- 50GB free storage
+- Internet connection
+
+PHASE 1: PREPARE UBUNTU ENVIRONMENT
+===================================
+
+1. Install Cubic (Custom Ubuntu ISO Creator):
+   sudo apt update
+   sudo apt install software-properties-common
+   sudo add-apt-repository universe
+   sudo add-apt-repository ppa:cubic-wizard/release
+   sudo apt update
+   sudo apt install cubic
+
+2. Download Ubuntu base ISO:
+   - Get Ubuntu 24.04 LTS Desktop ISO
+   - Place in accessible location
+
+3. Clone Bill Sloth repository:
+   git clone https://github.com/How1337ItIs/billsloth.git
+   cd billsloth
+
+PHASE 2: CUSTOMIZE ISO WITH CUBIC
+=================================
+
+1. Launch Cubic:
+   sudo cubic
+
+2. Cubic Project Setup:
+   - Project Name: "BillSloth-Ubuntu"
+   - Project Directory: Choose location with 50GB+ free
+   - Original ISO: Select your Ubuntu ISO
+   - Custom ISO Filename: "BillSloth-Ubuntu-Custom.iso"
+
+3. Extract and Modify:
+   - Cubic extracts the ISO
+   - Opens chroot terminal environment
+
+PHASE 3: INSTALL BILL SLOTH IN CHROOT
+=====================================
+
+In the Cubic chroot terminal:
+
+1. Update system:
+   apt update && apt upgrade -y
+
+2. Install dependencies:
+   apt install -y git curl wget bash-completion vim
+   apt install -y python3 python3-pip nodejs npm
+   apt install -y sqlite3 espeak-ng
+
+3. Clone Bill Sloth to system:
+   cd /opt
+   git clone https://github.com/How1337ItIs/billsloth.git
+   chmod +x /opt/billsloth/bill_command_center.sh
+   chmod +x /opt/billsloth/onboard.sh
+   chmod +x /opt/billsloth/lib/*.sh
+   chmod +x /opt/billsloth/modules/*.sh
+
+4. Create system integration:
+   # Auto-launch on first login
+   cat > /etc/profile.d/bill-sloth-welcome.sh << 'EOF'
+#!/bin/bash
+if [ ! -f "C:\Users\Sloth/.bill-sloth-initialized" ]; then
+    echo "Initializing Bill Sloth automation system..."
+    /opt/billsloth/onboard.sh
+    touch "C:\Users\Sloth/.bill-sloth-initialized"
+fi
+EOF
+
+5. Create desktop integration:
+   cat > /usr/share/applications/bill-sloth.desktop << 'EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Bill Sloth Command Center
+Comment=Personal Linux automation system
+Exec=/opt/billsloth/bill_command_center.sh
+Icon=utilities-terminal
+Terminal=true
+Categories=System;Utility;
+EOF
+
+6. Set up auto-start service:
+   cat > /etc/systemd/user/bill-sloth.service << 'EOF'
+[Unit]
+Description=Bill Sloth Automation System
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/billsloth/bill_command_center.sh --background
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+EOF
+
+   systemctl --global enable bill-sloth.service
+
+PHASE 4: FINALIZE CUSTOM ISO
+============================
+
+1. In Cubic, proceed through remaining steps:
+   - Configure kernel (usually keep default)
+   - Generate manifest
+   - Build custom ISO
+
+2. Test the ISO:
+   - Boot in VM to verify Bill Sloth launches
+   - Confirm all automation features work
+
+RESULT:
+=======
+You now have "BillSloth-Ubuntu-Custom.iso" that:
+- Installs Ubuntu with Bill Sloth pre-integrated
+- Launches onboarding automatically on first boot
+- Provides complete automation system immediately
+- Requires no manual setup after installation
+
+ADVANCED CUSTOMIZATION:
+======================
+You can also modify:
+- Default wallpaper to Bill Sloth themed
+- Install additional automation tools
+- Configure default applications
+- Add custom scripts to run during installation
+
+This creates a true "Bill Sloth Linux Distribution" - 
+your personal automation OS ready to deploy!

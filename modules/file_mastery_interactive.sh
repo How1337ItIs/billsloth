@@ -1,7 +1,14 @@
 #!/bin/bash
 # LLM_CAPABILITY: auto
+# CLAUDE_OPTIONS: 1=File Organizer, 2=Duplicate Finder, 3=Bulk Rename, 4=Smart Search, 5=Complete File Suite
+# CLAUDE_PROMPTS: File operation selection, Target directory confirmation, Organization rules
+# CLAUDE_DEPENDENCIES: find, fzf, ranger, fd, ripgrep, exiftool
 # File Mastery - Lightning-fast file operations with AI organization
 # "I'm straight. Teeth are for gay people" - Carl
+
+# Load Claude Interactive Bridge for AI/Human hybrid execution
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
     echo "📁 FILE MASTERY SETUP"
@@ -1667,7 +1674,7 @@ main_drive_manager() {
             4) relocate_app_data ;;
             5) multimonitor_setup ;;
             6) clean_system_drive ;;
-            7) echo "Configure drive preferences - Coming soon!" ;;
+            7) configure_drive_preferences ;;
             8) storage_analytics ;;
             0) break ;;
             *) echo "Invalid option" ;;
@@ -1705,6 +1712,224 @@ EOF
     fi
     
     echo ""
+}
+
+# Configure drive preferences
+configure_drive_preferences() {
+    echo -e "\033[38;5;39m🗄️ DRIVE PREFERENCES CONFIGURATION\033[0m"
+    echo ""
+    echo "📋 Configure your drive preferences for optimal file organization:"
+    echo ""
+    
+    # Create preferences directory
+    mkdir -p ~/.bill-sloth/drive-preferences
+    
+    echo "🎯 DRIVE PREFERENCE CATEGORIES:"
+    echo ""
+    echo "1) 📁 Default Download Location"
+    echo "2) 🎮 Game Installation Drives"  
+    echo "3) 🎬 Media Storage Preferences"
+    echo "4) 💼 Work/Document Organization"
+    echo "5) 🗃️ Backup Drive Configuration"
+    echo "6) ⚡ SSD vs HDD Usage Optimization"
+    echo "7) 📊 View Current Preferences"
+    echo "8) 🔄 Reset to Defaults"
+    echo ""
+    
+    read -p "Select preference category (1-8): " pref_choice
+    
+    case $pref_choice in
+        1)
+            echo "📁 DOWNLOAD LOCATION CONFIGURATION"
+            echo "=================================="
+            current_downloads=$(xdg-user-dir DOWNLOAD 2>/dev/null || echo "$HOME/Downloads")
+            echo "Current download location: $current_downloads"
+            echo ""
+            echo "Available drives:"
+            df -h | grep -E "^/dev" | awk '{print $6 " (" $4 " free)"}'
+            echo ""
+            read -p "Enter new download path (or press Enter to keep current): " new_downloads
+            if [[ -n "$new_downloads" && -d "$new_downloads" ]]; then
+                echo "download_location=$new_downloads" > ~/.bill-sloth/drive-preferences/downloads.conf
+                echo "✅ Download location updated to: $new_downloads"
+            else
+                echo "ℹ️ Keeping current download location"
+            fi
+            ;;
+        2)
+            echo "🎮 GAME INSTALLATION DRIVES"
+            echo "==========================="
+            echo "Configure preferred drives for different game platforms:"
+            echo ""
+            cat > ~/.bill-sloth/drive-preferences/games.conf << 'EOF'
+# Game Drive Preferences
+# Configure where different game platforms should install
+
+# Steam Library Locations
+steam_primary=/home/$(whoami)/.steam/steam/steamapps
+steam_secondary=/mnt/games/Steam
+
+# Epic Games Store
+epic_location=/mnt/games/Epic
+
+# Other Games
+general_games=/mnt/games/Other
+
+# Preferences
+prefer_ssd_for_competitive=true
+use_hdd_for_singleplayer=true
+EOF
+            echo "✅ Game drive preferences configured"
+            echo "📝 Edit ~/.bill-sloth/drive-preferences/games.conf to customize"
+            ;;
+        3)
+            echo "🎬 MEDIA STORAGE PREFERENCES"
+            echo "============================"
+            echo "Setting up media organization preferences:"
+            echo ""
+            read -p "Primary media drive (e.g., /mnt/media): " media_drive
+            read -p "Backup media location (optional): " backup_media
+            
+            cat > ~/.bill-sloth/drive-preferences/media.conf << EOF
+# Media Storage Configuration
+primary_media_drive=$media_drive
+backup_media_drive=$backup_media
+
+# Organization preferences
+organize_by_type=true
+create_year_folders=true
+auto_cleanup_duplicates=false
+
+# File type preferences
+videos_subdir=Videos
+music_subdir=Music
+photos_subdir=Photos
+documents_subdir=Documents
+EOF
+            echo "✅ Media preferences saved"
+            ;;
+        4)
+            echo "💼 WORK/DOCUMENT ORGANIZATION"
+            echo "============================="
+            echo "Configure work and document storage:"
+            echo ""
+            read -p "Primary work documents location: " work_location
+            read -p "Project files location: " project_location
+            
+            cat > ~/.bill-sloth/drive-preferences/work.conf << EOF
+# Work Organization Preferences
+work_documents=$work_location
+project_files=$project_location
+
+# Auto-organization rules
+organize_by_date=true
+create_project_folders=true
+auto_backup_important=true
+
+# VRBO business files
+vrbo_documents=$work_location/VRBO
+vrbo_photos=$work_location/VRBO/Photos
+
+# EdBoiGames business files
+edboigames_projects=$project_location/EdBoiGames
+edboigames_assets=$project_location/EdBoiGames/Assets
+EOF
+            echo "✅ Work organization preferences configured"
+            ;;
+        5)
+            echo "🗃️ BACKUP DRIVE CONFIGURATION"
+            echo "============================="
+            echo "Available drives for backup:"
+            df -h | grep -E "^/dev" | awk '{print $6 " (" $4 " free)"}'
+            echo ""
+            read -p "Primary backup drive: " backup_primary
+            read -p "Secondary backup drive (optional): " backup_secondary
+            
+            cat > ~/.bill-sloth/drive-preferences/backup.conf << EOF
+# Backup Configuration
+primary_backup=$backup_primary
+secondary_backup=$backup_secondary
+
+# Backup schedule preferences
+daily_backup=true
+weekly_full_backup=true
+verify_backups=true
+
+# What to backup
+backup_home=true
+backup_work_documents=true
+backup_media=false
+backup_games=false
+EOF
+            echo "✅ Backup preferences configured"
+            ;;
+        6)
+            echo "⚡ SSD vs HDD OPTIMIZATION"
+            echo "========================="
+            echo "Configure optimal drive usage:"
+            echo ""
+            cat > ~/.bill-sloth/drive-preferences/optimization.conf << 'EOF'
+# Drive Optimization Rules
+
+# SSD Usage (Fast, Limited Space)
+ssd_priority_files=(
+    "*.exe"           # Applications
+    "*.so"            # Libraries  
+    "*.tmp"           # Temporary files
+    "frequently_used" # Files accessed daily
+)
+
+# HDD Usage (Slow, Large Space)
+hdd_priority_files=(
+    "*.mkv" "*.mp4" "*.avi"  # Video files
+    "*.iso" "*.img"          # Disk images
+    "*.zip" "*.tar.gz"       # Archives
+    "backup*"                # Backup files
+)
+
+# Auto-move rules
+auto_optimize=true
+move_old_files_to_hdd=true
+days_before_move=30
+EOF
+            echo "✅ Drive optimization rules configured"
+            echo "💡 Tip: Use 'optimize-drives' command to apply rules"
+            ;;
+        7)
+            echo "📊 CURRENT DRIVE PREFERENCES"
+            echo "============================"
+            if [[ -d ~/.bill-sloth/drive-preferences ]]; then
+                for conf_file in ~/.bill-sloth/drive-preferences/*.conf; do
+                    if [[ -f "$conf_file" ]]; then
+                        echo ""
+                        echo "📁 $(basename "$conf_file" .conf | tr '[:lower:]' '[:upper:]'):"
+                        echo "──────────────────────────"
+                        cat "$conf_file" | grep -v "^#" | grep -v "^$"
+                    fi
+                done
+            else
+                echo "ℹ️ No preferences configured yet"
+            fi
+            ;;
+        8)
+            echo "🔄 RESET TO DEFAULTS"
+            echo "==================="
+            read -p "⚠️ This will reset all drive preferences. Continue? (y/N): " confirm_reset
+            if [[ "$confirm_reset" =~ ^[Yy]$ ]]; then
+                rm -rf ~/.bill-sloth/drive-preferences
+                echo "✅ Drive preferences reset to defaults"
+            else
+                echo "ℹ️ Reset cancelled"
+            fi
+            ;;
+        *)
+            echo "❌ Invalid choice"
+            ;;
+    esac
+    
+    echo ""
+    echo "🎉 Drive preferences configuration complete!"
+    echo "💡 Tip: Your preferences are saved in ~/.bill-sloth/drive-preferences/"
 }
 
 # Make sure we're in the right directory

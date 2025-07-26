@@ -1,8 +1,26 @@
-# Bill Sloth Windows Dual-Boot Setup Package
+# Bill Sloth Windows Setup Package
 
-This package provides comprehensive Windows-based tools to prepare for Ubuntu dual-boot installation with full Claude Code integration.
+This package provides comprehensive Windows-based tools for Bill Sloth installation with multiple options: WSL testing, dual-boot production, and ISO creation.
 
-## 🚀 Quick Start
+## 🎯 Choose Your Setup Method
+
+### 🧪 **WSL Testing Mode (Quick Start)**
+Perfect for testing Bill Sloth functionality and ISO creation process:
+
+```powershell
+# Run as Administrator
+.\bill-sloth-wsl-wizard.ps1
+```
+
+### 🖥️ **Dual-Boot Production Mode (Full Features)**  
+For complete Bill Sloth functionality with native Ubuntu:
+
+```powershell
+# Run as Administrator  
+.\bill-sloth-dual-boot-wizard-unified.ps1
+```
+
+## 🚀 Quick Start Options
 
 ### **For Claude Code Users (Recommended - One-Click Setup):**
 
@@ -18,6 +36,21 @@ What I want you to do:
 5. Guide me through the process with clear, ADHD-friendly instructions
 
 Please start by downloading the Bill Sloth auto-setup script and running the automated system analysis. I'll confirm any major changes but otherwise handle the technical details automatically.
+```
+
+### **For Bill's WSL2 → Native Transition (RECOMMENDED):**
+
+Run as Administrator in PowerShell:
+
+```powershell
+# SINGLE UNIFIED DUAL-BOOT WIZARD (FIXED VERSION)
+.\bill-sloth-dual-boot-wizard-unified.ps1
+
+# Fast transition (skip WSL2 backup)
+.\bill-sloth-dual-boot-wizard-unified.ps1 -FastMode
+
+# Specify target drive (default: E:)
+.\bill-sloth-dual-boot-wizard-unified.ps1 -TargetDrive E
 ```
 
 ### **For Manual Setup:**
@@ -64,7 +97,25 @@ Run as Administrator in PowerShell:
 
 ### Core Scripts
 
-#### `optimized-setup-launcher.ps1` **🎯 ULTIMATE & RECOMMENDED FOR BILL**
+#### `bill-sloth-dual-boot-wizard-unified.ps1` **🔄 SINGLE UNIFIED SOLUTION (RECOMMENDED)**
+**WSL2 to Native Ubuntu Dual-Boot Transition Wizard (FIXED VERSION)**
+- 🎯 **Designed for Bill's exact system**: ASUS, 32GB RAM, 27TB storage
+- 🔄 **WSL2 coexistence**: Leaves WSL2 intact for development/testing
+- 🚀 **Optimal partitioning**: Uses E: drive (9.25TB) for native Ubuntu installation
+- 📦 **Bill Sloth integration**: Includes complete automation system on USB
+- ⚡ **Fast transition mode**: Skip backup for quick setup
+- 🔧 **Hardware optimization**: Direct access to audio, GPU, and system resources
+- ✅ **No Unicode Issues**: Fixed encoding problems, pure ASCII output
+
+**Key Features:**
+- Leaves WSL2 Ubuntu 22.04 intact as development environment
+- Uses existing Ubuntu 24.04.2 ISOs (Bill has multiple)
+- Creates native Ubuntu USB with Bill Sloth automation
+- Clean native installation alongside Windows
+- Optimized for ASUS UEFI dual-boot setup
+- Single script replaces multiple broken versions
+
+#### `optimized-setup-launcher.ps1` **🎯 ALTERNATIVE**
 **Pre-flight system analysis + Token-efficient wizard launcher**  
 - 🔍 **Automated system analysis** without using Claude tokens
 - 🎯 **Smart optimization** based on system complexity and resources

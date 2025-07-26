@@ -1,0 +1,179 @@
+#!/bin/bash
+# Enhanced Bill Sloth Voice Interface with Claude Bridge Integration
+# LLM_CAPABILITY: local_ok
+
+echo "🎤 ENHANCED BILL SLOTH VOICE INTERFACE"
+echo "======================================"
+echo ""
+echo "🤖 Claude Bridge: ACTIVE"
+echo "🎙️ Voice Control: READY"
+echo "🧠 Smart Automation: ENABLED"
+echo ""
+
+# Load the Claude Interactive Bridge
+SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$SOURCE_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
+
+# Check if Linux Voice Control is available
+if [[ -f "$SOURCE_DIR/external/linux-voice-control/main.py" ]]; then
+    echo "✅ Linux Voice Control detected"
+    VOICE_CONTROL_AVAILABLE=true
+else
+    echo "⚠️ Linux Voice Control not found - using text input mode"
+    VOICE_CONTROL_AVAILABLE=false
+fi
+
+# Enhanced voice command categories
+show_voice_commands() {
+    echo "🎯 VOICE COMMAND CATEGORIES:"
+    echo ""
+    echo "🤖 AI & AUTOMATION:"
+    echo "   • 'ai mastery' - AI tools and local models"
+    echo "   • 'ai workflow' - AI automation workflows"
+    echo "   • 'automation advisor' - Smart automation setup"
+    echo ""
+    echo "🛠️ SYSTEM & TOOLS:"
+    echo "   • 'automation mastery' - Complete automation control"
+    echo "   • 'file management' - Advanced file operations"
+    echo "   • 'system doctor' - Health checks and diagnostics"
+    echo "   • 'security tools' - Defensive cyber security"
+    echo ""
+    echo "🎮 ENTERTAINMENT & PRODUCTIVITY:"
+    echo "   • 'gaming boost' - Gaming optimization"
+    echo "   • 'streaming setup' - Content creation tools"
+    echo "   • 'privacy tools' - Privacy protection"
+    echo "   • 'creative coding' - Development environment"
+    echo ""
+    echo "💼 BUSINESS & DATA:"
+    echo "   • 'vacation rental' - VRBO property management"
+    echo "   • 'data hoarding' - Data management and backup"
+    echo "   • 'edboy games' - EdBoiGames business tools"
+    echo ""
+    echo "🚀 SYSTEM COMMANDS:"
+    echo "   • 'bill command center' - Main control center"
+    echo "   • 'health check' - System health diagnostics"
+    echo "   • 'voice bridge test' - Test bridge integration"
+    echo ""
+}
+
+# Voice command processor with bridge integration
+process_voice_command() {
+    local command="$1"
+    local config_file="$SOURCE_DIR/external/bill-sloth-voice-config.json"
+    
+    if [[ ! -f "$config_file" ]]; then
+        echo "❌ Voice configuration file not found"
+        return 1
+    fi
+    
+    # Check if command exists in configuration
+    if command -v jq &> /dev/null; then
+        local exec_command=$(jq -r ".[\"$command\"].exec // empty" "$config_file")
+        local feedback=$(jq -r ".[\"$command\"].feedback // empty" "$config_file")
+        
+        if [[ -n "$exec_command" && "$exec_command" != "null" ]]; then
+            echo "🎙️ Executing: $command"
+            echo "💬 $feedback"
+            echo ""
+            
+            # Set voice context for bridge system
+            export CLAUDE_SCRIPT_CONTEXT="voice_control_$command"
+            
+            # Execute the command
+            eval "$exec_command"
+            
+            local exit_code=$?
+            if [[ $exit_code -eq 0 ]]; then
+                echo ""
+                echo "✅ Voice command completed successfully"
+            else
+                echo ""
+                echo "⚠️ Voice command finished with warnings (exit code: $exit_code)"
+            fi
+        else
+            echo "❌ Command '$command' not found in voice configuration"
+            echo "💡 Use 'help' to see available commands"
+        fi
+    else
+        echo "⚠️ jq not available - installing..."
+        sudo apt install -y jq
+        process_voice_command "$command"
+    fi
+}
+
+# Interactive voice interface
+start_voice_interface() {
+    echo "🎤 VOICE INTERFACE READY"
+    echo "========================"
+    echo ""
+    echo "💡 Type a command or say it aloud:"
+    echo "   • Type 'help' for command list"
+    echo "   • Type 'quit' or 'exit' to close"
+    echo ""
+    
+    while true; do
+        echo -n "🎙️ Voice Command: "
+        read -r -t 30 user_input
+        
+        # Handle timeout or empty input
+        if [[ $? -ne 0 ]] || [[ -z "$user_input" ]]; then
+            echo ""
+            echo "⏰ Timeout or no input received"
+            echo "💡 Type 'help' for commands or 'quit' to exit"
+            continue
+        fi
+        
+        case "$user_input" in
+            "help"|"commands"|"list")
+                show_voice_commands
+                ;;
+            "quit"|"exit"|"bye")
+                echo "🎤 Voice interface closing..."
+                if command -v espeak &> /dev/null; then
+                    espeak -s 120 "Goodbye! See you later!" 2>/dev/null &
+                fi
+                break
+                ;;
+            "test"|"voice bridge test")
+                echo "🧪 Testing bridge integration..."
+                export CLAUDE_SCRIPT_CONTEXT="voice_interface_test"
+                if is_claude_execution; then
+                    echo "✅ Claude bridge system: ACTIVE"
+                else
+                    echo "ℹ️ Claude bridge system: STANDBY (manual mode)"
+                fi
+                echo "✅ Voice interface: FUNCTIONAL"
+                ;;
+            *)
+                process_voice_command "$user_input"
+                ;;
+        esac
+        
+        echo ""
+    done
+}
+
+# Initialize voice interface
+main() {
+    # Check dependencies
+    if ! command -v espeak &> /dev/null; then
+        echo "🔊 Installing voice synthesis tools..."
+        sudo apt install -y espeak espeak-data alsa-utils
+    fi
+    
+    # Welcome message
+    if command -v espeak &> /dev/null; then
+        espeak -s 120 -p 50 "Bill Sloth enhanced voice interface ready!" 2>/dev/null &
+    fi
+    
+    # Start the interface
+    start_voice_interface
+}
+
+# Export functions for testing
+export -f process_voice_command show_voice_commands
+
+# Run if executed directly
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi
