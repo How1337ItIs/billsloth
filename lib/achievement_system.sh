@@ -124,9 +124,9 @@ show_achievement_celebration() {
     echo -e "\033[38;5;226m████████████████████████████████████████████████████████\033[0m"
     echo ""
     
-    # ATHF celebration
-    echo "🧙 wwwyzzerdd: 'Congratulations, you have been signed up to receive achievements!'"
-    echo "🍔 Meatwad: 'I get it! You did something good!'"
+    # ATHF celebration with real quotes
+    echo "🧙 wwwyzzerdd: 'Congratulations, you have been signed up to receive e-mails.'"
+    echo "🍔 Meatwad: 'I get it! It ain't making me laugh, but I get it!'"
     echo ""
     
     # Confetti effect

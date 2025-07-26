@@ -225,24 +225,24 @@ athf_loading() {
     
     case "$selected_char" in
         "meatwad")
-            echo "🍔 Meatwad: 'I'm helping with the loading! I understand!'"
+            echo "🍔 Meatwad: 'I get it! It ain't making me laugh, but I get it!'"
             sloth_loader "$message" "$duration"
-            echo "🍔 Meatwad: 'Did I do good? I think I did good!'"
+            echo "🍔 Meatwad: 'I'm a wildman.'"
             ;;
         "frylock")
-            echo "🧠 Frylock: 'Optimizing system parameters for maximum efficiency.'"
+            echo "🧠 Frylock: 'Damn it, Shake!'"
             cyberpunk_loader "$message" "$duration"
-            echo "🧠 Frylock: 'Process completed within acceptable parameters.'"
+            echo "🧠 Frylock: 'Grab my potatoes, Carl!'"
             ;;
         "shake")
-            echo "🥤 Shake: 'Yeah, I'm in charge of this loading operation.'"
+            echo "🥤 Shake: 'Dancing is forbidden!'"
             matrix_loader "$message" "$duration"
-            echo "🥤 Shake: 'You see that? That was all me. Number one in the hood, G!'"
+            echo "🥤 Shake: 'Number one in the hood, G!'"
             ;;
         "carl")
-            echo "👨 Carl: 'Yeah, I know all about loading bars and computers.'"
+            echo "👨 Carl: 'Yeah, I know all about computers.'"
             wwwyzzerdd_loader "$message" "$duration"
-            echo "👨 Carl: 'See? Told ya I knew about technology.'"
+            echo "👨 Carl: 'Write yourself a prescription for shutting the f*** up.'"
             ;;
         "wwwyzzerdd")
             wwwyzzerdd_loader "$message" "$duration"

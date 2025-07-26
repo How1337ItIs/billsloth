@@ -26,6 +26,7 @@ source "$SCRIPT_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
 # Load achievement system and loading animations
 source "$SCRIPT_DIR/lib/achievement_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/loading_animations.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/cyberpunk_enhancements.sh" 2>/dev/null || true
 
 # Enable safe mode for this script
 if command -v enable_safe_mode &>/dev/null; then
@@ -479,6 +480,11 @@ bill_command_center() {
         show_quick_actions
         
         echo "🧙 wwwyzzerdd: 'Welcome to the brainframe, broadbrain.'"
+        
+        # Add cyberpunk status line
+        if command -v hack_timestamp &>/dev/null && command -v cyber_status &>/dev/null; then
+            echo -e "$(hack_timestamp) $(cyber_status online) Neural interface active"
+        fi
         echo ""
         echo "📋 FULL MODULES:"
         echo "  1) Automation Mastery     2) Network Management    3) Data Hoarding"

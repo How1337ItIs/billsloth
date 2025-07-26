@@ -9,7 +9,6 @@
 # Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
-source "$SOURCE_DIR/../lib/contextual_personality.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/achievement_system.sh" 2>/dev/null || true
 
 source "../lib/interactive.sh" 2>/dev/null || {
