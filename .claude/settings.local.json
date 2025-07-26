@@ -85,7 +85,8 @@
       "Bash(export AI_EXECUTION=1)",
       "Bash(export CLAUDE_SCRIPT_CONTEXT=\"test\")",
       "Bash(jq:*)",
-      "Bash(apt list:*)"
+      "Bash(apt list:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   }
