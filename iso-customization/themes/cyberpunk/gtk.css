@@ -1,0 +1,210 @@
+/* Bill Sloth Cyberpunk Theme - Enhanced */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+/* Color Palette */
+@define-color bg_color #0a0a0a;
+@define-color fg_color #00ff41;
+@define-color neon_green #00ff41;
+@define-color neon_pink #ff0080;
+@define-color neon_cyan #00ffff;
+@define-color neon_purple #8000ff;
+@define-color dark_bg #0d1117;
+@define-color darker_bg #010409;
+@define-color selection_bg #003d1a;
+@define-color warning_color #ff6600;
+@define-color error_color #ff0040;
+
+/* Global styling */
+* {
+    font-family: 'Orbitron', 'Ubuntu Mono', monospace;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Windows and containers */
+.window, .background {
+    background: linear-gradient(135deg, @darker_bg 0%, @dark_bg 50%, #001122 100%);
+    color: @neon_green;
+    box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+/* Headers and titlebars */
+.titlebar, headerbar {
+    background: linear-gradient(90deg, @dark_bg 0%, #001a33 50%, @dark_bg 100%);
+    border-bottom: 2px solid @neon_cyan;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+.titlebar .title {
+    color: @neon_cyan;
+    font-weight: 900;
+    text-shadow: 0 0 10px currentColor;
+}
+
+/* Buttons with neon effects */
+.button {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid @neon_green;
+    color: @neon_green;
+    font-weight: 700;
+    text-shadow: 0 0 5px currentColor;
+    box-shadow: 
+        0 0 10px rgba(0, 255, 65, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.button:hover {
+    background: linear-gradient(145deg, @neon_green 0%, #00cc33 100%);
+    color: @darker_bg;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 65, 0.8),
+        0 0 40px rgba(0, 255, 65, 0.4);
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(0);
+    box-shadow: 
+        0 0 15px rgba(0, 255, 65, 0.6),
+        inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Destructive buttons */
+.button.destructive-action {
+    border-color: @neon_pink;
+    color: @neon_pink;
+}
+
+.button.destructive-action:hover {
+    background: linear-gradient(145deg, @neon_pink 0%, #cc0066 100%);
+    box-shadow: 
+        0 0 20px rgba(255, 0, 128, 0.8),
+        0 0 40px rgba(255, 0, 128, 0.4);
+}
+
+/* Text entries with glow */
+.entry {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid @neon_cyan;
+    color: @neon_green;
+    box-shadow: 
+        inset 0 0 10px rgba(0, 255, 255, 0.2),
+        0 0 5px rgba(0, 255, 255, 0.3);
+}
+
+.entry:focus {
+    border-color: @neon_green;
+    box-shadow: 
+        inset 0 0 15px rgba(0, 255, 65, 0.3),
+        0 0 15px rgba(0, 255, 65, 0.5);
+}
+
+/* Scrollbars with neon styling */
+scrollbar {
+    background: @darker_bg;
+    border-radius: 10px;
+}
+
+scrollbar slider {
+    background: linear-gradient(90deg, @neon_purple 0%, @neon_pink 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(128, 0, 255, 0.5);
+}
+
+scrollbar slider:hover {
+    box-shadow: 0 0 20px rgba(128, 0, 255, 0.8);
+}
+
+/* Menu styling */
+.menu, .popup {
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid @neon_cyan;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.8),
+        0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+.menuitem {
+    color: @neon_green;
+    transition: all 0.2s ease;
+}
+
+.menuitem:hover {
+    background: linear-gradient(90deg, @selection_bg 0%, rgba(0, 255, 65, 0.2) 100%);
+    color: @neon_cyan;
+    box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.3);
+}
+
+/* Progress bars with animation */
+.progressbar {
+    background: @darker_bg;
+    border: 1px solid @neon_cyan;
+    border-radius: 15px;
+}
+
+.progressbar progress {
+    background: linear-gradient(90deg, @neon_green 0%, @neon_cyan 50%, @neon_purple 100%);
+    background-size: 200% 100%;
+    animation: progress-glow 2s linear infinite;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+}
+
+@keyframes progress-glow {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Notebook tabs */
+.notebook tab {
+    background: @dark_bg;
+    border: 1px solid @neon_purple;
+    color: @neon_green;
+}
+
+.notebook tab:checked {
+    background: linear-gradient(180deg, @neon_purple 0%, @dark_bg 100%);
+    color: @neon_cyan;
+    box-shadow: 0 -3px 10px rgba(128, 0, 255, 0.5);
+}
+
+/* Tooltips */
+.tooltip {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid @neon_green;
+    color: @neon_cyan;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.4);
+}
+
+/* Selection highlighting */
+:selected {
+    background: linear-gradient(90deg, @selection_bg 0%, rgba(0, 255, 65, 0.3) 100%);
+    color: @neon_cyan;
+}
+
+/* Links */
+.link {
+    color: @neon_cyan;
+    text-decoration: none;
+}
+
+.link:hover {
+    color: @neon_pink;
+    text-shadow: 0 0 8px currentColor;
+}
+
+/* Switch controls */
+.switch {
+    border: 2px solid @neon_purple;
+    background: @darker_bg;
+}
+
+.switch:checked {
+    background: @neon_green;
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.6);
+}
+
+.switch slider {
+    background: @neon_cyan;
+    box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+}

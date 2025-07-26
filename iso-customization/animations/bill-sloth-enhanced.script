@@ -1,0 +1,93 @@
+# Enhanced Bill Sloth Plymouth Script with Matrix-style effects
+
+# Set up the display
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0.05, 0.05, 0.1);
+
+# Matrix rain effect
+for (i = 0; i < 50; i++) {
+    rain[i].image = Image.Text("0123456789ABCDEF", 0, 1, 0, 1);
+    rain[i].sprite = Sprite(rain[i].image);
+    rain[i].x = Math.Random() * Window.GetWidth();
+    rain[i].y = Math.Random() * Window.GetHeight() - Window.GetHeight();
+    rain[i].speed = Math.Random() * 5 + 2;
+}
+
+# Main logo with glow effect
+logo.image = Image("boot_logo.png");
+logo.sprite = Sprite(logo.image);
+logo.glow_image = Image("splash_screen_1.png");
+logo.glow_sprite = Sprite(logo.glow_image);
+
+# Text elements with cyberpunk styling
+text.image = Image.Text("BILL SLOTH LINUX", 0, 1, 0, 1, "Orbitron");
+text.sprite = Sprite(text.image);
+
+subtext.image = Image.Text("AUTOMATION POWERHOUSE", 0, 0.8, 1, 1, "Ubuntu Mono");
+subtext.sprite = Sprite(subtext.image);
+
+# Animation variables
+logo.pulse_angle = 0;
+logo.float_angle = 0;
+text.glow_angle = 0;
+matrix.time = 0;
+
+fun refresh_callback() {
+    # Matrix rain animation
+    matrix.time += 0.1;
+    for (i = 0; i < 50; i++) {
+        rain[i].y += rain[i].speed;
+        if (rain[i].y > Window.GetHeight()) {
+            rain[i].y = -20;
+            rain[i].x = Math.Random() * Window.GetWidth();
+        }
+        
+        # Fade effect based on position
+        opacity = 1 - (rain[i].y / Window.GetHeight()) * 0.7;
+        rain[i].sprite.SetOpacity(opacity * 0.3);
+        rain[i].sprite.SetPosition(rain[i].x, rain[i].y);
+    }
+    
+    # Logo pulsing and floating
+    logo.pulse_angle += 0.08;
+    logo.float_angle += 0.05;
+    
+    pulse_scale = 0.9 + Math.Sin(logo.pulse_angle) * 0.1;
+    float_offset = Math.Sin(logo.float_angle) * 10;
+    
+    logo_x = Window.GetWidth() / 2 - logo.image.GetWidth() / 2;
+    logo_y = Window.GetHeight() / 2 - logo.image.GetHeight() / 2 + float_offset;
+    
+    # Glow effect
+    glow_opacity = 0.3 + Math.Sin(logo.pulse_angle * 2) * 0.2;
+    logo.glow_sprite.SetOpacity(glow_opacity);
+    logo.glow_sprite.SetPosition(logo_x - 10, logo_y - 10);
+    
+    # Main logo
+    logo.sprite.SetPosition(logo_x, logo_y);
+    
+    # Text glow effect
+    text.glow_angle += 0.1;
+    text_glow = 0.7 + Math.Sin(text.glow_angle) * 0.3;
+    text.sprite.SetOpacity(text_glow);
+    text.sprite.SetPosition(Window.GetWidth() / 2 - text.image.GetWidth() / 2, 
+                           logo_y + logo.image.GetHeight() + 40);
+    
+    # Subtext
+    subtext.sprite.SetOpacity(0.8);
+    subtext.sprite.SetPosition(Window.GetWidth() / 2 - subtext.image.GetWidth() / 2,
+                              logo_y + logo.image.GetHeight() + 80);
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+
+# Password prompt styling
+fun DisplayPasswordPrompt(prompt, bullets) {
+    prompt_sprite = Sprite();
+    prompt_sprite.SetPosition(Window.GetWidth() / 2 - 200, Window.GetHeight() * 0.75);
+    
+    password_image = Image.Text(prompt + ": " + bullets, 0, 1, 0, 1);
+    prompt_sprite.SetImage(password_image);
+}
+
+Plymouth.SetDisplayPasswordFunction(DisplayPasswordPrompt);

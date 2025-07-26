@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE sound_theme PUBLIC "-//freedesktop//DTD sound theme//EN" "sound-theme.dtd">
+<sound_theme>
+  <_name>Bill Sloth Cyberpunk</_name>
+  <_description>Cyberpunk sound theme for Bill Sloth Linux</_description>
+  <inherits>freedesktop</inherits>
+  <directory>.</directory>
+  
+  <sound id="desktop-login" type="notification">
+    <_description>Login sound</_description>
+    <filename>login-cyberpunk.ogg</filename>
+  </sound>
+  
+  <sound id="desktop-logout" type="notification">
+    <_description>Logout sound</_description>
+    <filename>logout-cyberpunk.ogg</filename>
+  </sound>
+  
+  <sound id="bell-terminal" type="notification">
+    <_description>Terminal bell</_description>
+    <filename>terminal-bell-neon.ogg</filename>
+  </sound>
+</sound_theme>

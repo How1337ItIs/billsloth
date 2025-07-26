@@ -1,0 +1,39 @@
+/* Bill Sloth GTK Theme */
+@define-color bg_color #1a1a1a;
+@define-color fg_color #00ff00;
+@define-color base_color #2a2a2a;
+@define-color text_color #ffffff;
+@define-color selected_bg_color #00aa00;
+@define-color selected_fg_color #ffffff;
+@define-color tooltip_bg_color #333333;
+@define-color tooltip_fg_color #ffffff;
+
+/* Window styling */
+.window {
+    background-color: @bg_color;
+    color: @fg_color;
+}
+
+/* Button styling */
+.button {
+    background: linear-gradient(to bottom, #333333, #222222);
+    border: 1px solid #00ff00;
+    border-radius: 3px;
+    color: @fg_color;
+}
+
+.button:hover {
+    background: linear-gradient(to bottom, #00aa00, #008800);
+    color: #ffffff;
+}
+
+/* Menu styling */
+.menu {
+    background-color: @bg_color;
+    border: 1px solid #00ff00;
+}
+
+.menuitem:hover {
+    background-color: @selected_bg_color;
+    color: @selected_fg_color;
+}

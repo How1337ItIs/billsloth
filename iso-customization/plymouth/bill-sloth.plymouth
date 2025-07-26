@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Bill Sloth
+Description=Bill Sloth custom boot theme
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/bill-sloth
+ScriptFile=/usr/share/plymouth/themes/bill-sloth/bill-sloth.script

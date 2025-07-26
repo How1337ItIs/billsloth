@@ -1,0 +1,87 @@
+/* Bill Sloth Cyberpunk Theme - GTK 3.0 Compatibility */
+
+/* Color Palette */
+@define-color bg_color #0a0a0a;
+@define-color fg_color #00ff41;
+@define-color neon_green #00ff41;
+@define-color neon_pink #ff0080;
+@define-color neon_cyan #00ffff;
+@define-color neon_purple #8000ff;
+@define-color dark_bg #0d1117;
+@define-color darker_bg #010409;
+@define-color selection_bg #003d1a;
+
+/* Global styling for GTK 3.0 */
+* {
+    font-family: 'Ubuntu', sans-serif;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+/* Windows and backgrounds */
+.background, .window-frame {
+    background: linear-gradient(135deg, @darker_bg 0%, @dark_bg 50%, #001122 100%);
+    color: @neon_green;
+}
+
+/* Headers */
+.header-bar, .titlebar {
+    background: linear-gradient(90deg, @dark_bg 0%, #001a33 50%, @dark_bg 100%);
+    border-bottom: 2px solid @neon_cyan;
+    color: @neon_cyan;
+}
+
+/* Buttons */
+.button {
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid @neon_green;
+    color: @neon_green;
+}
+
+.button:hover {
+    background: linear-gradient(145deg, @neon_green 0%, #00cc33 100%);
+    color: @darker_bg;
+}
+
+/* Text entries */
+.entry {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid @neon_cyan;
+    color: @neon_green;
+}
+
+/* Scrollbars */
+.scrollbar {
+    background: @darker_bg;
+}
+
+.scrollbar .slider {
+    background: linear-gradient(90deg, @neon_purple 0%, @neon_pink 100%);
+}
+
+/* Menus */
+.menu {
+    background: rgba(10, 10, 10, 0.95);
+    border: 2px solid @neon_cyan;
+}
+
+.menuitem:hover {
+    background: @selection_bg;
+    color: @neon_cyan;
+}
+
+/* Selection */
+.view:selected {
+    background: @selection_bg;
+    color: @neon_cyan;
+}
+
+/* Progress bars */
+.progressbar {
+    background: @darker_bg;
+    border: 1px solid @neon_cyan;
+}
+
+.progressbar .progress {
+    background: linear-gradient(90deg, @neon_green 0%, @neon_cyan 100%);
+}

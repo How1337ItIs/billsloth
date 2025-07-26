@@ -1,0 +1,123 @@
+#!/bin/bash
+# Bill Sloth Visual Customization Installation Hook
+# Runs during ISO build to install all visual enhancements
+
+echo "🎨 Installing Bill Sloth Visual Enhancements..."
+
+# Install required packages for enhanced experience
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y \
+    gnome-shell-extensions \
+    gnome-tweaks \
+    plymouth-themes \
+    fonts-firacode \
+    papirus-icon-theme \
+    arc-theme \
+    numix-gtk-theme \
+    plank \
+    conky-all \
+    lolcat \
+    neofetch \
+    htop \
+    btop \
+    cmatrix \
+    figlet \
+    toilet \
+    curl \
+    wget \
+    git \
+    flatpak \
+    snapd
+
+# Install Orbitron font from Google Fonts
+mkdir -p /usr/share/fonts/truetype/orbitron
+cd /tmp
+wget -q "https://fonts.google.com/download?family=Orbitron" -O orbitron.zip
+unzip -q orbitron.zip -d orbitron/
+cp orbitron/*.ttf /usr/share/fonts/truetype/orbitron/
+fc-cache -f -v
+
+# Create Bill Sloth themes directory
+mkdir -p /usr/share/themes/Bill-Sloth-Cyberpunk/gtk-4.0
+mkdir -p /usr/share/themes/Bill-Sloth-Cyberpunk/gtk-3.0
+mkdir -p /usr/share/icons/Bill-Sloth-Neon
+mkdir -p /usr/share/sounds/Bill-Sloth-Cyberpunk
+mkdir -p /usr/share/plymouth/themes/bill-sloth-enhanced
+mkdir -p /boot/grub/themes/bill-sloth-enhanced
+
+# Copy all Bill Sloth assets (these will be placed by the build system)
+if [ -d "/tmp/bill-sloth-assets" ]; then
+    cp -r /tmp/bill-sloth-assets/backgrounds/* /usr/share/backgrounds/bill-sloth/ 2>/dev/null || true
+    cp -r /tmp/bill-sloth-assets/themes/* /usr/share/themes/Bill-Sloth-Cyberpunk/ 2>/dev/null || true
+    cp -r /tmp/bill-sloth-assets/icons/* /usr/share/icons/Bill-Sloth-Neon/ 2>/dev/null || true
+    cp -r /tmp/bill-sloth-assets/sounds/* /usr/share/sounds/Bill-Sloth-Cyberpunk/ 2>/dev/null || true
+    cp -r /tmp/bill-sloth-assets/plymouth/* /usr/share/plymouth/themes/bill-sloth-enhanced/ 2>/dev/null || true
+    cp -r /tmp/bill-sloth-assets/grub/* /boot/grub/themes/bill-sloth-enhanced/ 2>/dev/null || true
+fi
+
+# Set Plymouth theme
+if [ -f "/usr/share/plymouth/themes/bill-sloth-enhanced/bill-sloth-enhanced.plymouth" ]; then
+    plymouth-set-default-theme bill-sloth-enhanced
+    update-initramfs -u
+fi
+
+# Update GRUB configuration
+if [ -f "/boot/grub/themes/bill-sloth-enhanced/theme.txt" ]; then
+    echo 'GRUB_THEME="/boot/grub/themes/bill-sloth-enhanced/theme.txt"' >> /etc/default/grub
+    echo 'GRUB_GFXMODE="1920x1080,1680x1050,1280x1024,1024x768,auto"' >> /etc/default/grub
+    update-grub
+fi
+
+# Install Bill Sloth Command Center
+if [ -f "/tmp/bill-sloth-assets/bill_command_center.sh" ]; then
+    cp /tmp/bill-sloth-assets/bill_command_center.sh /usr/local/bin/
+    chmod +x /usr/local/bin/bill_command_center.sh
+    
+    # Create desktop entry
+    cat > /usr/share/applications/bill-sloth-command-center.desktop << 'DESKTOP_EOF'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Bill Sloth Command Center
+Comment=Launch the Bill Sloth automation powerhouse
+Icon=/usr/share/backgrounds/bill-sloth/logo.png
+Exec=gnome-terminal -- /usr/local/bin/bill_command_center.sh
+Terminal=false
+Categories=System;Utility;Development;
+StartupNotify=true
+DESKTOP_EOF
+fi
+
+# Set default dconf settings for all users
+mkdir -p /etc/dconf/db/site.d
+cat > /etc/dconf/db/site.d/00-bill-sloth-defaults << 'DCONF_EOF'
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/bill-sloth/wallpaper.png'
+picture-uri-dark='file:///usr/share/backgrounds/bill-sloth/wallpaper.png'
+primary-color='#000011'
+secondary-color='#00ff41'
+
+[org/gnome/desktop/screensaver]
+picture-uri='file:///usr/share/backgrounds/bill-sloth/lock_background.png'
+
+[org/gnome/desktop/interface]
+gtk-theme='Bill-Sloth-Cyberpunk'
+icon-theme='Bill-Sloth-Neon'
+font-name='Ubuntu 11'
+monospace-font-name='Ubuntu Mono 13'
+color-scheme='prefer-dark'
+
+[org/gnome/shell]
+favorite-apps=['firefox.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'bill-sloth-command-center.desktop']
+
+[org/gnome/terminal/legacy/profiles:/:default]
+background-color='#000011'
+foreground-color='#00ff41'
+use-theme-colors=false
+DCONF_EOF
+
+# Update dconf database
+dconf update
+
+echo "✅ Bill Sloth Visual Enhancements Installed!"

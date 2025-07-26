@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Bill Sloth Enhanced
+Description=Enhanced cyberpunk boot theme for Bill Sloth Linux
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/bill-sloth-enhanced
+ScriptFile=/usr/share/plymouth/themes/bill-sloth-enhanced/bill-sloth-enhanced.script
