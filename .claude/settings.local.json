@@ -78,7 +78,15 @@
       "Bash(git rm:*)",
       "Bash(git fetch:*)",
       "Bash(git pull:*)",
-      "Bash(del nul)"
+      "Bash(del nul)",
+      "Bash(export CLAUDE_EXECUTION=true)",
+      "Bash(export BILL_SLOTH_QUICK_MODE=1)",
+      "Bash(export CLAUDE_CODE=1)",
+      "Bash(export AI_EXECUTION=1)",
+      "Bash(export CLAUDE_SCRIPT_CONTEXT=\"test\")",
+      "Bash(jq:*)",
+      "Bash(apt list:*)",
+      "Bash(gh pr create:*)"
     ],
     "deny": []
   }

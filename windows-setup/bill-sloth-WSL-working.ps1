@@ -70,6 +70,8 @@ wsl -d Ubuntu-22.04 bash -c 'echo "    sudo apt update" >> /tmp/billsloth/squash
 wsl -d Ubuntu-22.04 bash -c 'echo "    sudo apt install -y git curl wget build-essential" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
 wsl -d Ubuntu-22.04 bash -c 'echo "    sudo apt install -y python3 python3-pip nodejs npm" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
 wsl -d Ubuntu-22.04 bash -c 'echo "    sudo apt install -y vim tmux htop jq sqlite3" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
+wsl -d Ubuntu-22.04 bash -c 'echo "    # Bill Sloth bridge system dependencies" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
+wsl -d Ubuntu-22.04 bash -c 'echo "    sudo apt install -y ripgrep fd-find" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
 wsl -d Ubuntu-22.04 bash -c 'echo "    git clone https://github.com/How1337ItIs/billsloth.git ~/bill-sloth || true" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
 wsl -d Ubuntu-22.04 bash -c 'echo "    if [ -d ~/bill-sloth ]; then" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
 wsl -d Ubuntu-22.04 bash -c 'echo "        find ~/bill-sloth -name \"*.sh\" -exec chmod +x {} \\; 2>/dev/null || true" >> /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init'
