@@ -50,6 +50,13 @@ ai_workflow_interactive() {
     echo "• Would you like AI-powered content generation? (y/n): "
     read -p "> " wants_content_ai
     
+    # Safety checks for unbound variables
+    ai_goals="${ai_goals:-3}"
+    uses_ai="${uses_ai:-y}"
+    wants_local_ai="${wants_local_ai:-y}"
+    wants_automation="${wants_automation:-y}"
+    wants_content_ai="${wants_content_ai:-y}"
+    
     # Generate personalized AI plan
     generate_ai_plan "$ai_goals" "$uses_ai" "$wants_local_ai" "$wants_automation" "$wants_content_ai"
     

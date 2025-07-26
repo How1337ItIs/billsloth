@@ -1,7 +1,7 @@
 {
   "automation mastery": {
-    "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/automation_mastery_interactive_v2.sh",
-    "feedback": "Opening automation mastery module",
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && export CLAUDE_SCRIPT_CONTEXT='voice automation' && source lib/claude_interactive_bridge.sh && run_with_claude_bridge modules/automation_mastery_interactive.sh automation_mastery_interactive",
+    "feedback": "Opening automation mastery with Claude bridge",
     "blocking": true
   },
   "clipboard tools": {
@@ -108,5 +108,30 @@
     "exec": "cd 'C:\\Users\\natha\\bill sloth' && ./modules/edboigames_toolkit_interactive.sh",
     "feedback": "Opening ed boy games toolkit",
     "blocking": true
+  },
+  "ai mastery": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && export CLAUDE_SCRIPT_CONTEXT='voice ai mastery' && source lib/claude_interactive_bridge.sh && run_with_claude_bridge modules/ai_mastery_interactive.sh ai_mastery_interactive",
+    "feedback": "Opening AI mastery with intelligent automation",
+    "blocking": true
+  },
+  "ai workflow": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && export CLAUDE_SCRIPT_CONTEXT='voice ai workflow' && source lib/claude_interactive_bridge.sh && run_with_claude_bridge modules/ai_workflow_interactive.sh ai_workflow_interactive",
+    "feedback": "Opening AI workflow automation",
+    "blocking": true
+  },
+  "automation advisor": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && export CLAUDE_SCRIPT_CONTEXT='voice automation advisor' && source lib/claude_interactive_bridge.sh && run_with_claude_bridge modules/intelligent_automation_advisor.sh intelligent_automation_advisor",
+    "feedback": "Opening intelligent automation advisor",
+    "blocking": true
+  },
+  "bill command center": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && bash bill_command_center.sh",
+    "feedback": "Opening Bill Sloth command center",
+    "blocking": true
+  },
+  "voice bridge test": {
+    "exec": "cd 'C:\\Users\\natha\\bill sloth' && bash -c 'echo \"🎤 Voice bridge integration test\" && export CLAUDE_SCRIPT_CONTEXT=\"voice test\" && source lib/claude_interactive_bridge.sh && echo \"✅ Bridge system ready for voice control!\"'",
+    "feedback": "Testing voice bridge integration",
+    "blocking": false
   }
 }

@@ -3,9 +3,22 @@
 # Claude Interactive Bridge - Hybrid AI/Human Interactive System
 # Preserves full aesthetic experience while enabling Claude Code intelligence
 
-# Detect execution context
+# Detect execution context - SAFE DETECTION METHOD
 is_claude_execution() {
-    [[ -n "$CLAUDE_CODE" ]] || [[ -n "$AI_EXECUTION" ]] || [[ ! -t 0 ]] || [[ "$TERM" == "dumb" ]]
+    # Primary detection: explicit Claude Code environment variables
+    [[ -n "${CLAUDE_CODE:-}" ]] && return 0
+    [[ -n "${AI_EXECUTION:-}" ]] && return 0
+    
+    # Secondary detection: stdin characteristics (safer than blind detection)
+    if [[ ! -t 0 ]] && [[ "${FORCE_INTERACTIVE:-}" != "1" ]]; then
+        return 0
+    fi
+    
+    # Terminal characteristics (most conservative)
+    [[ "${TERM:-}" == "dumb" ]] && [[ "${FORCE_INTERACTIVE:-}" != "1" ]] && return 0
+    
+    # Default to human interaction for safety
+    return 1
 }
 
 # Parse script metadata for Claude analysis
@@ -125,6 +138,9 @@ run_with_claude_bridge() {
         export CLAUDE_SCRIPT_CONTEXT="$script_name"
         export CLAUDE_EXECUTION="true"
         
+        # SAFETY: Enable bridge system explicitly and temporarily
+        export BILL_SLOTH_BRIDGE_ENABLED="1"
+        
         # Load universal bridge to override read/select functions
         source "$(dirname "${BASH_SOURCE[0]}")/universal_interactive_bridge.sh"
         
@@ -138,6 +154,8 @@ run_with_claude_bridge() {
 
 # Export functions for script integration
 export -f is_claude_execution
-export -f claude_enhanced_read
+export -f claude_enhanced_read  
 export -f claude_smart_select
+export -f parse_script_metadata
+export -f claude_preflight_analysis
 export -f run_with_claude_bridge

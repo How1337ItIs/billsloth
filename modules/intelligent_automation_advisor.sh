@@ -525,13 +525,39 @@ EOF
 setup_specific_automation() {
     echo -e "\033[38;5;226m🚀 SPECIFIC AUTOMATION SETUP\033[0m"
     echo ""
-    echo "Coming soon: Direct integration setup for:"
-    echo "• Zapier workflows"
-    echo "• n8n installation and configuration"
-    echo "• IFTTT setup"
-    echo "• Custom automation scripts"
+    echo "🎯 Choose your automation platform to set up:"
     echo ""
-    echo "For now, use the platform recommendations to get started!"
+    echo "1) 🟢 Zapier - Web-based automation (easiest)"
+    echo "   💡 Best for: Web services, SaaS integrations"
+    echo "   🚀 Setup: Account creation + workflow templates"
+    echo ""
+    echo "2) 🔵 n8n - Self-hosted automation (most powerful)"
+    echo "   💡 Best for: Privacy, complex workflows, local control"
+    echo "   🚀 Setup: Docker installation + configuration"
+    echo ""
+    echo "3) 🟠 IFTTT - Simple trigger-action automation"
+    echo "   💡 Best for: IoT, social media, simple triggers"
+    echo "   🚀 Setup: Mobile app + applet configuration"
+    echo ""
+    echo "4) ⚡ Custom Scripts - Bill Sloth automation scripts"
+    echo "   💡 Best for: System-specific tasks, local automation"
+    echo "   🚀 Setup: Bash scripts + cron jobs"
+    echo ""
+    echo "5) 🎯 All Platforms - Complete automation ecosystem"
+    echo "   💡 Best for: Maximum flexibility and power"
+    echo "   🚀 Setup: Guided setup for all platforms"
+    echo ""
+    
+    read -p "Select automation platform (1-5): " platform_choice
+    
+    case $platform_choice in
+        1) setup_zapier_automation ;;
+        2) setup_n8n_automation ;;
+        3) setup_ifttt_automation ;;
+        4) setup_custom_scripts_automation ;;
+        5) setup_all_automation_platforms ;;
+        *) echo "❌ Invalid choice. Please select 1-5." ;;
+    esac
 }
 
 # Show best practices
@@ -579,6 +605,266 @@ show_best_practices() {
 • Measure time savings after implementation
 • Automate the automations (meta-automation)
 EOF
+}
+
+# Specific automation platform setup functions
+setup_zapier_automation() {
+    echo "🟢 ZAPIER AUTOMATION SETUP"
+    echo "=========================="
+    echo ""
+    echo "📋 Setting up Zapier automation:"
+    echo ""
+    echo "1️⃣ Create Zapier account (if needed):"
+    echo "   🌐 Visit: https://zapier.com/sign-up"
+    echo "   💡 Tip: Start with free plan (100 tasks/month)"
+    echo ""
+    echo "2️⃣ Recommended Zaps for Bill Sloth users:"
+    echo "   📧 Gmail → Google Sheets (track important emails)"
+    echo "   📅 Google Calendar → Slack (meeting reminders)"
+    echo "   📝 Typeform → Airtable (collect and organize data)"
+    echo "   🗂️ Google Drive → Dropbox (backup automation)"
+    echo ""
+    echo "3️⃣ Bill-specific workflow templates:"
+    mkdir -p ~/.bill-sloth/zapier-templates
+    cat > ~/.bill-sloth/zapier-templates/vrbo-guest-workflow.txt << 'EOF'
+VRBO Guest Communication Workflow:
+Trigger: New email with "booking confirmed"
+Actions:
+1. Create Google Calendar event
+2. Add task to Google Tasks
+3. Send Slack notification
+4. Update guest spreadsheet
+EOF
+    echo "   ✅ Created VRBO workflow template"
+    echo ""
+    echo "🚀 Next steps:"
+    echo "   1. Log into Zapier and create your first Zap"
+    echo "   2. Use templates in ~/.bill-sloth/zapier-templates/"
+    echo "   3. Test workflows with sample data"
+}
+
+setup_n8n_automation() {
+    echo "🔵 N8N AUTOMATION SETUP"
+    echo "======================="
+    echo ""
+    echo "📋 Setting up n8n (self-hosted automation):"
+    echo ""
+    
+    # Check for Docker
+    if command -v docker &> /dev/null; then
+        echo "✅ Docker detected - ready for n8n installation"
+        echo ""
+        echo "🚀 Installing n8n with Docker:"
+        
+        # Create n8n directory
+        mkdir -p ~/.bill-sloth/n8n/{data,workflows}
+        
+        echo "📁 Created n8n directories"
+        echo ""
+        
+        # Create docker-compose file
+        cat > ~/.bill-sloth/n8n/docker-compose.yml << 'EOF'
+version: '3.1'
+services:
+  n8n:
+    image: n8nio/n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=bill
+      - N8N_BASIC_AUTH_PASSWORD=sloth123
+    volumes:
+      - ~/.bill-sloth/n8n/data:/home/node/.n8n
+      - ~/.bill-sloth/n8n/workflows:/workflows
+EOF
+        
+        echo "🐳 Starting n8n with Docker:"
+        cd ~/.bill-sloth/n8n
+        docker-compose up -d
+        
+        echo ""
+        echo "✅ n8n installation complete!"
+        echo "🌐 Access n8n at: http://localhost:5678"
+        echo "👤 Username: bill"
+        echo "🔐 Password: sloth123"
+        echo ""
+        echo "📝 Change password after first login!"
+    else
+        echo "❌ Docker not found. Installing Docker first..."
+        echo ""
+        echo "🐳 Docker installation (Ubuntu/WSL):"
+        echo "curl -fsSL https://get.docker.com -o get-docker.sh"
+        echo "sudo sh get-docker.sh"
+        echo "sudo usermod -aG docker \$USER"
+        echo ""
+        echo "⚠️  After Docker installation, re-run this setup"
+    fi
+}
+
+setup_ifttt_automation() {
+    echo "🟠 IFTTT AUTOMATION SETUP"
+    echo "========================="
+    echo ""
+    echo "📋 Setting up IFTTT (If This Then That):"
+    echo ""
+    echo "1️⃣ Download IFTTT app:"
+    echo "   📱 iOS: https://apps.apple.com/app/ifttt/id660944635"
+    echo "   🤖 Android: https://play.google.com/store/apps/details?id=com.ifttt.ifttt"
+    echo ""
+    echo "2️⃣ Recommended applets for Bill Sloth users:"
+    echo "   🏠 Smart home integration (lights, locks, etc.)"
+    echo "   📧 Email notifications for important events"
+    echo "   📱 Phone automation (location-based triggers)"
+    echo "   ☁️ Weather-based automation"
+    echo ""
+    echo "3️⃣ Bill-specific IFTTT ideas:"
+    mkdir -p ~/.bill-sloth/ifttt-templates
+    cat > ~/.bill-sloth/ifttt-templates/applet-ideas.txt << 'EOF'
+Bill Sloth IFTTT Applet Ideas:
+
+1. Location-based reminders:
+   - When I arrive at VRBO property → Send checkout checklist
+
+2. Time-based automation:
+   - Every Monday 9 AM → Create weekly planning task
+
+3. Weather integration:
+   - If rain forecast → Remind to update VRBO guest instructions
+
+4. Social media automation:
+   - New Instagram post → Save to Google Drive folder
+
+5. Smart home integration:
+   - When I leave home → Turn off all lights and set security
+EOF
+    echo "   ✅ Created IFTTT applet ideas"
+    echo ""
+    echo "🚀 Next steps:"
+    echo "   1. Create IFTTT account and connect services"
+    echo "   2. Browse applet ideas in ~/.bill-sloth/ifttt-templates/"
+    echo "   3. Start with simple applets and build complexity"
+}
+
+setup_custom_scripts_automation() {
+    echo "⚡ CUSTOM SCRIPTS AUTOMATION SETUP"
+    echo "=================================="
+    echo ""
+    echo "📋 Setting up Bill Sloth custom automation scripts:"
+    echo ""
+    
+    # Create automation scripts directory
+    mkdir -p ~/.bill-sloth/automation-scripts/{daily,weekly,monthly}
+    
+    # Daily automation script
+    cat > ~/.bill-sloth/automation-scripts/daily/morning-routine.sh << 'EOF'
+#!/bin/bash
+# Daily morning routine automation
+echo "🌅 Good morning, Bill! Starting your daily automation..."
+
+# Check weather
+curl -s "wttr.in/YourCity?format=3" 
+
+# Check calendar for today
+gcalcli agenda --calendar="primary" --tsv --nocolor
+
+# VRBO property check (if applicable)
+if [ -d ~/.bill-sloth/vrbo-automation ]; then
+    echo "🏠 Checking VRBO properties..."
+    # Add VRBO-specific checks here
+fi
+
+# EdBoiGames business check
+if [ -d ~/edboigames_business ]; then
+    echo "🎮 Checking EdBoiGames metrics..."
+    # Add business metrics here
+fi
+
+echo "✅ Daily automation complete!"
+EOF
+    
+    # Weekly automation script
+    cat > ~/.bill-sloth/automation-scripts/weekly/sunday-planning.sh << 'EOF'
+#!/bin/bash
+# Weekly planning automation
+echo "📅 Starting weekly planning automation..."
+
+# Create weekly backup
+mkdir -p ~/.bill-sloth/backups/$(date +%Y-%m-%d)
+
+# Generate weekly report
+echo "📊 Weekly Report - $(date)" > ~/.bill-sloth/reports/weekly-$(date +%Y-%m-%d).txt
+
+# VRBO weekly summary
+echo "🏠 VRBO Properties:" >> ~/.bill-sloth/reports/weekly-$(date +%Y-%m-%d).txt
+
+# EdBoiGames weekly summary  
+echo "🎮 EdBoiGames Business:" >> ~/.bill-sloth/reports/weekly-$(date +%Y-%m-%d).txt
+
+echo "✅ Weekly planning complete!"
+EOF
+    
+    # Make scripts executable
+    chmod +x ~/.bill-sloth/automation-scripts/daily/*.sh
+    chmod +x ~/.bill-sloth/automation-scripts/weekly/*.sh
+    
+    echo "✅ Created custom automation scripts:"
+    echo "   📁 Daily: ~/.bill-sloth/automation-scripts/daily/"
+    echo "   📁 Weekly: ~/.bill-sloth/automation-scripts/weekly/"
+    echo ""
+    echo "🕒 Setting up cron jobs for automation:"
+    
+    # Add cron jobs
+    (crontab -l 2>/dev/null; echo "# Bill Sloth daily automation") | crontab -
+    (crontab -l 2>/dev/null; echo "0 8 * * * ~/.bill-sloth/automation-scripts/daily/morning-routine.sh") | crontab -
+    (crontab -l 2>/dev/null; echo "# Bill Sloth weekly automation") | crontab -
+    (crontab -l 2>/dev/null; echo "0 9 * * 0 ~/.bill-sloth/automation-scripts/weekly/sunday-planning.sh") | crontab -
+    
+    echo "✅ Cron jobs configured:"
+    echo "   🌅 Daily routine: 8:00 AM every day"
+    echo "   📅 Weekly planning: 9:00 AM every Sunday"
+    echo ""
+    echo "🔧 Manage cron jobs with:"
+    echo "   View: crontab -l"
+    echo "   Edit: crontab -e"
+}
+
+setup_all_automation_platforms() {
+    echo "🎯 COMPLETE AUTOMATION ECOSYSTEM SETUP"
+    echo "======================================"
+    echo ""
+    echo "🚀 Setting up all automation platforms for maximum power..."
+    echo ""
+    
+    # Run all setup functions
+    setup_zapier_automation
+    echo ""
+    echo "─────────────────────────────────────────────────────────"
+    echo ""
+    setup_n8n_automation
+    echo ""
+    echo "─────────────────────────────────────────────────────────"
+    echo ""
+    setup_ifttt_automation
+    echo ""
+    echo "─────────────────────────────────────────────────────────"
+    echo ""
+    setup_custom_scripts_automation
+    echo ""
+    echo "🎉 COMPLETE AUTOMATION ECOSYSTEM READY!"
+    echo "======================================="
+    echo ""
+    echo "📊 Your automation toolkit:"
+    echo "   🟢 Zapier: Web service automation"
+    echo "   🔵 n8n: Self-hosted workflows"
+    echo "   🟠 IFTTT: Mobile and IoT automation"
+    echo "   ⚡ Custom Scripts: Local system automation"
+    echo ""
+    echo "🎯 Next steps:"
+    echo "   1. Test each platform with simple workflows"
+    echo "   2. Connect platforms for complex automation chains"
+    echo "   3. Monitor and optimize your automation ecosystem"
 }
 
 # Main function
