@@ -27,8 +27,8 @@ The current version has been **completely rewritten** and fixes all the issues h
 
 ## 🎯 **ONLY USE THIS ONE:** `bill-sloth-RECOMMENDED-iso-builder.ps1`
 
-**Status:** ✅ **FULLY WORKING** (as of July 26, 2025)  
-**Approach:** ISO extraction/modification (not live-build)  
+**Status:** ✅ **FULLY WORKING** (Bootloader Fixed July 26, 2025)  
+**Approach:** ISO extraction/modification with modern GRUB/EFI boot  
 **Requirements:** Local Ubuntu ISO at `C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso`
 
 ### How It Works:
@@ -117,8 +117,14 @@ cd "C:\Users\natha\bill sloth\windows-setup"
 - ✅ PowerShell script parses without errors
 - ✅ WSL2 commands execute successfully  
 - ✅ ISO extraction and modification works
-- ✅ Final ISO is bootable and contains Bill Sloth integration
+- ✅ **BOOTLOADER FIX APPLIED** - Uses modern Ubuntu GRUB/EFI structure
+- ✅ Boot directories preserved from original ISO
+- ✅ Final ISO supports both BIOS and UEFI boot
+- ✅ Custom "BILLSLOTH" volume branding applied
 - ✅ First-boot installer runs and installs packages correctly
+
+### Recent Fix (July 26, 2025):
+**Bootloader Issue Resolved:** Updated from broken ISOLINUX approach to modern GRUB/EFI boot structure. See `BOOTLOADER-FIX-COMPLETE.md` for technical details.
 
 ---
 

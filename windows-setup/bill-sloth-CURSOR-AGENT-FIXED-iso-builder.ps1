@@ -1,21 +1,20 @@
-# RECOMMENDED Bill Sloth Custom ISO Builder - USES LOCAL UBUNTU ISO
-# Uses local Ubuntu ISO to avoid network issues
-param([string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso")
+# CURSOR AGENT FIXED Bill Sloth Custom ISO Builder - Proper Filesystem Extraction
+# By Cursor Agent - July 25, 2025
+# Addresses the filesystem extraction issues that caused tiny ISOs
+param([string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Custom-FIXED.iso")
 
-$LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64-fast.iso"
+$LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso"
 
 Write-Host "================================================================================" -ForegroundColor Green
-Write-Host "==  RECOMMENDED BILL SLOTH CUSTOM ISO BUILDER - COMPLETE & WORKING          ==" -ForegroundColor Green  
+Write-Host "==  CURSOR AGENT FIXED BILL SLOTH CUSTOM ISO BUILDER                        ==" -ForegroundColor Green  
+Write-Host "==  By Cursor Agent - July 25, 2025                                        ==" -ForegroundColor Green
 Write-Host "================================================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "FEATURES:" -ForegroundColor Yellow
-Write-Host "  - Creates REAL custom ISO with Bill Sloth Cyberpunk Ubuntu branding" -ForegroundColor White
-Write-Host "  - Installs packages on first boot (avoids live-build package issues)" -ForegroundColor White
-Write-Host "  - Complete development environment setup" -ForegroundColor White
-Write-Host "  - Bill Sloth automation repository integration" -ForegroundColor White
-Write-Host "  - No fallback to standard Ubuntu - 100% custom" -ForegroundColor White
-Write-Host ""
-Write-Host "WARNING: OTHER ISO BUILDERS ARE BROKEN - USE THIS ONE ONLY" -ForegroundColor Red
+Write-Host "FIXES:" -ForegroundColor Yellow
+Write-Host "  - Proper filesystem extraction with cleanup" -ForegroundColor White
+Write-Host "  - Verification of filesystem size" -ForegroundColor White
+Write-Host "  - Full Ubuntu system preservation" -ForegroundColor White
+Write-Host "  - Correct ISO size (should be ~4-5GB)" -ForegroundColor White
 Write-Host ""
 
 # Test WSL2
@@ -23,12 +22,12 @@ $test = wsl -d Ubuntu-22.04 echo "test"
 if ($LASTEXITCODE -ne 0) { Write-Host "WSL2 failed"; exit 1 }
 Write-Host "WSL2 verified" -ForegroundColor Green
 
-# Clean start
-wsl -d Ubuntu-22.04 rm -rf /tmp/billsloth
+# Clean start - IMPORTANT: Remove any leftover directories
+Write-Host "Cleaning previous build artifacts..." -ForegroundColor Yellow
+wsl -d Ubuntu-22.04 bash -c "sudo rm -rf /tmp/billsloth"
+wsl -d Ubuntu-22.04 bash -c "sudo umount /mnt/ubuntu-iso 2>/dev/null || true"
 
-Write-Host "Creating minimal build environment..." -ForegroundColor Green
-
-# Check local ISO and extract
+# Check local ISO
 if (-not (Test-Path $LocalUbuntuISO)) {
     Write-Host "ERROR: Local Ubuntu ISO not found: $LocalUbuntuISO" -ForegroundColor Red
     exit 1
@@ -39,22 +38,45 @@ Write-Host "SUCCESS: Using local Ubuntu ISO: $LocalUbuntuISO" -ForegroundColor G
 # Convert to WSL path
 $wslISOPath = $LocalUbuntuISO -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
 
-# Extract ISO using local file
-wsl -d Ubuntu-22.04 mkdir -p /tmp/billsloth
-wsl -d Ubuntu-22.04 bash -c "sudo apt update"
-wsl -d Ubuntu-22.04 bash -c "sudo apt install -y xorriso squashfs-tools"
+Write-Host "Step 1: Installing required tools..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "sudo apt update -qq"
+wsl -d Ubuntu-22.04 bash -c "sudo apt install -y xorriso squashfs-tools rsync"
+
+Write-Host "Step 2: Creating build environment..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "mkdir -p /tmp/billsloth"
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && mkdir -p extract-cd"
+
+Write-Host "Step 3: Mounting Ubuntu ISO..." -ForegroundColor Cyan
 wsl -d Ubuntu-22.04 bash -c "sudo mkdir -p /mnt/ubuntu-iso"
 wsl -d Ubuntu-22.04 bash -c "sudo mount -o loop '$wslISOPath' /mnt/ubuntu-iso"
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && mkdir -p extract-cd"
+
+Write-Host "Step 4: Extracting ISO contents..." -ForegroundColor Cyan
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo rsync -a /mnt/ubuntu-iso/ extract-cd/"
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo chown -R `$USER:users extract-cd/"
+
+Write-Host "Step 5: Extracting filesystem (this may take 5-10 minutes)..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo rm -rf squashfs-root"
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && mkdir -p squashfs-root"
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo unsquashfs -d squashfs-root extract-cd/casper/filesystem.squashfs"
 
-Write-Host "Adding Bill Sloth first-boot installer..." -ForegroundColor Green
-wsl -d Ubuntu-22.04 mkdir -p /tmp/billsloth/squashfs-root/usr/local/bin
+# Verify filesystem extraction was successful
+Write-Host "Step 6: Verifying filesystem extraction..." -ForegroundColor Cyan
+$fsSize = wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo du -sh squashfs-root 2>/dev/null | cut -f1"
+$fileCount = wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo find squashfs-root -type f | wc -l"
 
-# Create comprehensive first-boot script that installs everything
+Write-Host "Filesystem size: $fsSize" -ForegroundColor White
+Write-Host "File count: $fileCount" -ForegroundColor White
+
+if ($fileCount -lt 1000) {
+    Write-Host "ERROR: Filesystem extraction failed - too few files!" -ForegroundColor Red
+    Write-Host "Expected: 100,000+ files, Got: $fileCount" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Step 7: Adding Bill Sloth integration..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "sudo mkdir -p /tmp/billsloth/squashfs-root/usr/local/bin"
+
+# Create comprehensive first-boot script
 wsl -d Ubuntu-22.04 bash -c 'cat > /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init << "INIT_EOF"
 #!/bin/bash
 
@@ -115,14 +137,6 @@ if [ ! -f ~/.billsloth-setup-complete ]; then
         echo "Quick start:"
         echo "  cd ~/bill-sloth && ./bill_command_center.sh"
         echo ""
-        echo "Features installed:"
-        echo "  - Development tools: git, python, node, build tools"
-        echo "  - System tools: vim, tmux, htop, tree"  
-        echo "  - Audio tools: pipewire, pulseaudio"
-        echo "  - Media tools: ffmpeg, imagemagick"
-        echo "  - Network tools: openssh, rsync"
-        echo "  - Utilities: jq, sqlite3"
-        echo ""
     else
         echo "ERROR: Failed to clone Bill Sloth repository"
         echo "Check your internet connection and try again"
@@ -133,84 +147,61 @@ else
 fi
 INIT_EOF'
 
-wsl -d Ubuntu-22.04 chmod +x /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init
+wsl -d Ubuntu-22.04 bash -c "sudo chmod +x /tmp/billsloth/squashfs-root/usr/local/bin/billsloth-init"
 
-Write-Host "Adding auto-startup..." -ForegroundColor Green  
-wsl -d Ubuntu-22.04 mkdir -p /tmp/billsloth/squashfs-root/etc/skel
-wsl -d Ubuntu-22.04 bash -c "echo 'billsloth-init' > /tmp/billsloth/squashfs-root/etc/skel/.bashrc"
+Write-Host "Step 8: Adding auto-startup..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "sudo mkdir -p /tmp/billsloth/squashfs-root/etc/skel"
+wsl -d Ubuntu-22.04 bash -c "echo 'billsloth-init' | sudo tee /tmp/billsloth/squashfs-root/etc/skel/.bashrc"
 
 Write-Host ""
-Write-Host "Rebuilding filesystem and creating custom ISO..." -ForegroundColor Yellow
+Write-Host "Step 9: Rebuilding filesystem (this may take 10-15 minutes)..." -ForegroundColor Yellow
 Write-Host "Building Ubuntu base system with Bill Sloth integration" -ForegroundColor Cyan
-Write-Host "Packages will be installed on first boot for reliability" -ForegroundColor Cyan
-Write-Host ""
 
 # Rebuild the filesystem
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo rm -f extract-cd/casper/filesystem.squashfs"
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo mksquashfs squashfs-root extract-cd/casper/filesystem.squashfs -comp xz -noappend"
 
 # Update filesystem size
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && echo -n `$(sudo du -sx --block-size=1 squashfs-root | cut -f1) | sudo tee extract-cd/casper/filesystem.size > /dev/null"
 
-# Create the final ISO with modern Ubuntu GRUB/EFI boot structure
-Write-Host "Creating bootable ISO with GRUB/EFI support..." -ForegroundColor Green
-
-# First ensure all boot directories are preserved from original ISO
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/boot extract-cd/ 2>/dev/null || true"
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/EFI extract-cd/ 2>/dev/null || true"  
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/.disk extract-cd/ 2>/dev/null || true"
-
-# Create bootable ISO using modern Ubuntu boot structure
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth/extract-cd && sudo xorriso -as mkisofs -r -V 'BILLSLOTH' -o ../billsloth-custom.iso -J -l -b boot/grub/i386-pc/eltorito.img -c boot.catalog -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e EFI/boot/bootx64.efi -no-emul-boot -isohybrid-gpt-basdat ."
+Write-Host "Step 10: Creating bootable ISO..." -ForegroundColor Cyan
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth/extract-cd && sudo xorriso -as mkisofs -r -V 'BILLSLOTH' -o ../billsloth-custom-fixed.iso -J -l -b boot/grub/i386-pc/eltorito.img -c boot.catalog -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e EFI/boot/bootx64.efi -no-emul-boot -isohybrid-gpt-basdat ."
 
 # Cleanup
 wsl -d Ubuntu-22.04 bash -c "sudo umount /mnt/ubuntu-iso 2>/dev/null || true"
 
 if ($LASTEXITCODE -eq 0) {
-    # Check for ISO file
-    $isoCheck = wsl -d Ubuntu-22.04 bash -c "ls -la /tmp/billsloth/billsloth-custom.iso 2>/dev/null"
+    # Check for ISO file and verify size
+    $isoCheck = wsl -d Ubuntu-22.04 bash -c "ls -la /tmp/billsloth/billsloth-custom-fixed.iso 2>/dev/null"
     
     if ($isoCheck) {
+        $isoSize = wsl -d Ubuntu-22.04 bash -c "ls -lh /tmp/billsloth/billsloth-custom-fixed.iso | awk '{print `$5}'"
         Write-Host "Build completed successfully!" -ForegroundColor Green
+        Write-Host "ISO size: $isoSize" -ForegroundColor White
         
         # Copy ISO to Windows
         $wslPath = $OutputISO -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
-        wsl -d Ubuntu-22.04 bash -c "cp /tmp/billsloth/billsloth-custom.iso '$wslPath'"
+        wsl -d Ubuntu-22.04 bash -c "cp /tmp/billsloth/billsloth-custom-fixed.iso '$wslPath'"
         
         if (Test-Path $OutputISO) {
             $size = (Get-Item $OutputISO).Length / 1GB
             Write-Host ""
             Write-Host "================================================================================" -ForegroundColor Green
-            Write-Host "==  SUCCESS: BILL SLOTH CYBERPUNK ISO CREATED SUCCESSFULLY!                 ==" -ForegroundColor Green
+            Write-Host "==  SUCCESS: CURSOR AGENT FIXED BILL SLOTH CUSTOM ISO CREATED!              ==" -ForegroundColor Green
             Write-Host "================================================================================" -ForegroundColor Green
             Write-Host ""
             Write-Host "Location: $OutputISO" -ForegroundColor Cyan  
             Write-Host "Size: $([math]::Round($size, 2)) GB" -ForegroundColor Cyan
             Write-Host ""
-            Write-Host "WORKING CUSTOM ISO FEATURES:" -ForegroundColor Green
-            Write-Host ""
-            Write-Host "FIRST BOOT SETUP:" -ForegroundColor Yellow
-            Write-Host "  - Automatic Bill Sloth installation script" -ForegroundColor White
-            Write-Host "  - Full development environment setup" -ForegroundColor White
-            Write-Host "  - Audio and media tools installation" -ForegroundColor White
-            Write-Host "  - Repository cloning and configuration" -ForegroundColor White
-            Write-Host ""
-            Write-Host "ISO FEATURES:" -ForegroundColor Yellow  
-            Write-Host "  - Custom 'Bill Sloth Cyberpunk Ubuntu' branding" -ForegroundColor White
-            Write-Host "  - BILLSLOTH volume label" -ForegroundColor White
-            Write-Host "  - No fallback to standard Ubuntu" -ForegroundColor White
-            Write-Host "  - Real custom ISO (not just copied file)" -ForegroundColor White
-            Write-Host ""
-            Write-Host "ON FIRST BOOT WILL INSTALL:" -ForegroundColor Yellow
-            Write-Host "  - git, curl, wget, build-essential" -ForegroundColor White
-            Write-Host "  - python3, pip, nodejs, npm" -ForegroundColor White
-            Write-Host "  - vim, neovim, tmux, htop, tree" -ForegroundColor White
-            Write-Host "  - openssh-client, rsync" -ForegroundColor White
-            Write-Host "  - ffmpeg, imagemagick, jq, sqlite3" -ForegroundColor White
-            Write-Host "  - Audio tools (pipewire, pulseaudio)" -ForegroundColor White
+            
+            if ($size -gt 3) {
+                Write-Host "✅ CORRECT SIZE: ISO is properly sized (>3GB)" -ForegroundColor Green
+            } else {
+                Write-Host "⚠️  WARNING: ISO size seems small ($size GB)" -ForegroundColor Yellow
+            }
+            
             Write-Host ""
             Write-Host "Your cyberpunk sloth ISO is ready for dual-boot installation!" -ForegroundColor Magenta
-            Write-Host ""
-            Write-Host "The system will automatically set itself up on first login." -ForegroundColor Cyan
         } else {
             Write-Host "Failed to copy ISO to Windows" -ForegroundColor Red
             exit 1
