@@ -90,22 +90,39 @@ ADDITIONAL OPTIONS:
 ```
 🚨 CRITICAL CHOICES FOR BILL'S DUAL-BOOT:
 
-OPTIONS YOU'LL SEE:
-
-✅ SELECT: "Install Ubuntu alongside Windows Boot Manager"
+WHAT YOU SHOULD SEE:
+✅ CORRECT: "Install Ubuntu alongside Windows Boot Manager"
    (SAFEST - Automatic dual-boot setup)
-   ⚠️  NOTE: Only appears if Windows is properly detected
 
-✅ ALTERNATIVE: "Manual Installation" 
-   (If "alongside Windows" not available - gives full control)
+PROBLEM OPTIONS:
+⚠️  WRONG: "Install Ubuntu alongside Ubuntu"
+   (Means old Ubuntu partitions exist - MUST clean up first!)
 
 ❌ NEVER SELECT: "Erase disk and install Ubuntu"
    (Would delete Windows - catastrophic data loss!)
 
-🎯 WHAT TO DO:
-1. If you see "Install Ubuntu alongside Windows Boot Manager" - SELECT IT
-2. If you DON'T see it, select "Manual Installation"
-3. Never select "Erase disk" unless you want to lose Windows
+🎯 DECISION TREE:
+1. ✅ IF you see "alongside Windows Boot Manager" → SELECT IT
+2. ⚠️  IF you see "alongside Ubuntu" → STOP! Clean old partitions first
+3. 🔧 IF neither appears → Use "Manual Installation"
+4. ❌ NEVER select "Erase disk"
+```
+
+### **🚨 CRITICAL: If You See "Install Ubuntu alongside Ubuntu":**
+```
+⛔ DO NOT PROCEED! This means old Ubuntu partitions exist.
+
+REQUIRED STEPS:
+1. 🚫 CANCEL: Current installation (don't continue)
+2. 🧹 CLEAN: Old Ubuntu partitions using GParted
+3. 🔄 RESTART: Installation after cleanup
+
+📋 DETAILED GUIDE: See UBUNTU-PARTITION-CLEANUP-GUIDE.md
+
+WHY THIS MATTERS:
+- Old partitions cause fragmented installation
+- Results in unstable dual-boot setup
+- Can break both Ubuntu and Windows boot
 ```
 
 ### **If You Selected "Manual Installation":**
