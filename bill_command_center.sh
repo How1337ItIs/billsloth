@@ -27,6 +27,7 @@ source "$SCRIPT_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/achievement_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/loading_animations.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/cyberpunk_enhancements.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/ascii_gallery.sh" 2>/dev/null || true
 
 # Enable safe mode for this script
 if command -v enable_safe_mode &>/dev/null; then
@@ -502,6 +503,9 @@ bill_command_center() {
         echo "🏆 ACHIEVEMENTS:"
         echo "  achievements) View Achievement Status & Progress"
         echo ""
+        echo "🎨 ASCII ART:"
+        echo "  gallery) Browse Hardcore ASCII Art Collection"
+        echo ""
         echo "🎤 VOICE CONTROL:"
         echo "  voice) Optimize Voice Control (Jarvis Mode)"
         echo ""
@@ -938,6 +942,21 @@ EOF
                 esac
                 
                 read -p "Press Enter to continue..."
+                ;;
+            "gallery")
+                log_activity "Opened ASCII Art Gallery"
+                
+                # Show random sloth as intro
+                if command -v random_sloth &>/dev/null; then
+                    echo ""
+                    echo -e "${CYBER_GREEN}Welcome to the ASCII Gallery!${CYBER_RESET}"
+                    random_sloth
+                    echo ""
+                    sleep 1
+                    ascii_gallery
+                else
+                    echo "ASCII Gallery not available"
+                fi
                 ;;
             "health")
                 log_activity "Ran system health check"

@@ -91,7 +91,9 @@
       "Bash(git submodule:*)",
       "WebFetch(domain:aqua-teen-hunger-force.fandom.com)",
       "WebFetch(domain:gist.github.com)",
-      "WebFetch(domain:ascii.co.uk)"
+      "WebFetch(domain:ascii.co.uk)",
+      "WebFetch(domain:emojicombos.com)",
+      "WebFetch(domain:www.asciiart.eu)"
     ],
     "deny": []
   }

@@ -1,0 +1,84 @@
+# Legitimate Ransomware ASCII Art Collection
+# Sources: Public domain and documented cybersecurity research
+
+# PETYA SKULL (Original from gist.github.com/hasherezade/32095565c6630b4af0741b19e4db7c5b)
+uu$$$$$$$$$$$uu
+uu$$$$$$$$$$$$$$$$$uu
+u$$$$$$$$$$$$$$$$$$$$$u
+u$$$$$$$$$$$$$$$$$$$$$$$u
+u$$$$$$$$$$$$$$$$$$$$$$$$$u
+u$$$$$$* *$$$* *$$$$$$u
+*$$$$* u$u $$$$*
+$$$u u$u u$$$
+$$$u u$$$u u$$$
+*$$$$uu$$$ $$$uu$$$$*
+*$$$$$$$* *$$$$$$$*
+u$$$$$$$u$$$$$$$u
+u$*$*$*$*$*$*$u
+uuu $$u$ $ $ $ $u$$ uuu
+u$$$$ $$$$$u$u$u$$$ u$$$$
+$$$$$uu *$$$$$$$$$* uu$$$$$$
+u$$$$$$$$$$$uu **** uuuu$$$$$$$$$
+$$$$***$$$$$$$$$$uuu uu$$$$$$$$$***$$$*
+*** **$$$$$$$$$$$uu **$***
+uuuu **$$$$$$$$$$uuu
+u$$$uuu$$$$$$$$$uu **$$$$$$$$$$$uuu$$$
+$$$$$$$$$$*** **$$$$$$$$$$$*
+*$$$$$* **$$$$**
+$$$* $$$$*
+
+# SKULL PUNK (from ascii.co.uk/art/skulls)
+                                  ,,..
+                                ,@$$$$$.
+                              .,$$$$$$$$i
+                        .,z$""')$$$$$$$$C`^#`-..
+                     ,zF'        `""#*"'       "*o.
+                  ,zXe>        u:..        ..      "c
+                ,' zP'    ,:`"          .            "N.
+
+# COMPACT SKULL
+    ___
+   /   \
+  | X X |
+   \ _ /
+    ---
+
+# SIMPLE CROSSBONES
+    ___
+   /   \
+   | o |
+   \___/
+  /     \
+ /       \
+/         \
+
+# TERMINAL DEATH
+  ╔══════════════════════════════════════╗
+  ║  SYSTEM COMPROMISED - ACCESS DENIED  ║
+  ║                                      ║
+  ║              ███████                 ║
+  ║            ███     ███               ║
+  ║           ███  ███  ███              ║
+  ║            ███     ███               ║
+  ║              ███████                 ║
+  ║                                      ║
+  ║        NEURAL LINK TERMINATED        ║
+  ╚══════════════════════════════════════╝
+
+# CYBER SKULL MINIMAL
+  ▄▄▄▄▄▄▄▄▄
+ ▐░░░░░░░░░▌
+ ▐░██░░░██░▌  
+ ▐░░░░▄░░░░▌
+ ▐░░░███░░░▌
+  ▀▀▀▀▀▀▀▀▀
+
+# HACKER CROSSBONES
+    ████████
+  ██        ██
+ ██    ██    ██
+██   ██████   ██
+██     ██     ██
+ ██    ██    ██
+  ██        ██
+    ████████
