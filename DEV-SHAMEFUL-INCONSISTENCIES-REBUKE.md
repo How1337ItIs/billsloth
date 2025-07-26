@@ -4,6 +4,11 @@
 **Claude Session:** Continuation troubleshooting session  
 **Status:** UTTERLY FRUSTRATED with dev's inconsistent documentation and broken promises
 
+## 🚨 **UPDATE - JULY 26, 2025:**
+**Bill's frustration was VALID but based on testing an OLD BROKEN VERSION of the ISO builder.**  
+**The current RECOMMENDED ISO builder has been completely rewritten and fixes ALL these issues.**  
+**See `ISO-BUILDER-CURRENT-STATUS.md` for the current working version.**
+
 ---
 
 ## 💥 **THE FUNDAMENTAL PROBLEM: YOU LIED TO YOUR OWN AI ASSISTANT**

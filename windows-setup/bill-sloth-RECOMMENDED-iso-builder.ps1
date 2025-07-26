@@ -1,21 +1,21 @@
-# ★ RECOMMENDED ★ Bill Sloth Custom ISO Builder - USES LOCAL UBUNTU ISO
+# RECOMMENDED Bill Sloth Custom ISO Builder - USES LOCAL UBUNTU ISO
 # Uses local Ubuntu ISO to avoid network issues
 param([string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso")
 
 $LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso"
 
-Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
-Write-Host "██  ★ RECOMMENDED BILL SLOTH CUSTOM ISO BUILDER - COMPLETE & WORKING ★          ██" -ForegroundColor Green  
-Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+Write-Host "================================================================================" -ForegroundColor Green
+Write-Host "==  RECOMMENDED BILL SLOTH CUSTOM ISO BUILDER - COMPLETE & WORKING          ==" -ForegroundColor Green  
+Write-Host "================================================================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "🦥⚡ FEATURES:" -ForegroundColor Yellow
-Write-Host "  • Creates REAL custom ISO with Bill Sloth Cyberpunk Ubuntu branding" -ForegroundColor White
-Write-Host "  • Installs packages on first boot (avoids live-build package issues)" -ForegroundColor White
-Write-Host "  • Complete development environment setup" -ForegroundColor White
-Write-Host "  • Bill Sloth automation repository integration" -ForegroundColor White
-Write-Host "  • No fallback to standard Ubuntu - 100% custom" -ForegroundColor White
+Write-Host "FEATURES:" -ForegroundColor Yellow
+Write-Host "  - Creates REAL custom ISO with Bill Sloth Cyberpunk Ubuntu branding" -ForegroundColor White
+Write-Host "  - Installs packages on first boot (avoids live-build package issues)" -ForegroundColor White
+Write-Host "  - Complete development environment setup" -ForegroundColor White
+Write-Host "  - Bill Sloth automation repository integration" -ForegroundColor White
+Write-Host "  - No fallback to standard Ubuntu - 100% custom" -ForegroundColor White
 Write-Host ""
-Write-Host "⚠️  OTHER ISO BUILDERS ARE BROKEN - USE THIS ONE ONLY" -ForegroundColor Red
+Write-Host "WARNING: OTHER ISO BUILDERS ARE BROKEN - USE THIS ONE ONLY" -ForegroundColor Red
 Write-Host ""
 
 # Test WSL2
@@ -30,11 +30,11 @@ Write-Host "Creating minimal build environment..." -ForegroundColor Green
 
 # Check local ISO and extract
 if (-not (Test-Path $LocalUbuntuISO)) {
-    Write-Host "❌ Local Ubuntu ISO not found: $LocalUbuntuISO" -ForegroundColor Red
+    Write-Host "ERROR: Local Ubuntu ISO not found: $LocalUbuntuISO" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "✅ Using local Ubuntu ISO: $LocalUbuntuISO" -ForegroundColor Green
+Write-Host "SUCCESS: Using local Ubuntu ISO: $LocalUbuntuISO" -ForegroundColor Green
 
 # Convert to WSL path
 $wslISOPath = $LocalUbuntuISO -replace '^([A-Z]):', '/mnt/$1' -replace '\\', '/' | ForEach-Object { $_.ToLower() }
@@ -59,9 +59,9 @@ wsl -d Ubuntu-22.04 bash -c 'cat > /tmp/billsloth/squashfs-root/usr/local/bin/bi
 #!/bin/bash
 
 if [ ! -f ~/.billsloth-setup-complete ]; then
-    echo "████████████████████████████████████████████████████████████████████████████████"
-    echo "██  INITIALIZING BILL SLOTH CYBERPUNK SYSTEM                                   ██"
-    echo "████████████████████████████████████████████████████████████████████████████████"
+    echo "================================================================================"
+    echo "==  INITIALIZING BILL SLOTH CYBERPUNK SYSTEM                                 =="
+    echo "================================================================================"
     echo ""
     
     echo "This will install development tools and set up the Bill Sloth automation system."
@@ -106,11 +106,11 @@ if [ ! -f ~/.billsloth-setup-complete ]; then
         touch ~/.billsloth-setup-complete
         
         echo ""
-        echo "████████████████████████████████████████████████████████████████████████████████"
-        echo "██  ✅ BILL SLOTH CYBERPUNK SYSTEM READY!                                     ██"
-        echo "████████████████████████████████████████████████████████████████████████████████"
+        echo "================================================================================"
+        echo "==  SUCCESS: BILL SLOTH CYBERPUNK SYSTEM READY!                             =="
+        echo "================================================================================"
         echo ""
-        echo "🦥⚡ Your cyberpunk sloth system is ready!"
+        echo "Your cyberpunk sloth system is ready!"
         echo ""
         echo "Quick start:"
         echo "  cd ~/bill-sloth && ./bill_command_center.sh"
@@ -124,7 +124,7 @@ if [ ! -f ~/.billsloth-setup-complete ]; then
         echo "  - Utilities: jq, sqlite3"
         echo ""
     else
-        echo "❌ Failed to clone Bill Sloth repository"
+        echo "ERROR: Failed to clone Bill Sloth repository"
         echo "Check your internet connection and try again"
     fi
 else
@@ -171,9 +171,9 @@ if ($LASTEXITCODE -eq 0) {
         if (Test-Path $OutputISO) {
             $size = (Get-Item $OutputISO).Length / 1GB
             Write-Host ""
-            Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
-            Write-Host "██  ✅ BILL SLOTH CYBERPUNK ISO CREATED SUCCESSFULLY!                         ██" -ForegroundColor Green
-            Write-Host "████████████████████████████████████████████████████████████████████████████████" -ForegroundColor Green
+            Write-Host "================================================================================" -ForegroundColor Green
+            Write-Host "==  SUCCESS: BILL SLOTH CYBERPUNK ISO CREATED SUCCESSFULLY!                 ==" -ForegroundColor Green
+            Write-Host "================================================================================" -ForegroundColor Green
             Write-Host ""
             Write-Host "Location: $OutputISO" -ForegroundColor Cyan  
             Write-Host "Size: $([math]::Round($size, 2)) GB" -ForegroundColor Cyan

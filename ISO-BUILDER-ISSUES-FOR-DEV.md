@@ -1,6 +1,13 @@
 # ISO Builder Issues - Current Status Report
 
-## Summary
+## 🚨 **UPDATE - JULY 26, 2025:**
+**These issues were identified in the OLD BROKEN VERSION of the ISO builder.**  
+**The current RECOMMENDED ISO builder has been completely rewritten to avoid ALL these problems.**  
+**See `ISO-BUILDER-CURRENT-STATUS.md` for the current working version.**
+
+---
+
+## Summary (Historical - Fixed in Current Version)
 After testing all ISO builders, we have identified specific technical issues preventing successful custom ISO creation. The live-build system works correctly, but there are three blocking issues.
 
 ## Issue 1: Missing Ubuntu Theme Packages
