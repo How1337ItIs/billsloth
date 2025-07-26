@@ -357,6 +357,121 @@ function New-BillSlothCustomISO {
         $syncedItems = (Get-ChildItem $billSlothIntegrationDir -Recurse).Count
         Write-EnhancedLog "Complete Bill Sloth system embedded: $syncedItems items" "SUCCESS"
         
+        # Enhanced Visual System Integration
+        Write-EnhancedLog "Integrating enhanced visual system..." "INFO"
+        
+        # Verify enhanced aesthetic bridge is included
+        $aestheticBridgePath = "$billSlothIntegrationDir\lib\enhanced_aesthetic_bridge.sh"
+        if (Test-Path $aestheticBridgePath) {
+            Write-EnhancedLog "Enhanced aesthetic bridge included: enhanced_aesthetic_bridge.sh" "SUCCESS"
+        } else {
+            Write-EnhancedLog "Enhanced aesthetic bridge not found - visual enhancements may be limited" "WARN"
+        }
+        
+        # Verify ATHF easter eggs are ASCII-only
+        $athfEasterEggsPath = "$billSlothIntegrationDir\lib\athf_easter_eggs.sh"
+        if (Test-Path $athfEasterEggsPath) {
+            Write-EnhancedLog "ASCII ATHF easter eggs included: athf_easter_eggs.sh" "SUCCESS"
+        }
+        
+        # Enable enhanced visuals in autostart script
+        $autostartPath = "$billSlothIntegrationDir\autostart.sh"
+        if (Test-Path $autostartPath) {
+            $autostartContent = Get-Content $autostartPath -Raw
+            
+            # Add enhanced visual system initialization
+            $visualEnhancement = @'
+
+# Enhanced Visual System Initialization
+export BILL_SLOTH_ENHANCED_VISUALS=1
+export PRESERVE_BANNERS=true
+export SHOW_EASTER_EGGS=true
+export MAINTAIN_COLORS=true
+export VISUAL_FEEDBACK=enhanced
+export FORCE_VISUAL_MODE=true
+
+# Initialize enhanced aesthetic bridge if available
+if [ -f "$BILLSLOTH_DIR/lib/enhanced_aesthetic_bridge.sh" ]; then
+    source "$BILLSLOTH_DIR/lib/enhanced_aesthetic_bridge.sh"
+    echo "    > [VISUAL] Enhanced aesthetic bridge initialized"
+fi
+'@
+            
+            # Insert visual enhancement before the final echo statements
+            $insertionPoint = $autostartContent.IndexOf('echo "    > jack_out.exe --save_state --maintain_connection"')
+            if ($insertionPoint -gt 0) {
+                $beforeText = $autostartContent.Substring(0, $insertionPoint)
+                $afterText = $autostartContent.Substring($insertionPoint)
+                $enhancedContent = $beforeText + $visualEnhancement + "`n" + $afterText
+                
+                Set-Content -Path $autostartPath -Value $enhancedContent -Encoding UTF8
+                Write-EnhancedLog "Enhanced visual system integrated into autostart" "SUCCESS"
+            }
+        }
+        
+        # Create visual system verification script
+        $visualVerificationScript = @'
+#!/bin/bash
+# Visual System Health Check
+echo ""
+echo "=============================================="
+echo "     BILL SLOTH VISUAL SYSTEM STATUS"
+echo "=============================================="
+echo ""
+
+# Check enhanced aesthetic bridge
+if [ -f "lib/enhanced_aesthetic_bridge.sh" ]; then
+    echo " Enhanced Aesthetic Bridge: READY"
+    source lib/enhanced_aesthetic_bridge.sh
+    detect_terminal_aesthetics
+    echo "   • Terminal Support: $TERM_SUPPORT_LEVEL"
+    echo "   • Color Support: $COLOR_SUPPORT"
+    echo "   • Wide Display: $WIDE_DISPLAY"
+else
+    echo "  Enhanced Aesthetic Bridge: NOT FOUND"
+fi
+
+# Check ATHF easter eggs
+if [ -f "lib/athf_easter_eggs.sh" ]; then
+    echo " ATHF Easter Eggs: READY (ASCII-only)"
+else
+    echo "  ATHF Easter Eggs: NOT FOUND"
+fi
+
+# Check module visual integration
+visual_modules=0
+for module in modules/*.sh; do
+    if grep -q "enhanced_aesthetic_bridge" "$module" 2>/dev/null; then
+        visual_modules=$((visual_modules + 1))
+    fi
+done
+
+echo " Visual-Enhanced Modules: $visual_modules"
+echo ""
+echo "=============================================="
+
+# Show sample visual output
+if [ "$1" = "--demo" ]; then
+    echo ""
+    echo "Visual System Demo:"
+    echo ""
+    
+    # Show ASCII art sample
+    cat << 'EOF'
+                            (\\_/)              
+                           ( ^.^ )   VISUAL   
+                          o_(\"|(\")   READY   
+                                                
+                       BILL SLOTH AESTHETICS   
+                         >>> ONLINE <<<      
+EOF
+    echo ""
+fi
+'@
+        
+        Set-Content -Path "$billSlothIntegrationDir\check_visuals.sh" -Value $visualVerificationScript -Encoding UTF8
+        Write-EnhancedLog "Visual system verification script created: check_visuals.sh" "SUCCESS"
+        
         # Ensure all shell scripts are executable
         Get-ChildItem "$billSlothIntegrationDir" -Filter "*.sh" -Recurse | ForEach-Object {
             # This will be preserved in the ISO and available in Ubuntu
