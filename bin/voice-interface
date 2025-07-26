@@ -2,6 +2,10 @@
 # Bill Sloth Voice Interface - ATHF Meatwad Style
 # "I understand! I understand!"
 
+# Get script directory and load achievement system
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/achievement_system.sh" 2>/dev/null || true
+
 echo "🎤 MEATWAD VOICE INTERFACE ACTIVATED!"
 echo "======================================="
 echo ""
@@ -209,7 +213,21 @@ while true; do
             ;;
     esac
     
+    # Track voice command usage for achievements
+    if command -v mark_voice_command_used &>/dev/null; then
+        mark_voice_command_used
+    fi
+    
     echo ""
 done
 
 echo "🍔 Meatwad voice interface deactivated. I understand!"
+
+# Check if voice commander achievement should be unlocked
+if command -v check_achievement &>/dev/null; then
+    local voice_count=$(jq -r '.stats.voice_commands_used' "$HOME/.bill-sloth/data/achievements.json" 2>/dev/null || echo 0)
+    if [ "$voice_count" -ge 10 ]; then
+        echo ""
+        echo "🍔 Meatwad: 'I think you're getting really good at this voice thing!'"
+    fi
+fi

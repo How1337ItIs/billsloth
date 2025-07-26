@@ -23,6 +23,10 @@ source "$SCRIPT_DIR/lib/input_validation.sh" 2>/dev/null || {
 # Load Claude Interactive Bridge for AI/Human hybrid execution
 source "$SCRIPT_DIR/lib/claude_interactive_bridge.sh" 2>/dev/null || true
 
+# Load achievement system and loading animations
+source "$SCRIPT_DIR/lib/achievement_system.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/loading_animations.sh" 2>/dev/null || true
+
 # Enable safe mode for this script
 if command -v enable_safe_mode &>/dev/null; then
     # Set flag to restore settings on exit
@@ -489,6 +493,9 @@ bill_command_center() {
         echo "  fix1) Fix Ollama AI Integration    fix2) Fix Placeholder Code"
         echo "  fix3) Verify Docker Health        fix4) Setup API Credentials"
         echo ""
+        echo "🏆 ACHIEVEMENTS:"
+        echo "  achievements) View Achievement Status & Progress"
+        echo ""
         echo "🎤 VOICE CONTROL:"
         echo "  voice) Optimize Voice Control (Jarvis Mode)"
         echo ""
@@ -686,7 +693,18 @@ EOF
             # Full modules
             1)
                 log_activity "Opened Automation Mastery"
+                
+                # Show loading animation
+                athf_loading "Initializing Automation Mastery" 2 &
+                wait
+                
+                # Track activity and check achievements
+                update_activity_streak
+                
                 source "$SCRIPT_DIR/modules/automation_mastery_interactive.sh"
+                
+                # Mark module engagement
+                mark_module_mastered "Automation Mastery"
                 ;;
             2)
                 log_activity "Opened Network Management Hub"
@@ -738,8 +756,15 @@ EOF
                 ;;
             3)
                 log_activity "Opened Data Hoarding"
+                
+                # Wwwyzzerdd-themed loading for data operations
+                wwwyzzerdd_loader "Accessing digital treasure vaults" 2
+                update_activity_streak
+                
                 source "$SCRIPT_DIR/modules/data_hoarding.sh"
                 data_hoarding_interactive
+                
+                mark_module_mastered "Data Hoarding"
                 ;;
             4)
                 log_activity "Opened Media Processing"
@@ -848,6 +873,65 @@ EOF
                 log_activity "Optimized Voice Control System"
                 echo "🎤 Optimizing Voice Control System..."
                 source "$SCRIPT_DIR/bin/voice-control-optimizer"
+                ;;
+            "achievements")
+                log_activity "Viewed Achievement Status"
+                
+                # Celebration loading for achievements
+                cyberpunk_loader "Loading achievement database" 1
+                
+                show_achievement_status
+                
+                echo "🎮 Achievement Actions:"
+                echo "1) View detailed progress"
+                echo "2) Check for new achievements"
+                echo "3) Export achievement summary"
+                echo "0) Return to main menu"
+                echo ""
+                read -p "Select action: " achievement_action
+                
+                case "$achievement_action" in
+                    1)
+                        # Show detailed progress
+                        if command -v jq &>/dev/null && [ -f "$HOME/.bill-sloth/data/achievements.json" ]; then
+                            echo ""
+                            echo "📊 DETAILED PROGRESS:"
+                            echo "===================="
+                            local modules=$(jq -r '.stats.modules_mastered' "$HOME/.bill-sloth/data/achievements.json" 2>/dev/null || echo 0)
+                            local automations=$(jq -r '.stats.automations_created' "$HOME/.bill-sloth/data/achievements.json" 2>/dev/null || echo 0)
+                            local voice_uses=$(jq -r '.stats.voice_commands_used' "$HOME/.bill-sloth/data/achievements.json" 2>/dev/null || echo 0)
+                            
+                            echo "🎯 Progress to next achievements:"
+                            [ "$modules" -lt 3 ] && echo "  • Sloth Sensei: $modules/3 modules mastered"
+                            [ "$automations" -lt 5 ] && echo "  • Automation Master: $automations/5 automations created"
+                            [ "$voice_uses" -lt 10 ] && echo "  • Voice Commander: $voice_uses/10 voice commands used"
+                        fi
+                        ;;
+                    2)
+                        echo "🔍 Checking for new achievements..."
+                        # Force check all achievements
+                        check_achievement "easter_hunter" 0 5  # Will be triggered by usage
+                        echo "✓ Achievement check complete!"
+                        ;;
+                    3)
+                        echo "📄 Exporting achievement summary..."
+                        if [ -f "$HOME/.bill-sloth/data/achievement_log.txt" ]; then
+                            echo "Achievement summary saved to: $HOME/.bill-sloth/data/achievement_summary.txt"
+                            {
+                                echo "=== BILL SLOTH ACHIEVEMENT SUMMARY ==="
+                                echo "Generated: $(date)"
+                                echo ""
+                                echo "=== UNLOCKED ACHIEVEMENTS ==="
+                                cat "$HOME/.bill-sloth/data/achievement_log.txt"
+                                echo ""
+                                echo "=== CURRENT STATS ==="
+                                show_achievement_status | grep -E "Modules|Automations|Streak"
+                            } > "$HOME/.bill-sloth/data/achievement_summary.txt"
+                        fi
+                        ;;
+                esac
+                
+                read -p "Press Enter to continue..."
                 ;;
             "health")
                 log_activity "Ran system health check"
