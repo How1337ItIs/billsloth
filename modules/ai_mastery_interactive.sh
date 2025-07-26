@@ -8,7 +8,7 @@
 
 # Load Claude Interactive Bridge for AI/Human hybrid execution
 SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/enhanced_aesthetic_bridge.sh" 2>/dev/null || true
 
 # Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
