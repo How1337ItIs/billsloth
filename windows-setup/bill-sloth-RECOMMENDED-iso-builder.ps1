@@ -151,8 +151,16 @@ wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo mksquashfs squashfs-root 
 # Update filesystem size
 wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && echo -n `$(sudo du -sx --block-size=1 squashfs-root | cut -f1) | sudo tee extract-cd/casper/filesystem.size > /dev/null"
 
-# Create the final ISO
-wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth/extract-cd && sudo xorriso -as mkisofs -isohybrid-mbr /usr/lib/ISOLINUX/isohdpfx.bin -c isolinux/boot.cat -b isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e boot/grub/efi.img -no-emul-boot -isohybrid-gpt-basdat -o ../billsloth-custom.iso ."
+# Create the final ISO with modern Ubuntu GRUB/EFI boot structure
+Write-Host "Creating bootable ISO with GRUB/EFI support..." -ForegroundColor Green
+
+# First ensure all boot directories are preserved from original ISO
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/boot extract-cd/ 2>/dev/null || true"
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/EFI extract-cd/ 2>/dev/null || true"  
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth && sudo cp -r /mnt/ubuntu-iso/.disk extract-cd/ 2>/dev/null || true"
+
+# Create bootable ISO using modern Ubuntu boot structure
+wsl -d Ubuntu-22.04 bash -c "cd /tmp/billsloth/extract-cd && sudo xorriso -as mkisofs -r -V 'BILLSLOTH' -o ../billsloth-custom.iso -J -l -b boot/grub/i386-pc/eltorito.img -c boot.catalog -no-emul-boot -boot-load-size 4 -boot-info-table -eltorito-alt-boot -e EFI/boot/bootx64.efi -no-emul-boot -isohybrid-gpt-basdat ."
 
 # Cleanup
 wsl -d Ubuntu-22.04 bash -c "sudo umount /mnt/ubuntu-iso 2>/dev/null || true"
