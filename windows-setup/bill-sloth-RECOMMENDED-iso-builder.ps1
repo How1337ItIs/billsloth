@@ -2,7 +2,7 @@
 # Uses local Ubuntu ISO to avoid network issues
 param([string]$OutputISO = "$env:USERPROFILE\Desktop\BillSloth-Cyberpunk-Ubuntu.iso")
 
-$LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64.iso"
+$LocalUbuntuISO = "C:\billsloth\ubuntu-22.04.5-desktop-amd64-fast.iso"
 
 Write-Host "================================================================================" -ForegroundColor Green
 Write-Host "==  RECOMMENDED BILL SLOTH CUSTOM ISO BUILDER - COMPLETE & WORKING          ==" -ForegroundColor Green  
