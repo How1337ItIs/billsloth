@@ -587,7 +587,7 @@ EOF
             echo "Install your first model and start using offline AI!"
             echo "You now have privacy-first AI that works anywhere!"
             echo ""
-            echo "🧠 Carl: 'Finally! AI that respects my privacy and doesn't spy on me!'"
+            echo "[ATHF] Carl: 'Finally!'"
             ;;
         models|Models|MODELS)
             echo "[LOG] Bill requested AI model recommendations" >> ~/ai_workflows/assistant.log

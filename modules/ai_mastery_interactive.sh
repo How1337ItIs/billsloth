@@ -21,7 +21,7 @@ ai_mastery_interactive() {
     echo "🎯 Master the power of AI on YOUR terms - locally, privately, and with"
     echo "professional automation that rivals tech giants, designed for ADHD minds!"
     echo ""
-    echo "🧠 Carl: 'Yeah, I got AI. It's called artificial intelligence, which is like... intelligence, but fake.'"
+    echo "[ATHF] Carl: 'Yeah, I got it. It's called technology.'"
     echo ""
     
     # AI mastery assessment
@@ -287,7 +287,7 @@ EOF
             echo "You now have complete AI independence!"
             echo "Reload your shell (source ~/.bashrc) to use new commands!"
             echo ""
-            echo "🧠 Carl: 'Finally! AI that doesn't spy on me and send my data to corporations!'"
+            echo "[ATHF] Carl: 'Finally!'"
             ;;
         2)
             echo "[LOG] Bill chose AI Development Environment" >> ~/ai_mastery/assistant.log

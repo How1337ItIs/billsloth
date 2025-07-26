@@ -32,7 +32,7 @@ assess_personal_workflows() {
     
     print_header "🔍 PERSONAL WORKFLOW ASSESSMENT"
     
-    echo "🍔 Meatwad: 'I understand! Tell me about your stuff so we can make robots do it!'"
+    echo "[ATHF] Meatwad: 'I get it! I get it!'"
     echo ""
     echo "Before we dive into automation, let's understand YOUR unique workflows,"
     echo "pain points, and digital habits. This assessment will help us create"

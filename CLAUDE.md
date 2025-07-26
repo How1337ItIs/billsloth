@@ -54,6 +54,7 @@ bash scripts/generate_module_docs.sh
 - Error handling through centralized `lib/error_handling.sh`
 - Data persistence via SQLite and JSON structures
 - Modular, interchangeable components following Unix philosophy
+- **NO UNICODE/EMOJIS in scripts** - Use ASCII only to prevent encoding issues
 
 ## Claude Code Session Management
 
@@ -96,6 +97,10 @@ check_system_health
 - Enhanced onboarding experience with personalization
 - Improved module interconnection and data sharing
 - Added voice control via Linux Voice Control integration
+- Created comprehensive enhanced visual system with cyberpunk/retro gaming aesthetic
+- Added auto-installation system for ISO customizations
+- Implemented game development and vibe coding modules
+- Added audit system and bug fixes for production readiness
 
 ## Working with This Project
 
@@ -267,3 +272,42 @@ fi
 - Platform-specific commands failing unexpectedly  
 - Inconsistent results between test runs
 - Missing files that should exist based on documentation
+
+## Script Development Guidelines
+
+### Unicode and Character Encoding
+- **NEVER use Unicode characters (emojis, special symbols) in shell scripts**
+- Use ASCII-only characters to prevent encoding issues across environments
+- Replace visual elements with:
+  - Text prefixes: `[INFO]`, `[SUCCESS]`, `[ERROR]`, `[WARNING]`
+  - ASCII art for visual appeal where appropriate
+  - Simple symbols: `*`, `+`, `-`, `>` for bullets and formatting
+  - Standard text formatting and colors via ANSI codes
+
+### Why This Matters
+- Different terminal encodings can break Unicode characters
+- Automated build systems often use minimal character sets
+- SSH connections may not support Unicode properly
+- CI/CD pipelines can fail on Unicode parsing
+- Different Linux distributions handle encoding differently
+
+### Acceptable Visual Enhancement
+```bash
+# Good: ASCII-based visual formatting
+echo "=================================================="
+echo "         BILL SLOTH SYSTEM INITIALIZING"
+echo "=================================================="
+echo ""
+echo "[INFO] Starting system health check..."
+echo "[SUCCESS] All systems operational"
+echo "[ERROR] Database connection failed"
+
+# Bad: Unicode characters that can cause encoding issues
+echo "🚀 Starting system..."  # Can break in different environments
+```
+
+### Testing Script Compatibility
+- Test scripts in minimal environments (basic terminals, SSH connections)
+- Verify functionality in automated build systems
+- Check compatibility across different Linux distributions
+- Ensure scripts work in both interactive and non-interactive modes

@@ -534,7 +534,7 @@ generate_recommendations() {
         echo "   • Automatic task creation from various sources"
         echo "   • Smart reminders that adapt to your energy levels"
         echo "   • Dopamine-reward systems for completed tasks"
-        echo "   🍔 Meatwad: 'I understand! Your brain needs help remembering stuff!'"
+        echo "   [ATHF] Meatwad: 'I get it! I get it!'"
         echo ""
         echo "- ADHD-optimized task management (high priority)" >> "$ASSESSMENT_FILE"
     fi
@@ -1658,7 +1658,7 @@ setup_node_red() {
     echo "• No syntax errors - drag and drop prevents most mistakes"
     echo "• Community nodes handle complex integrations for you"
     echo ""
-    echo "🍔 Meatwad: 'I understand! It's like connecting dots but the dots do robot stuff!'"
+    echo "[ATHF] Meatwad: 'That's awesome!'"
     echo ""
     
     # Check for Node.js installation
