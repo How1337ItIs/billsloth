@@ -101,22 +101,22 @@ function Get-WSL2Status {
 function Get-SimpleISOBuilderPath {
     $possiblePaths = @(
         # Try PSScriptRoot (most reliable for PowerShell 3.0+)
-        (Join-Path $PSScriptRoot "bill-sloth-simple-iso-builder.ps1"),
+        (Join-Path $PSScriptRoot "bill-sloth-RECOMMENDED-iso-builder.ps1"),
         
         # Try current working directory  
-        (Join-Path $PWD "bill-sloth-simple-iso-builder.ps1"),
+        (Join-Path $PWD "bill-sloth-RECOMMENDED-iso-builder.ps1"),
         
         # Try same directory as current script using PSCommandPath
-        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-simple-iso-builder.ps1"),
+        (Join-Path (Split-Path $PSCommandPath -Parent) "bill-sloth-RECOMMENDED-iso-builder.ps1"),
         
         # Try common installation paths
-        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-simple-iso-builder.ps1",
-        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-simple-iso-builder.ps1"
+        "C:\Users\natha\bill sloth\windows-setup\bill-sloth-RECOMMENDED-iso-builder.ps1",
+        "$env:USERPROFILE\bill sloth\windows-setup\bill-sloth-RECOMMENDED-iso-builder.ps1"
     )
     
     # Add MyInvocation path conditionally (avoid inline if in array)
     if ($MyInvocation.MyCommand.Path) {
-        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-simple-iso-builder.ps1"
+        $possiblePaths += Join-Path (Split-Path $MyInvocation.MyCommand.Path) "bill-sloth-RECOMMENDED-iso-builder.ps1"
     }
     
     foreach ($path in $possiblePaths) {
