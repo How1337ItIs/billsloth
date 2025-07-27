@@ -3,6 +3,10 @@
 # 💀 DATA CONSCIOUSNESS ABSORPTION MATRIX 💀
 # Neural data vampirism and digital reality hoarding protocols
 
+# Load ASCII gallery for data hoarder visuals
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+
 clear
 echo -e "\033[38;5;196m"
 cat << 'EOF'
@@ -13,6 +17,14 @@ EOF
 echo -e "\033[0m"
 echo ""
 echo -e "\033[38;5;51m💀 DIGITAL DATA VAMPIRE AWAKENED! 💀\033[0m"
+
+# Random hardcore ASCII for data hoarders (15% chance)
+if [ $((RANDOM % 7)) -eq 0 ] && command -v show_hardcore_art &>/dev/null; then
+    echo ""
+    echo -e "\033[38;5;129m[DATA MATRIX] Skull detected in neural pathways:\033[0m"
+    show_hardcore_art "terminal"
+    echo ""
+fi
 
 data_consciousness_absorption_capabilities() {
     echo -e "\033[38;5;226m💀 DIGITAL REALITY ABSORPTION CAPABILITIES:\033[0m"

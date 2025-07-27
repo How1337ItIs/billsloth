@@ -15,6 +15,17 @@ source "../lib/interactive.sh" 2>/dev/null || {
     echo "================================="
 }
 
+# Load ASCII art gallery for cyber effects
+source "$SOURCE_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+
+# Show cyber skull for hacking module (20% chance)
+if [ $((RANDOM % 5)) -eq 0 ] && command -v show_cyber_skull &>/dev/null; then
+    echo ""
+    echo -e "${CYBER_RED}[CYBER DEFENSE MATRIX ACTIVATED]${CYBER_RESET}"
+    show_cyber_skull "full"
+    echo ""
+fi
+
 show_banner "DEFENSIVE CYBERSECURITY" "1337 h4x0r security testing tools for ethical defense" "SECURITY"
 
 echo "🛡️  DEFENSIVE CYBERSECURITY - ETHICAL HACKING MASTERY"

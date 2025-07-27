@@ -482,9 +482,16 @@ bill_command_center() {
         
         echo "🧙 wwwyzzerdd: 'Welcome to the brainframe, broadbrain.'"
         
-        # Add cyberpunk status line
+        # Add cyberpunk status line with random sloth
         if command -v hack_timestamp &>/dev/null && command -v cyber_status &>/dev/null; then
             echo -e "$(hack_timestamp) $(cyber_status online) Neural interface active"
+        fi
+        
+        # Random sloth appearance (10% chance)
+        if [ $((RANDOM % 10)) -eq 0 ] && command -v random_sloth &>/dev/null; then
+            echo ""
+            echo -e "${CYBER_GREEN}[SYS] Random sloth detected in neural pathways:${CYBER_RESET}"
+            random_sloth
         fi
         echo ""
         echo "📋 FULL MODULES:"

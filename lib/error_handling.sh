@@ -3,6 +3,10 @@
 # Provides consistent error messaging across all modules
 # Part of Phase 1 Implementation Plan - Core Stabilization
 
+# Load ASCII gallery for error visuals
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/ascii_gallery.sh" 2>/dev/null || true
+
 # Colors for consistent output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -99,10 +103,17 @@ log_step() {
     return 0
 }
 
-# Fatal error - Logs error and exits
+# Fatal error - Logs error and exits with skull
 log_fatal() {
     local message="$1"
     local exit_code="${2:-1}"
+    
+    # Show skull for fatal errors (5% chance for hardcore skull)
+    if [ $((RANDOM % 20)) -eq 0 ] && command -v show_cyber_skull &>/dev/null; then
+        show_cyber_skull "compact"
+        echo ""
+    fi
+    
     echo -e "${RED}💀 FATAL ERROR: $message${NC}" >&2
     write_to_log "FATAL" "$message (exit code: $exit_code)"
     exit "$exit_code"
