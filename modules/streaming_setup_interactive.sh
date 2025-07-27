@@ -62,6 +62,17 @@ generate_streaming_plan() {
 }
 
 streaming_setup_interactive() {
+    # Load ASCII art gallery
+    source "$SOURCE_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+    
+    # Show cyberpunk art for streaming (10% chance)
+    if [ $((RANDOM % 10)) -eq 0 ] && command -v show_cyber_art &>/dev/null; then
+        echo ""
+        echo -e "${CYBER_PURPLE}[STREAMING NEURAL INTERFACE ACTIVATED]${CYBER_RESET}"
+        show_cyber_art "random"
+        echo ""
+    fi
+    
     echo "🎥 HARDCORE STREAMING & AUTOMATION EMPIRE - SWEATYPEDALS LEVEL MASTERY"
     echo "======================================================================"
     echo ""

@@ -10,6 +10,7 @@ source "$SCRIPT_DIR/lib/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/data_persistence.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/achievement_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/lib/loading_animations.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/lib/ascii_gallery.sh" 2>/dev/null || true
 
 # Onboarding configuration
 ONBOARD_DIR="$HOME/.bill-sloth/onboarding"
@@ -284,9 +285,16 @@ exercise_system_health() {
     echo ""
     echo "✅ Exercise 1 complete! You've taken your first look under the hood."
     
-    # Unlock first achievement
+    # Unlock first achievement with sloth celebration
     if command -v unlock_achievement &>/dev/null; then
         unlock_achievement "first_steps"
+    fi
+    
+    # Show celebration sloth (50% chance on first completion)
+    if [ $((RANDOM % 2)) -eq 0 ] && command -v show_sloth_banner &>/dev/null; then
+        echo ""
+        show_sloth_banner "FIRST STEPS COMPLETE!"
+        echo ""
     fi
     
     sleep 2
