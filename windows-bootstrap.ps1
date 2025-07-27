@@ -218,18 +218,104 @@ Write-Host ""
 Write-Host "🤖 For AI assistance, use Claude Code with Bill Sloth prompts!" -ForegroundColor Magenta
 Write-Host ""
 
-# CLI Pane Bridge Prerequisites Check (Phase 0 Stub)
+# CLI Pane Bridge Prerequisites Check (Phase 1)
 Write-Host "🔧 CLI PANE BRIDGE PREREQUISITES" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Log "Checking CLI Pane Bridge prerequisites..." "INFO"
 
-# TODO: Implement full prerequisite checking
-Write-Host "TODO: Check for Windows Terminal availability" -ForegroundColor Yellow
-Write-Host "TODO: Check for WSL2 installation" -ForegroundColor Yellow  
-Write-Host "TODO: Check for tmux in WSL2 environment" -ForegroundColor Yellow
-Write-Host "TODO: Verify Claude Code CLI installation" -ForegroundColor Yellow
+# Check for Claude CLI
+$claudeAvailable = $false
+try {
+    $claudeVersion = claude --version 2>$null
+    if ($claudeVersion) {
+        Write-Host "✅ Claude CLI found: $claudeVersion" -ForegroundColor Green
+        Write-Log "Claude CLI detected: $claudeVersion" "SUCCESS"
+        $claudeAvailable = $true
+    }
+} catch {
+    Write-Host "❌ Claude CLI not found" -ForegroundColor Red
+    Write-Log "Claude CLI not found" "WARN"
+    Write-Host "   Install from: https://claude.ai/code" -ForegroundColor Yellow
+    Write-Host "   Add to PATH after installation" -ForegroundColor Yellow
+}
+
+# Check for Windows Terminal
+$windowsTerminalAvailable = $false
+try {
+    $wtVersion = wt --version 2>$null
+    if ($wtVersion) {
+        Write-Host "✅ Windows Terminal found" -ForegroundColor Green
+        Write-Log "Windows Terminal detected" "SUCCESS"
+        $windowsTerminalAvailable = $true
+    }
+} catch {
+    Write-Host "⚠️  Windows Terminal not found" -ForegroundColor Yellow
+    Write-Log "Windows Terminal not found" "WARN"
+    Write-Host "   Install from Microsoft Store or:" -ForegroundColor Yellow
+    Write-Host "   https://github.com/microsoft/terminal/releases" -ForegroundColor Yellow
+    Write-Host "   Fallback method will be used" -ForegroundColor Yellow
+}
+
+# Check for WSL2
+$wslAvailable = $false
+try {
+    $wslList = wsl --list --quiet 2>$null
+    if ($wslList) {
+        Write-Host "✅ WSL2 found with distributions:" -ForegroundColor Green
+        $wslList | ForEach-Object { Write-Host "   - $_" -ForegroundColor White }
+        Write-Log "WSL2 detected with distributions: $($wslList -join ', ')" "SUCCESS"
+        $wslAvailable = $true
+        
+        # Check for tmux in WSL
+        try {
+            $tmuxCheck = wsl bash -c "command -v tmux" 2>$null
+            if ($tmuxCheck) {
+                Write-Host "✅ tmux available in WSL2" -ForegroundColor Green
+                Write-Log "tmux found in WSL2" "SUCCESS"
+            } else {
+                Write-Host "⚠️  tmux not found in WSL2" -ForegroundColor Yellow
+                Write-Log "tmux not found in WSL2" "WARN"
+                Write-Host "   Install with: wsl -- sudo apt update && sudo apt install tmux" -ForegroundColor Yellow
+            }
+        } catch {
+            Write-Host "⚠️  Could not check tmux in WSL2" -ForegroundColor Yellow
+            Write-Log "Could not check tmux in WSL2" "WARN"
+        }
+    }
+} catch {
+    Write-Host "⚠️  WSL2 not found or not running" -ForegroundColor Yellow
+    Write-Log "WSL2 not detected" "WARN"
+    Write-Host "   Install WSL2: https://docs.microsoft.com/en-us/windows/wsl/install" -ForegroundColor Yellow
+}
+
+# Summary and recommendations
 Write-Host ""
-Write-Log "CLI Pane Bridge prerequisite check (stub) completed" "INFO"
+Write-Host "📋 CLI PANE BRIDGE READINESS" -ForegroundColor Cyan
+Write-Host "============================" -ForegroundColor Cyan
+
+if ($claudeAvailable) {
+    Write-Host "🎯 Ready for CLI pane bridge!" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Usage examples:" -ForegroundColor Cyan
+    
+    if ($wslAvailable) {
+        Write-Host "  Linux/WSL2: bash bin/bsai.sh data_hoarding_interactive" -ForegroundColor White
+    }
+    
+    Write-Host "  PowerShell: bin/bsai.ps1 data_hoarding_interactive" -ForegroundColor White
+    
+    if ($windowsTerminalAvailable) {
+        Write-Host "  (Windows Terminal split-pane support available)" -ForegroundColor Green
+    } else {
+        Write-Host "  (Will use fallback method - separate windows)" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "⚠️  Install Claude CLI to use CLI pane bridge" -ForegroundColor Yellow
+    Write-Host "   After installing Claude CLI, you'll be ready to go!" -ForegroundColor White
+}
+
+Write-Host ""
+Write-Log "CLI Pane Bridge prerequisite check completed" "INFO"
 
 Write-Log "Bill Sloth Windows Bootstrap completed" "INFO"
