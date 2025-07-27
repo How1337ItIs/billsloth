@@ -309,6 +309,16 @@ analyze_guest_data() {
     
     echo "✅ Guest analysis completed: $analysis_file"
     notify_success "Guest Analysis" "Data patterns analyzed"
+    
+    # Random sloth celebration (20% chance)
+    if [ $((RANDOM % 5)) -eq 0 ] && command -v random_sloth &>/dev/null; then
+        echo ""
+        echo "🦥 Automation Sloth says:"
+        random_sloth
+        echo "    (\\_/)"
+        echo "   ( ^.^ )  'Slow and steady automation wins!'"
+        echo "  o_(\"|(\") "
+    fi
 }
 
 # Property performance dashboard

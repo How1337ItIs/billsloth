@@ -48,6 +48,22 @@ claude_preflight_analysis() {
     local menu_options=$(grep -E "^[[:space:]]*[0-9]+\)" "$script_file" | head -10)
     local read_prompts=$(grep -E "read -p|Your choice:" "$script_file" | wc -l)
     
+    # Visual content detection
+    local ascii_art_lines=$(grep -E "cat <<|EOF" "$script_file" | wc -l)
+    local color_codes=$(grep -E "\\\\033\[|\\\\e\[" "$script_file" | wc -l)
+    
+    if [[ $ascii_art_lines -gt 5 ]] || [[ $color_codes -gt 10 ]]; then
+        echo "📊 VISUAL CONTENT DETECTED:"
+        echo "   • ASCII art blocks: $ascii_art_lines"
+        echo "   • Color sequences: $color_codes"
+        echo ""
+        echo "💡 RECOMMENDATION: This script has rich visual content."
+        echo "   Claude will run it in analysis mode for debugging."
+        echo "   For the full visual experience, run directly in terminal:"
+        echo "   $ bash $script_file"
+        echo ""
+    fi
+    
     echo "📊 SCRIPT OVERVIEW:"
     echo "• Found $read_prompts interactive decision points"
     echo "• Detected menu-driven interface"

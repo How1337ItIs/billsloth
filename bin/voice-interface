@@ -8,6 +8,17 @@ source "$SCRIPT_DIR/../lib/achievement_system.sh" 2>/dev/null || true
 
 echo "🎤 MEATWAD VOICE INTERFACE ACTIVATED!"
 echo "======================================="
+
+# Random sloth greeting (25% chance)
+if [ $((RANDOM % 4)) -eq 0 ] && command -v random_sloth &>/dev/null; then
+    echo ""
+    echo "🦥 Voice Sloth detected:"
+    random_sloth
+    echo "    (\\_/)"
+    echo "   ( o.o )  'Ready for voice commands...'"
+    echo "  o_(\"|(\") "
+fi
+
 echo ""
 echo "🍔 Meatwad: 'I understand! Tell me what you want to do!'"
 echo ""

@@ -17,6 +17,18 @@ load_includes "core" "notification" "adaptive_learning" "data_persistence" "erro
 init_adaptive_learning "vibe_coding_ultimate" "$0" 2>/dev/null || true
 
 show_vibe_ultimate_banner() {
+    # Load ASCII art gallery for creative vibes
+    source "$SOURCE_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+    
+    # Show sloth for creative coding (20% chance)
+    if [ $((RANDOM % 5)) -eq 0 ] && command -v random_sloth &>/dev/null; then
+        echo ""
+        echo -e "${CYBER_PURPLE}[CREATIVE SLOTH ACTIVATED]${CYBER_RESET}"
+        random_sloth
+        echo "    Hanging out in the code zone..."
+        echo ""
+    fi
+    
     echo -e "\033[38;5;201m"
     cat << 'EOF'
     ██╗   ██╗██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ██╗███╗   ██╗ ██████╗ 

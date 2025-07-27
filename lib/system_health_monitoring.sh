@@ -8,6 +8,7 @@ set -euo pipefail
 source "$SCRIPT_DIR/error_handling.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/notification_system.sh" 2>/dev/null || true
 source "$SCRIPT_DIR/data_sharing.sh" 2>/dev/null || true
+source "$SCRIPT_DIR/ascii_gallery.sh" 2>/dev/null || true
 
 # Health monitoring configuration
 HEALTH_CONFIG_DIR="$HOME/.bill-sloth/health-monitoring"
@@ -574,6 +575,14 @@ record_alert() {
 send_health_alert() {
     local message="$1"
     local severity="${2:-warning}"
+    
+    # Add skull to critical alerts (5% chance)
+    if [ "$severity" = "critical" ] && [ $((RANDOM % 20)) -eq 0 ] && command -v show_cyber_skull &>/dev/null; then
+        echo ""
+        echo -e "${CYBER_RED}[CRITICAL SYSTEM ALERT]${CYBER_RESET}"
+        show_cyber_skull "compact"
+        echo ""
+    fi
     
     # Log alert
     log_warning "HEALTH ALERT: $message"

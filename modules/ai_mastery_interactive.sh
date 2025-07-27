@@ -13,6 +13,7 @@ source "$SOURCE_DIR/../lib/enhanced_aesthetic_bridge.sh" 2>/dev/null || true
 # Source required libraries
 source "$SOURCE_DIR/../lib/error_handling.sh" 2>/dev/null || true
 source "$SOURCE_DIR/../lib/interactive.sh" 2>/dev/null || true
+source "$SOURCE_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
 
 ai_mastery_interactive() {
     echo "🤖 AI MASTERY - YOUR COMPLETE ARTIFICIAL INTELLIGENCE EMPIRE"
@@ -24,6 +25,14 @@ ai_mastery_interactive() {
     echo "[ATHF] Carl: 'Yeah, I got it. It's called technology.'"
     echo "🧙 wwwyzzerdd: 'You have entered the cyberland portal of AI mastery, broadbrain.'"
     echo "🧙 wwwyzzerdd: 'This is live streaming artificial intelligence.'"
+    
+    # Random cyberpunk art for AI module (10% chance)
+    if [ $((RANDOM % 10)) -eq 0 ] && command -v show_hardcore_art &>/dev/null; then
+        echo ""
+        echo -e "\033[38;5;46m[AI MATRIX] Cyberpunk entity detected:\033[0m"
+        show_hardcore_art "cyberpunk"
+        echo ""
+    fi
     echo ""
     
     # AI mastery assessment

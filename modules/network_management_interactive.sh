@@ -26,6 +26,17 @@ source "$SCRIPT_DIR/../lib/adaptive_learning.sh" 2>/dev/null || true
 # Initialize adaptive learning for this module
 init_adaptive_learning "network_management" "$0" 2>/dev/null || true
 
+# Load ASCII art gallery
+source "$SCRIPT_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+
+# Show cyberpunk art for network module (12% chance)
+if [ $((RANDOM % 8)) -eq 0 ] && command -v show_cyber_art &>/dev/null; then
+    echo ""
+    echo -e "${CYBER_BLUE}[NETWORK MATRIX INTERFACE]${CYBER_RESET}"
+    show_cyber_art "random"
+    echo ""
+fi
+
 show_banner "NETWORK MANAGEMENT" "VPN, Security & Connectivity" "NETWORKING"
 
 echo "🌐 Bill Sloth Network Management Center"

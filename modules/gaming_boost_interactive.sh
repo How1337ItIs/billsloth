@@ -14,6 +14,17 @@ source "$SOURCE_DIR/../lib/claude_interactive_bridge.sh" 2>/dev/null || true
 source "$SOURCE_DIR/gaming_boost.sh"
 
 gaming_boost_interactive() {
+    # Load ASCII art gallery for cyberpunk effects
+    source "$SOURCE_DIR/../lib/ascii_gallery.sh" 2>/dev/null || true
+    
+    # Show hardcore ASCII art (15% chance)
+    if [ $((RANDOM % 7)) -eq 0 ] && command -v show_hardcore_art &>/dev/null; then
+        echo ""
+        echo -e "${CYBER_GREEN}[GAMING DEMON AWAKENING]${CYBER_RESET}"
+        show_hardcore_art "random"
+        echo ""
+    fi
+    
     echo -e "\033[35m"
     cat << 'BANNER'
     ██████╗  █████╗ ███╗   ███╗███████╗    ██████╗  ██████╗  ██████╗ ███████╗████████╗
